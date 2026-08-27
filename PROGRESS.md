@@ -1,3 +1,4 @@
 # PROGRESS — append-only ledger
 
 - 2026-08-27 — repo scaffolded; architecture (GOAL/CHAPTER_MAP/STYLE/EDITORIAL_SYSTEM) locked; research fanout launched (W1: serving internals, 24 digests).
+- 2026-08-27 — iteration 2 (research gap-fill): 14 new dated digests (roofline/arithmetic intensity, decode bandwidth wall, attention cost scaling, KV-bytes formula w/ per-model math, GQA/MQA/MLA, context-window claims vs effective, GPU memory hierarchy, continuous batching, PagedAttention, prefix caching/radix, chunked prefill + PD split, speculative decoding, quantization menu, sharding/MoE). research/ 10 → 24 digests; W1 wave complete; Part I (ch1-4) + Part II engine chapters (ch5-10) now fact-covered. Note: glm-5.3-flash fanout hit spawn 429s at 14-wide; retried in batches of 3. 10 of 14 researcher outputs returned text not files; recovered verbatim from run artifacts. No chapter drafted this iteration (per gap-fill rule). Next: draft ch01.
