@@ -44,9 +44,16 @@ done
 # KDP wants a JPEG cover.
 if command -v sips >/dev/null 2>&1; then
   sips -s format jpeg figures/png/cover.png --out figures/png/cover.jpg >/dev/null
-else
+elif command -v convert >/dev/null 2>&1; then
   convert figures/png/cover.png -background white -alpha remove \
     -quality 92 figures/png/cover.jpg
+elif command -v ffmpeg >/dev/null 2>&1; then
+  # cover.png renders opaque RGB (rsvg-convert flattens the SVG background),
+  # so a plain encode is safe; -q:v 2 ≈ ImageMagick quality 92.
+  ffmpeg -y -loglevel error -i figures/png/cover.png -q:v 2 figures/png/cover.jpg
+else
+  echo "error: install sips, ImageMagick, or ffmpeg to make the cover JPEG" >&2
+  exit 1
 fi
 echo "rendered cover.jpg"
 

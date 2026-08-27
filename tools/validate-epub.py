@@ -8,7 +8,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-EPUB = ROOT / "build" / "harness-engineering.epub"
+EPUB = ROOT / "build" / "inference-engineering.epub"
 errors: list[str] = []
 
 if not EPUB.exists():
@@ -63,7 +63,7 @@ with ZipFile(EPUB) as book:
                         cover_spine_linear = element.attrib.get("linear", "yes")
                 elif local == "meta" and element.attrib.get("property") == "schema:accessibilitySummary":
                     accessibility_summary = bool((element.text or "").strip())
-            if title != "Harness Engineering":
+            if title != "Inference Engineering":
                 errors.append(f"wrong EPUB title: {title!r}")
             if creator != "Arbaz Khan":
                 errors.append(f"wrong EPUB author: {creator!r}")

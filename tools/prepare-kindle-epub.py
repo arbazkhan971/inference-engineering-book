@@ -42,9 +42,21 @@ def main() -> None:
             if SUMMARY_MARKER not in data:
                 marker = b'    <meta property="schema:accessibilityHazard">none</meta>'
                 if marker not in data:
-                    raise SystemExit("could not find the EPUB accessibility metadata block")
-                data = data.replace(marker, marker + b"\n    " + SUMMARY, 1)
-                adjusted = True
+                    # Older Pandoc (e.g. 3.1.3) emits no accessibility block
+                    # at all; inject one before </metadata> so the EPUB validates
+                    # regardless of the Pandoc version on the build machine.
+                    close = b'</metadata>'
+                    if close not in data:
+                        raise SystemExit("could not find OPF </metadata> to inject the accessibility block")
+                    block = (
+                        b'    <meta property="schema:accessibilityHazard">none</meta>\n    '
+                        + SUMMARY + b'\n  '
+                    )
+                    data = data.replace(close, block + close, 1)
+                    adjusted = True
+                else:
+                    data = data.replace(marker, marker + b"\n    " + SUMMARY, 1)
+                    adjusted = True
         rewritten.append((info, data))
 
     if not adjusted:
