@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Render every ```mermaid fence in manuscript/ to PNG via mermaid-cli.
 # Commits-ready outputs land in figures/png/mermaid/ and figures/svg-mermaid/.
-# Run on a machine with npx + rsvg-convert (rendered PNGs are committed, so
-# the EPUB build itself never needs a browser).
+# Run on a machine with npx (rendered PNGs are committed, so the EPUB build
+# itself never needs a browser). PNGs are rasterized by mermaid-cli's own
+# Chromium: mermaid v11 emits flowchart labels as <foreignObject> HTML that
+# librsvg (rsvg-convert) silently drops, so an SVG->rsvg pipeline produced
+# diagrams with empty boxes. Chromium renders the HTML labels natively.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p figures/svg-mermaid figures/png/mermaid build/mermaid-src
@@ -48,7 +51,9 @@ for mmd in build/mermaid-src/*.mmd; do
   if [ ! -f "figures/svg-mermaid/$name.svg" ] || [ "$mmd" -nt "figures/svg-mermaid/$name.svg" ]; then
     npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/svg-mermaid/$name.svg" \
       -b transparent --quiet "${PUPPETEER_ARGS[@]}" 2>/dev/null || npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/svg-mermaid/$name.svg" -b transparent "${PUPPETEER_ARGS[@]}"
-    rsvg-convert -w 2400 "figures/svg-mermaid/$name.svg" -o "figures/png/mermaid/$name.png"
+    # PNG direct from mermaid-cli (Chromium), scale 4 ≈ the old 2400px-wide rsvg raster.
+    npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/png/mermaid/$name.png" \
+      -b transparent -s 4 --quiet "${PUPPETEER_ARGS[@]}" 2>/dev/null || npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/png/mermaid/$name.png" -b transparent -s 4 "${PUPPETEER_ARGS[@]}"
     echo "rendered $name"
   fi
 done
