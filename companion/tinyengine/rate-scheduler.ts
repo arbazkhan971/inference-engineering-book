@@ -67,22 +67,22 @@ export class QuotaLedger {
   configure(m: QuotaMeters, now?: number): void {
     this.books.set(m.provider, { rpm: new TokenBucket(m.rpm ?? 60, (m.rpm ?? 60) / 60, now), tpm: new TokenBucket(m.tpm ?? m.itpm ?? 1e6, (m.tpm ?? m.itpm ?? 1e6) / 60, now) });
   }
-  reserve(provider: string, req: { maxTokens: number; estimatedPromptTokens: number; cacheReadTokens?: number }, now?: number): boolean {
+  reserve(provider: string, req: { maxTokens: number; estimatedPromptTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number }, now?: number): boolean {
     const b = this.books.get(provider); if (!b) return true;
     if (!b.rpm.tryAcquire(1, now)) return false;
     let charge = 0;
     if (provider === "openai") charge = Math.max(req.maxTokens, req.estimatedPromptTokens); // max(max_tokens, estimate)
     else if (provider === "anthropic") charge = req.estimatedPromptTokens - (req.cacheReadTokens ?? 0); // reads bypass ITPM
-    else if (provider === "bedrock") charge = req.estimatedPromptTokens + req.maxTokens;  // booked up front, reconciled later
+    else if (provider === "bedrock") charge = req.estimatedPromptTokens + (req.cacheWriteTokens ?? 0) + req.maxTokens; // input + cache-write + max_tokens, booked up front
     else charge = req.estimatedPromptTokens;                                               // gemini: input TPM only
     return b.tpm.tryAcquire(Math.max(0, charge), now);
   }
-  // Bedrock books input + max_tokens up front, then re-credits the unused reservation at completion
+  // Bedrock books input + cache-write + max_tokens up front, then re-credits the unused reservation at completion
   // (final charge = input + writes + output × burndown; cache reads never counted — ch. 15's worked example).
-  reconcile(provider: string, booked: { input: number; maxTokens: number }, actual: { input: number; output: number; burndown?: number }): void {
+  reconcile(provider: string, booked: { input: number; cacheWrite?: number; maxTokens: number }, actual: { input: number; cacheWrite?: number; output: number; burndown?: number }, now?: number): void {
     const b = this.books.get(provider); if (!b || provider !== "bedrock") return;
-    const finalCharge = actual.input + actual.output * (actual.burndown ?? 1);
-    b.tpm.credit(Math.max(0, booked.input + booked.maxTokens - finalCharge));
+    const finalCharge = actual.input + (actual.cacheWrite ?? 0) + actual.output * (actual.burndown ?? 1);
+    b.tpm.credit(Math.max(0, booked.input + (booked.cacheWrite ?? 0) + booked.maxTokens - finalCharge), now);
   }
 }
 

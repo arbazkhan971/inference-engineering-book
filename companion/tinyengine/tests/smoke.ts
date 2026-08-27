@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { traceCall } from "../tracer.js";
 import { StreamNormalizer, type Event } from "../stream-normalizer.js";
 import { CacheLedger } from "../cache-ledger.js";
-import { classify, backoffDelayMs, TokenBucket, RetryPolicy, kOfN } from "../rate-scheduler.js";
+import { classify, backoffDelayMs, TokenBucket, QuotaLedger, RetryPolicy, kOfN } from "../rate-scheduler.js";
 import { Router, type RouteRule } from "../router.js";
 import { SessionStore, classifyIdle, ttlRequestFor } from "../session-store.js";
 
@@ -158,6 +158,17 @@ const PRICES = {
   assert.equal(b.tryAcquire(59, 0), true);
   assert.equal(b.tryAcquire(2, 0), false);             // the burst trap: 60 in second one 429s
   assert.equal(b.tryAcquire(2, 1.1), true);            // refilled while waiting
+  // The per-provider quota ledger — chapter 15's Checkpoint 2, replayed:
+  // Bedrock books 2,000 input + 500 cache-write + 16,000 reservation = 18,500 at request start.
+  const ledger = new QuotaLedger();
+  ledger.configure({ provider: "bedrock", tpm: 20000 }, 0);
+  assert.equal(ledger.reserve("bedrock", { maxTokens: 16000, estimatedPromptTokens: 2000, cacheWriteTokens: 500 }, 0), true);
+  assert.equal(ledger.reserve("bedrock", { maxTokens: 500, estimatedPromptTokens: 2000 }, 0), false); // only 1,500 of quota left
+  assert.equal(ledger.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 1500 }, 0), true);
+  // Reconcile: final = 2,000 + 500 + 800×10 = 10,500; the unused 8,000 reservation is re-credited.
+  ledger.reconcile("bedrock", { input: 2000, cacheWrite: 500, maxTokens: 16000 }, { input: 2000, cacheWrite: 500, output: 800, burndown: 10 }, 0);
+  assert.equal(ledger.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 8000 }, 0), true);   // the re-credited 8,000
+  assert.equal(ledger.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 1 }, 0), false);    // ...and nothing more
 }
 {
   const p = new RetryPolicy(3, 0.1);

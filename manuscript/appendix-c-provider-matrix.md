@@ -69,7 +69,7 @@ The meters differ enough that one shared token counter mispredicts throttling on
 |---|---|---|---|---|
 | Metrics | RPM, TPM, RPD, IPM, audio-min | RPM, ITPM, OTPM | RPM, input TPM, RPD | Per-model token quota |
 | Scope | Org + project (not per key); some families share pools (3.5M TPM documented) | Per model class; families share pools | Per project; resets midnight Pacific | Per model |
-| Reservation | `max(max_tokens, char-estimate)`; unsuccessful requests count | ITPM = input + writes; **cache reads exempt** (Haiku 3.5 the exception); OTPM on actual output | Input only | `input + max_tokens` up front, re-credited; output × burndown (15× Claude 4.8; 10× Sonnet 5/Opus 5 and GPT-5.6 on Bedrock; 5× Claude ≤4.7; 1:1 most others); cache reads never counted |
+| Reservation | `max(max_tokens, char-estimate)`; unsuccessful requests count | ITPM = input + writes; **cache reads exempt** (Haiku 3.5 the exception); OTPM on actual output | Input only | `input + cache-write + max_tokens` up front, re-credited; output × burndown (15× Claude 4.8; 10× Sonnet 5/Opus 5 and GPT-5.6 on Bedrock; 5× Claude ≤4.7; 1:1 most others); cache reads never counted |
 | Enforcement | Tiered by lifetime spend | Token bucket, continuous refill ("60 RPM might be 1 rps") | Plus spend-based limits | Service Quotas |
 | Snapshot example | Tier 1: 500 RPM / 500K TPM (GPT-5.4/5.6 family) | Opus 5/Sonnet 5/Haiku 4.5: 1,000 RPM / 2M ITPM / 400K OTPM | Free 2.5 Pro ≈ 5 RPM / 100 RPD; paid ~150–300 RPM (third-party trackers — approximate) | Worked example in docs: 36,000 booked → 9,000 final |
 
