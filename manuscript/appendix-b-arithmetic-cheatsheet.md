@@ -144,7 +144,7 @@ Sizes your semaphore directly: 24 rps at 4 s average → hold ≈ 96 in flight; 
 
 > P(step exceeds L) = 1 − (1 − p)^N, p = per-child probability, N = fanout width
 
-At p = 1% and N = 100, ~63%; at N = 10,000, 99.99999% (derived). A wide fanout of perfectly median calls behaves, at the step level, like a 99th-percentile call. Budget the step, not the call: child deadlines, K-of-N reduction. *(Ch. 15, 16)*
+At p = 1% and N = 100, ~63%; at N = 10,000, ≥ 99.99999% (derived). A wide fanout of perfectly median calls behaves, at the step level, like a 99th-percentile call. Budget the step, not the call: child deadlines, K-of-N reduction. *(Ch. 15, 16)*
 
 **Full jitter.**
 
