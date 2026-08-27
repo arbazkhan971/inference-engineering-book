@@ -125,3 +125,19 @@ then re-closed after the remediation pass. The first-edition pass record is
 reopened whenever a reader identifies a
 visible comprehension or design failure. The current revision requires a new
 Feynman/ELI5 pass and a new visual proof before it may return to release status.
+
+## Volume II pass record (Inference Engineering)
+
+Manuscript complete 2026-08-27: 18/18 chapters + prologue + appendices A–F,
+111k+ words, all numbers traced to 71 dated digests. Status by pass:
+
+| Pass | Status | Evidence |
+|---|---|---|
+| Architecture | pass | CHAPTER_MAP locked at scaffold; books-positioning wedge verified against the 12-digest books corpus (no dedicated inference/serving title in the reviewed bestseller nodes) |
+| Developmental edit | pass (writer gate) | Gate-1 self-review logged per chapter in PROGRESS.md (structure, number tracing, fix lists); structural lint green manuscript-wide, 26 files |
+| Technical edit | partial | Gate-2 review complete for ch01 only (P0=0, P1=3, P2=2 — findings in review/ch01-gate2.md, fixes owed); ch02–18 owe the same sweep; recorded as a release blocker in Appendix F |
+| Code test | pass | companion/tinyengine: tsc 5.9.3 clean, zero npm deps; offline smoke suite green across repeated runs (chapters' Break-it/Prove-it cases) |
+| Build test | pass | tools/build.sh one command: EPUB OK 3.4M, 34/34 mermaid rendered, validate-epub.py passes, spine/nav carry all appendices |
+| Visual proof | partial | all figure renders verified in SVG/PNG; open item: reflow check finds 54 overlong lines in 10 files (freezes only at --budget 87) — fix-or-ratchet decision owed before upload |
+| Copyedit | owed | structural lint only so far; human-grade copyedit pass owed |
+| Final proof | not started | Kindle Previewer pass on the retail file owed; gated on technical-edit sweep, copyedit, and the reflow decision (runbook in Appendix F) |
