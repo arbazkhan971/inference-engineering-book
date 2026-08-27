@@ -41,9 +41,13 @@ done
 for mmd in build/mermaid-src/*.mmd; do
   name="$(basename "$mmd" .mmd)"
   [ -s "$mmd" ] || continue
+  # Optional puppeteer config (e.g. --no-sandbox for hosts where Chromium's
+  # sandbox cannot launch); drop build/puppeteer-config.json to opt in.
+  PUPPETEER_ARGS=()
+  [ -f build/puppeteer-config.json ] && PUPPETEER_ARGS=(-p build/puppeteer-config.json)
   if [ ! -f "figures/svg-mermaid/$name.svg" ] || [ "$mmd" -nt "figures/svg-mermaid/$name.svg" ]; then
     npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/svg-mermaid/$name.svg" \
-      -b transparent --quiet 2>/dev/null || npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/svg-mermaid/$name.svg" -b transparent
+      -b transparent --quiet "${PUPPETEER_ARGS[@]}" 2>/dev/null || npx -y @mermaid-js/mermaid-cli -i "$mmd" -o "figures/svg-mermaid/$name.svg" -b transparent "${PUPPETEER_ARGS[@]}"
     rsvg-convert -w 2400 "figures/svg-mermaid/$name.svg" -o "figures/png/mermaid/$name.png"
     echo "rendered $name"
   fi

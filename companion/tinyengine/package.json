@@ -1,0 +1,11 @@
+{
+  "name": "tinyengine",
+  "version": "0.1.0",
+  "description": "The Inference Engineering companion: ~700 lines between your agent loop and every model endpoint it calls.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node dist/tests/smoke.js"
+  }
+}
