@@ -1,0 +1,36 @@
+# Streaming Transports and How Harnesses Normalize Them
+researched: 2026-08-27 · researcher: glm-5.3-flash
+
+## Key facts
+- OpenAI's HTTP streaming (`stream: true`) is carried over Server-Sent Events (SSE): a `text/event-stream` response where each event is a `data:` line containing one JSON object, and Chat Completions streams terminate with the literal sentinel line `data: [DONE]` (OpenAI Streaming guide, retrieved 2026-08-27; codex issue #8708 confirming the `[DONE]` sentinel, retrieved 2026-08-27).
+- The WHATWG SSE spec allows events that carry only meta-fields (`id`, `event`, `retry`) with no `data:` line; naive parsers crash on these — the OpenAI Python SDK's `__stream__` threw `JSONDecodeError` on empty data payloads before it was hardened (openai-python issue #2722, retrieved 2026-08-27). Vercel's AI SDK data stream protocol explicitly uses SSE "for improved standardization, keep-alive through ping, and automatic reconnection" (ai-sdk.dev stream-protocol docs, retrieved 2026-08-27).
+- Chat Completions chunks (`chat.completion.chunk`) put text in `choices[].delta.content`, tool calls in `choices[].delta.tool_calls[]` (each with an `index` and fragmentary `function.arguments` strings), and signal termination in `choices[].finish_reason` (values such as `stop`, `tool_calls`, `length`); `delta.role` appears only on the first chunk and is otherwise omitted or null (OpenAI API reference and openai/openapi issue #504, retrieved 2026-08-27).
+- The Responses API uses a different stream grammar: typed events (`response.output_text.delta`, `response.output_item.added`, `response.completed`, etc.) rather than delta-shaped chunks (OpenAI "Chat Completions streaming events" / streaming-responses guide, retrieved 2026-08-27).
+- Anthropic's Messages streaming is a strictly ordered SSE event sequence: `message_start` (contains the initial `Message` object with empty content), then per content block `content_block_start` → one or more `content_block_delta` → `content_block_stop`, and finally `message_delta` (carrying `stop_reason` and final usage) and `message_stop`. Delta subtypes include `text_delta`, `input_json_delta` (fragmentary JSON string for tool arguments), and thinking/signature deltas (Anthropic "Streaming Messages" docs, platform.claude.com, retrieved 2026-08-27).
+- Gemini's `streamGenerateContent` REST method returns SSE chunks of `GenerateContentResponse` when called with `?alt=sse`; without it the default REST return is a JSON array, so the query parameter is what makes the stream SSE-framed (Google AI `generate-content` API reference and Gemini cookbook Streaming_REST.ipynb, retrieved 2026-08-27). Gemini reports termination via `finishReason` on the last chunk (e.g. `STOP`, `MAX_TOKENS`) rather than a sentinel.
+- Realtime/speech APIs move off SSE entirely. OpenAI's Realtime API is a stateful WebSocket (or WebRTC) connection for server-to-server, with event-driven bidirectional JSON messages (OpenAI Realtime WebSocket guide, retrieved 2026-08-27). Gemini's Live API is WebSocket-only: input raw 16-bit PCM at 16 kHz little-endian, output raw PCM at 24 kHz, and the socket resets roughly every 10 minutes, forcing harnesses to implement session resumption (Google Live API overview + WebSocket guide, retrieved 2026-08-27).
+- Finish reasons diverge enough to break schemas: LiteLLM maintains a `map_finish_reason()` mapping layer because providers emit non-OpenAI values — e.g. ZhipuAI/GLM can emit `finish_reason: "network_error"` mid-stream, which previously caused a Pydantic `ValidationError` in LiteLLM's `stream_chunk_builder` before unknown values were mapped to `finish_reason_unspecified` (LiteLLM PR #22673 and issue #22671, retrieved 2026-08-27).
+
+## How it works
+SSE (WHATWG) is a long-lived HTTP response with `Content-Type: text/event-stream`. The server writes blocks of field lines — `data:`, `event:`, `id:`, `retry:` — each block ended by a blank line. A provider stream is therefore just a sequence of `data: {json}\n\n` events, optionally terminated by a sentinel (`data: [DONE]` for OpenAI Chat Completions) or by a final chunk carrying a finish reason (Anthropic `message_delta.stop_reason`, Gemini `finishReason`, OpenAI `finish_reason`).
+
+Partial tool-call assembly works by index. In Chat Completions, each `delta.tool_calls[i]` entry carries `index: i`, an optional one-time `id`/`function.name`, and a fragment `function.arguments` string. The harness keeps an array of buffers, appends each fragment to buffer `i`, and only when a finish reason arrives does it `json.loads` the concatenated string. Worked example: three chunks deliver `delta.tool_calls[0].function.arguments` = `{"ci` then `ty": "Por` then `tland"}`; concatenation yields `{"city": "Portland"}`, which parses as one complete tool call at stream end. Anthropic does the same thing structurally, but via `content_block_start` (which announces `type: "tool_use` with `id` and `name`) followed by `input_json_delta.partial_json` fragments the harness concatenates per block index.
+
+Normalization middleware sits between provider streams and application code. LiteLLM converts every provider stream into OpenAI-shaped chunks (mapping finish reasons and reasoning content into `reasoning_content` or thinking blocks); the Vercel AI SDK defines its own SSE-based data-stream / UI-message-stream protocol with typed parts (`text-start`, `text-delta`, `tool-input-available`, pings) that provider adapters target, so the frontend sees one shape regardless of model.
+
+HTTP/2 matters because SSE over HTTP/1.1 holds one connection per stream per browser-origin limit; HTTP/2 multiplexes many SSE streams over one TCP connection (protocol-level fact, WHATWG/MDN SSE documentation; no provider-specific figure retrieved — hedged).
+
+## Harness angle
+A harness should never parse provider streams directly: it should ingest everything through one normalization layer that (a) buffers tool-call argument fragments by index and parses JSON only at finish, and (b) maps finish/stop reasons through an explicit table with an unknown-value fallback — otherwise a single provider quirk like GLM's `"network_error"` finish reason crashes the whole agent loop mid-turn.
+
+## Sources
+- OpenAI — Streaming API responses: https://developers.openai.com/api/docs/guides/streaming-responses
+- OpenAI — Chat Completions streaming events / chunk schema: https://developers.openai.com/api/reference/resources/chat/subresources/completions/streaming-events/
+- Anthropic — Streaming Messages (event sequence): https://platform.claude.com/docs/en/build-with-claude/streaming
+- Google — Gemini generate-content / streamGenerateContent reference: https://ai.google.dev/api/generate-content
+- Google — Gemini Live API WebSocket guide: https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
+- Google — Gemini Live API overview: https://ai.google.dev/gemini-api/docs/live-api
+- OpenAI — Realtime API with WebSocket: https://developers.openai.com/api/docs/guides/realtime-websocket
+- Vercel AI SDK — Stream Protocols: https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol
+- LiteLLM — finish_reason mapping fix PR #22673: https://github.com/BerriAI/litellm/pull/22673
+- openai-python issue #2722 — SSE meta-field events without data: https://github.com/openai/openai-python/issues/2722
