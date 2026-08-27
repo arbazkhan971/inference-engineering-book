@@ -71,8 +71,8 @@ Static batch, 4 slots (t = engine iterations):
 
   slot A |████░░░░░░░░░░░░░░░|  A finishes at t=4... but the batch
   slot B |████████████████████████████████|  runs until t=32: A's answer
-  slot C |██████░░░░░░░░░░░░░░░░░░░░░░░░░░|  is held ~28 idle steps,
-  slot D |██████████████████░░░░░░░░░░░░░░|  B pads ~24 wasted steps.
+  slot C |██████░░░░░░░░░░░░░░░░░░░░░░░░░░|  is held ~28 idle steps;
+  slot D |██████████████████░░░░░░░░░░░░░░|  C and D pad ~26 and ~14 wasted steps.
 
 Continuous batching, same arrivals:
 
@@ -88,7 +88,7 @@ One mechanical wrinkle had to be solved to make this work, and it is why Orca's 
 
 The scheduler's greed is bounded by two numbers, and if you ever operate an engine they are the two you will tune first. In vLLM's vocabulary: `max_num_seqs` caps how many sequences may run concurrently (V1 default: 128), and `max_num_batched_tokens` caps total tokens processed per iteration — decode steps plus any prompt chunks — so one iteration cannot grow without bound (vLLM docs, retrieved 2026-08-27; the V1 default is from the scheduler configuration source). They interact through a token *budget*, and the budget arithmetic is worth doing once:
 
-Say the budget is 8,192 tokens per iteration and 64 sequences are running. Decode consumes 64 tokens — one per rider — leaving 8,128 tokens of budget, which the scheduler spends on *prefill chunks* for waiting requests: a 4,000-token prompt can be admitted across two iterations without stalling a single decode step (constants illustrative; the budget mechanism is per vLLM docs). That is **chunked prefill**, on by default in vLLM V1, which prioritizes all pending decodes first and gives prefill the leftovers (vLLM docs, retrieved 2026-08-27). Notice what this buys: prefill — compute-heavy, the phase that inflates iterations — is *rationed* so that riders already aboard keep their pace. Chapter 7 takes this rationing to its architectural conclusion (separating the phases onto different hardware entirely); here you only need the admission-level view.
+Say the budget is 8,192 tokens per iteration and 64 sequences are running. Decode consumes 64 tokens — one per rider — leaving 8,128 tokens of budget, which the scheduler spends on *prefill chunks* for waiting requests: a 12,000-token prompt can be admitted across two iterations without stalling a single decode step (constants illustrative; the budget mechanism is per vLLM docs). That is **chunked prefill**, on by default in vLLM V1, which prioritizes all pending decodes first and gives prefill the leftovers (vLLM docs, retrieved 2026-08-27). Notice what this buys: prefill — compute-heavy, the phase that inflates iterations — is *rationed* so that riders already aboard keep their pace. Chapter 7 takes this rationing to its architectural conclusion (separating the phases onto different hardware entirely); here you only need the admission-level view.
 
 The knobs also close the loop with chapter 4: when the KV cache runs out of room — too many riders, each with growing luggage — vLLM's documented advice is to *decrease* one of these two knobs, shrinking the running batch. Push the batch past memory and the scheduler starts preempting riders mid-trip, at which point chapter 4's overflow behavior (RECOMPUTE, the preemption counter, the multi-second stall your user sees) is what your harness experiences. The batch dial and the memory desk are the same machine seen from two sides.
 
@@ -104,7 +104,7 @@ Now the bill for all that throughput, stated mechanically. Decode emits exactly 
 
 Your pace is not set by your prompt, your model, or your provider's marketing page. It is set by how long the *shared* iteration takes — and every rider added to the batch makes the iteration longer (more arithmetic, more KV cache reads per step). More riders also make it *cheaper* per token (each weight byte amortized over more seats — chapter 3's roofline), and that is precisely the trade: aggregate tokens per second up, per-request tokens per second gently down, until the engine saturates and both get ugly. The curve was measured on a real deployment:
 
-> **Dated snapshot (NVIDIA TensorRT-LLM tuning case study, Llama-3.3-70B on 4× H100 — the flagship GPU of chapter 3; docs fetched 2026-08-27).** Sweeping `max_batch_size` 64 → 512 → 2048: throughput 1,944 → 2,467 → 2,044 tokens/s, with average inter-token latency essentially flat (14.65 / 14.66 / 14.45 ms). Batch 512 was the sweet spot — ~20% more throughput than either extreme (derived: 2,466.79 ÷ 2,044.26 ≈ 1.21) at no latency cost. The untuned default config measured 1,564 tokens/s at 31.3 ms average inter-token latency; after tuning batch size and token budget, 2,474 tokens/s at 14.7 ms — a 58.2% throughput gain and a 53.1% latency reduction. Defaults are a starting point, not a verdict.
+> **Dated snapshot (NVIDIA TensorRT-LLM tuning case study, Llama-3.3-70B on 4× H100 — the flagship GPU of chapter 3; docs fetched 2026-08-27).** Sweeping `max_batch_size` 64 → 512 → 2048: throughput 1,944 → 2,467 → 2,044 tokens/s, with average inter-token latency essentially flat (14.65 / 14.66 / 14.45 ms). Batch 512 was the sweet spot — ~20% more throughput than 2048 and ~27% more than 64 (derived: 2,466.79 ÷ 2,044.26 ≈ 1.21; 2,466.79 ÷ 1,944.26 ≈ 1.27) at no latency cost. The untuned default config measured 1,564 tokens/s at 31.3 ms average inter-token latency; after tuning batch size and token budget, 2,474 tokens/s at 14.7 ms — a 58.2% throughput gain and a 53.1% latency reduction. Defaults are a starting point, not a verdict.
 
 Three things live inside that box. First, the sweet spot is *interior* — batch 2048 underperformed batch 512 on throughput outright, because past saturation the extra riders cost more (scheduling, cache pressure) than they contribute. Second, "ITL" — inter-token latency, the clock chapter 2 defined as TPOT's twin, measured between streamed chunks — is what your client watches while all this happens: in this book's vocabulary the dashboard's ITL is your TPOT. Third: the untuned default had *twice* the per-token latency at *lower* throughput. The curve is real, it has a knee, and you find it by measurement, not by maxing knobs.
 
@@ -124,7 +124,7 @@ Classical queueing theory (the M/G/1 model — "random arrivals, general service
 
 **First, the 1/(1−ρ) cliff.** Latency is nearly flat at 50–70% utilization, then hits a wall: 0.8 → 0.95 utilization multiplies mean queue delay about 4× (derived: 0.2 ÷ 0.05), and the p99 tail diverges faster than the mean. The same arithmetic, tabulated (classical queueing math, not a measurement — but it is why the wall feels sudden):
 
-| Utilization ρ | Mean system time multiplier 1/(1−ρ) |
+| Utilization ρ | Mean system time multiplier 1/(1−ρ), M/M/1 form |
 |---|---|
 | 50% | 2× service time |
 | 80% | 5× |
