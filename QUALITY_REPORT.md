@@ -3,20 +3,19 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-27, after the tester-cadence
-and verify-harness pass (iteration 47 of the writing driver; copyedit was
-iteration 46).
+command where one exists. Last updated: 2026-08-27, after the back-matter
+pass (iteration 48 of the writing driver; copyedit was iteration 46).
 
 ## 1. Gate ledger
 
 | Gate | Status | Evidence |
 |---|---|---|
-| Gate 1 — Writer (self-review) | **PASS, all 18 chapters + prologue + appendices A–F** | Per-chapter Gate-1 logs in PROGRESS.md (structure checklist, numbers audit, fix lists). Structural lint green manuscript-wide: `python3 tools/lint-manuscript.py` → MANUSCRIPT OK, 18/18 chapters, 26 files |
+| Gate 1 — Writer (self-review) | **PASS, all 18 chapters + prologue + appendices A–F + back matter** | Per-chapter Gate-1 logs in PROGRESS.md (structure checklist, numbers audit, fix lists). Structural lint green manuscript-wide: `python3 tools/lint-manuscript.py` → MANUSCRIPT OK, 18/18 chapters, 27 files |
 | Gate 2 — Technical editor | **PASS, all 18 chapters** | Full review set in `review/` (verdicts: 17 MINOR, 1 MAJOR); every P0/P1/P2 finding applied via driver fix-passes, iterations 28–44 + ch01 post-review polish; citations re-verified against `research/` before each application |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
 | Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases, and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence` |
-| Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 26 files. Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
+| Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 27 files (prologue through back matter). Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
 
 ## 2. Numbers discipline
 

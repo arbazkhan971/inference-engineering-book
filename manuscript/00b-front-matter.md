@@ -51,35 +51,6 @@ Prices, rate limits, and benchmark results are **dated snapshots** —
 clearly marked, honest about their shelf life. Formulas are forever. When
 a number and a formula disagree in the future, trust the formula.
 
-## How this book was written
-
-This book was written the way it teaches engineers to work. The author
-defined the architecture — reader promise, chapter map, style contract,
-editorial gates, inherited from *Harness Engineering* — and an autonomous
-fleet of well over one hundred GLM-5.3 model instances ran the research
-(seventy-plus dated, sourced evidence digests, all committed to the public
-repository) and drafted chapter by chapter on a headless writing driver,
-against a six-gate editorial system. Every claim traces to a digest or
-carries a visible hedge. The repo — manuscript, research corpus, and build
-pipeline — is public: github.com/arbazkhan971/inference-engineering-book.
-Check our work; that's the point.
-
-## About the author
-
-**Arbaz Khan** is a backend engineer and harness engineer who has spent his
-career at the intersection of high-volume messaging systems and, lately,
-industrial-scale AI agent operations — on the order of 200 billion tokens
-driven through coding agents in four months, metered publicly because a
-claim you can't check is just a boast. He is the author of *Harness
-Engineering: How to Build AI Agents That Actually Work* and *System Design
-Mastery*, and writes from the operator's chair, not the vendor's podium.
-
-*Agent spawner by day, loop optimizer by night.*
-
-- github.com/arbazkhan971 · github.com/arbazkhan971/harness-engineering
-- ccrank.dev/user/arbaz-khan
-- linkedin.com/in/arb5z · X: @arb5z
-
 ## Series note
 
 This is **Volume II of the Harness Engineering series**. Volume I built the
