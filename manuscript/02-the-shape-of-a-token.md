@@ -43,7 +43,9 @@ There is no universal converter. The same paragraph is a different token count o
 
 For rough English intuition, one rule of thumb is official: 1 token ≈ 4 characters, and 100 tokens ≈ 75 words (OpenAI Help Center, fetched 2026-08-27). Treat it the way you treat "a mile is about a 20-minute walk" — fine for picnic planning, useless for billing. The next section is about why.
 
-Everything downstream of the tokenizer is counted in the provider's tokens, not yours. Per-million pricing is per-million *provider tokens*. Anthropic's rate limits are denominated in requests, input tokens, and output tokens per minute (RPM, ITPM, OTPM), enforced by a token bucket that lets short bursts exceed the average rate — and, for most Claude models, only *uncached* input tokens count against your ITPM (Anthropic rate-limits doc, fetched 2026-08-27; the quota machinery gets its own chapter, 15). Even cache discounts are token arithmetic: DeepSeek bills cache-hit input at $0.007 per 1M tokens off-peak against $0.22 cache-miss — a ~31× gap derived from the published prices (DeepSeek pricing page, fetched 2026-08-27). When your prompt cache hits or misses, it hits or misses in tokens.
+Everything downstream of the tokenizer is counted in the provider's tokens, not yours. Per-million pricing is per-million *provider tokens*. Anthropic's rate limits are denominated in requests, input tokens, and output tokens per minute (RPM, ITPM, OTPM), enforced by a token bucket that lets short bursts exceed the average rate — and, for most Claude models, only *uncached* input tokens count against your ITPM (Anthropic rate-limits doc, fetched 2026-08-27; the quota machinery gets its own chapter, 15). Even cache discounts are token arithmetic — DeepSeek's spread is boxed below. When your prompt cache hits or misses, it hits or misses in tokens.
+
+> **Dated snapshot — DeepSeek cache pricing (fetched 2026-08-27).** DeepSeek bills cache-hit input at $0.007 per 1M tokens off-peak against $0.22 off-peak cache-miss — a ~31× gap derived from the published prices (peak windows double both rates).
 
 So the harness rule is already fixed: **budget with the target model's tokenizer, never a character heuristic.** Count representative prompts with the provider's tokenizer or count-tokens endpoint at design time; trust the `usage` counts the API returns at runtime (server-side counts are the billing truth); reconcile the two; and recount whenever the model version changes.
 
@@ -112,7 +114,7 @@ The four clocks are not independent — they are tied by arithmetic. For an N-to
 
 Where do real numbers land? As a mid-2026 snapshot, with all the drift caveats a leaderboard deserves:
 
-> **Dated snapshot — median output speed, first-party APIs (Artificial Analysis models page, fetched 2026-08-27; derived mean-ITL equivalents in parentheses).** Gemini 3.5 Flash-Lite ≈ 365 tokens/s (≈2.7 ms) · Gemini 3.7 Flash (high) ≈ 330 (≈3.0 ms) · GPT-5.6 Luna ≈ 131 (≈7.6 ms) · Claude 4.5 Haiku ≈ 119 (≈8.4 ms) · GLM-5.3 ≈ 67 (≈14.9 ms) · Claude Opus 5 ≈ 55 (≈18.2 ms) · Kimi K3 ≈ 39 (≈25.6 ms). A ~9× spread across the market, from "faster than any human can read" to "read-along pace."
+> **Dated snapshot — median output speed, first-party APIs (Artificial Analysis models page, fetched 2026-08-27; derived mean-ITL equivalents in parentheses; the AA site is JS-rendered — re-verify this table against the live page before each print run).** Gemini 3.5 Flash-Lite ≈ 365 tokens/s (≈2.7 ms) · Gemini 3.7 Flash (high) ≈ 330 (≈3.0 ms) · GPT-5.6 Luna ≈ 131 (≈7.6 ms) · Claude 4.5 Haiku ≈ 119 (≈8.4 ms) · GLM-5.3 ≈ 67 (≈14.9 ms) · Claude Opus 5 ≈ 55 (≈18.2 ms) · Kimi K3 ≈ 39 (≈25.6 ms). A ~9× spread across the market, from "faster than any human can read" to "read-along pace."
 
 Two product regimes fall out of the identity. **Short replies are TTFT-dominated:** an agentic tool-call turn that emits 20 tokens spends almost all its wall clock waiting for the first one — e2e ≈ TTFT plus a handful of gaps. The DistServe paper's chatbot example wants the initial response under 0.2 s but only asks that decoding "match human reading speed" — roughly 250 words per minute for silent reading (arXiv:2401.09670, 2024). **Long replies are TPOT-dominated:** at 200+ tokens the (N − 1) × TPOT term swamps TTFT, and first-token tricks amortize to nothing. Community user-experience (UX) thresholds (approximate, not primary-measured): below ~5–8 tokens/s streaming feels like crawling; 20–30 tokens/s feels fluid; above ~50 tokens/s extra speed is imperceptible for reading and only matters for agent chains and bulk consumption (LLM speed guides, fetched 2026-08-27; GMI Cloud pegs the practical threshold near 10 tokens/s, above which perceived lag shifts to TTFT).
 
@@ -126,7 +128,7 @@ Here is the durable form, the one to write on the whiteboard:
 
 > **The decode-time inequality:** e2e ≈ TTFT + N × TPOT
 >
-> where N is the number of output tokens. TTFT absorbs queueing, prefill, and network; TPOT is the steady-state inter-token gap (NVIDIA NIM benchmarking docs, fetched 2026-08-27). The exact identity from 2.5 uses (N − 1) gaps — the inequality's N absorbs that minus-one as approximation noise; use the identity when computing, the inequality when thinking.
+> where N is the number of output tokens. TTFT absorbs queueing, prefill, and network; TPOT is the steady-state inter-token gap (NVIDIA benchmarking docs, fetched 2026-08-27). The exact identity from 2.5 uses (N − 1) gaps — the inequality's N absorbs that minus-one as approximation noise; use the identity when computing, the inequality when thinking.
 
 Three consequences, in increasing order of practical value.
 
@@ -142,7 +144,11 @@ xychart-beta
     line "TPOT 10 ms" [0.4, 1.4, 2.4, 3.4, 4.4, 5.4]
 ```
 
-Even the benchmarking world concedes how steep this is. MLPerf Inference v5.0 (April 2025) tightened its interactive Llama-2-70B constraints to p99 TTFT ≤ 450 ms and p99 TPOT ≤ 40 ms (25 tokens/s) — from 2 s / 200 ms in v4.0 — based on a late-2024 analysis of ChatGPT and Perplexity targeting 20–50 tokens/s at the 50th percentile (MLCommons blog, 2025-04). But the same release added Llama-3.1-405B with p99 TTFT ≤ 6 s and p99 TPOT ≤ 175 ms — about 5.7 tokens/s. That is the standards body admitting frontier-scale models can miss comfortable read-along speed: streaming hundreds of gigabytes of weights per token takes the time it takes.
+Even the benchmarking world concedes how steep this is.
+
+> **Dated snapshot — MLPerf Inference v5.0 interactive-latency targets (MLCommons blog, 2025-04).** The release tightened its interactive Llama-2-70B constraints to p99 (99th-percentile) TTFT ≤ 450 ms and p99 TPOT ≤ 40 ms (25 tokens/s) — from 2 s / 200 ms in v4.0 — based on a late-2024 analysis of ChatGPT and Perplexity targeting 20–50 tokens/s at the 50th percentile. The same release added Llama-3.1-405B with p99 TTFT ≤ 6 s and p99 TPOT ≤ 175 ms — about 5.7 tokens/s.
+
+That is the standards body admitting frontier-scale models can miss comfortable read-along speed: streaming hundreds of gigabytes of weights per token takes the time it takes.
 
 **Second: budgets invert the inequality.** Don't ask "how long will N tokens take?" — ask "given my deadline and my required pace, how many tokens may I spend?" Fix a UX deadline D (how long until the user has the useful answer) and a required perceived pace P (tokens/s at or above reading speed). Then:
 
@@ -154,7 +160,7 @@ Worked (derived, using the approximate 8 tokens/s reading-along pace and TTFT 0.
 max_tokens = floor((deadline_ms − p95_TTFT_ms) / p95_TPOT_ms)
 ```
 
-Measure p95 TTFT and p95 TPOT for the deployed model (your ch12 tracer does this), derive the cap, and let the arithmetic own the truncation decision — instead of discovering it as mid-answer cutoffs in production.
+Measure p95 (95th-percentile) TTFT and p95 TPOT for the deployed model (your ch12 tracer does this), derive the cap, and let the arithmetic own the truncation decision — instead of discovering it as mid-answer cutoffs in production.
 
 **Third: serial hops multiply.** The inequality is per call, but agent chains are calls in series. A five-step chain emitting 500 tokens per step at 40 ms TPOT burns 5 × 500 × 0.04 = 100 s in decode alone, before any tool latency (derived). When the consumer of each step is another model — not a human — you can relax the pace requirement but never the length requirement, because N multiplies across every hop.
 
@@ -180,7 +186,7 @@ The currency-and-taxi pictures earned their keep; now dismantle them before they
 
 **The one-runner relay can be beaten — two ways.** Speculative decoding runs a cheap draft model ahead and verifies batches of guesses (chapter 8), so "each token strictly waits for the last" is true of *accepted* tokens, not of wall-clock work. And batching interleaves strangers into each decode step (chapter 5): your runner shares the track, which is why your measured TPOT breathes with the provider's load even when nothing you sent changed.
 
-**TTFT is one number hiding four hops.** Network, admission, queue, prefill — the stopwatch flattens them. Two identical TTFTs can have entirely different owners and entirely different fixes: a 2 s TTFT from a bloated prompt shrinks with prefix caching; a 2 s TTFT from queueing at 6 pm does not. Chapter 1's ownership test still applies inside the clock.
+**TTFT is one number hiding five hops.** Network, admission, routing, queue, prefill — the stopwatch flattens them. Two identical TTFTs can have entirely different owners and entirely different fixes: a 2 s TTFT from a bloated prompt shrinks with prefix caching; a 2 s TTFT from queueing at 6 pm does not. Chapter 1's ownership test still applies inside the clock.
 
 **TPOT is a mean, and users feel the tail.** The taxi's per-mile rate implies a smooth meter. Real streams stutter — ITL p99 is what a reader experiences as hesitation, and vLLM's 25/50 ms bands exist precisely because means hide this. Budget on percentiles, not averages.
 
@@ -215,4 +221,4 @@ Verify the identity on real traffic: for ten streamed requests, check e2e ≈ TT
 
 ### See it in the wild
 
-Play with a live tokenizer: OpenAI's tokenizer page (or tiktoken in a notebook) and watch digits, CJK, and whitespace split in real time; use Anthropic's count-tokens endpoint on a prompt with tools attached and see how much the tool schemas themselves cost. Read vLLM's benchmark documentation and note that exactly four latency metrics survive to reporting — `ttft`, `tpot`, `itl`, `e2el`, at p99 by default: the industry has already voted on the vocabulary. Skim the MLPerf Inference v5.0 results announcement (April 2025) and find the 70B and 405B SLO rows — a standards body's own numbers on how steep the decode slope is at frontier scale. And browse Artificial Analysis' methodology page to see how a benchmark defines "first token" for reasoning models — the definitional choice your TTFT timeout inherits.
+Play with a live tokenizer: OpenAI's tokenizer page (or tiktoken in a notebook) and watch digits, CJK, and whitespace split in real time; use Anthropic's count-tokens endpoint on a prompt with tools attached and see how much the tool schemas themselves cost. Read vLLM's benchmark documentation and note that exactly four latency metrics survive to reporting — `ttft`, `tpot`, `itl`, `e2el`, at p99 by default: the industry has already voted on the vocabulary. Skim the MLPerf Inference v5.0 results announcement (April 2025) and find the 70B and 405B SLO (service-level objective) rows — a standards body's own numbers on how steep the decode slope is at frontier scale. And browse Artificial Analysis' methodology page to see how a benchmark defines "first token" for reasoning models — the definitional choice your TTFT timeout inherits.
