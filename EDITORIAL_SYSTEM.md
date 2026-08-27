@@ -135,9 +135,9 @@ Manuscript complete 2026-08-27: 18/18 chapters + prologue + appendices A–F,
 |---|---|---|
 | Architecture | pass | CHAPTER_MAP locked at scaffold; books-positioning wedge verified against the 12-digest books corpus (no dedicated inference/serving title in the reviewed bestseller nodes) |
 | Developmental edit | pass (writer gate) | Gate-1 self-review logged per chapter in PROGRESS.md (structure, number tracing, fix lists); structural lint green manuscript-wide, 26 files |
-| Technical edit | partial | Gate-2 review complete for ch01 only (P0=0, P1=3, P2=2 — findings in review/ch01-gate2.md, fixes owed); ch02–18 owe the same sweep; recorded as a release blocker in Appendix F |
+| Technical edit | pass | Gate-2 reviews complete for all 18 chapters (review/); every P0/P1/P2 finding applied via driver fix-passes (ch01–ch04 iterations 28–29 + post-review polish; ch02–ch18 iterations 29–44, one chapter per iteration, citations re-verified against research/ before applying). Verdicts: 17 MINOR, 1 MAJOR (ch04, resolved iteration 28) |
 | Code test | pass | companion/tinyengine: tsc 5.9.3 clean, zero npm deps; offline smoke suite green across repeated runs (chapters' Break-it/Prove-it cases) |
-| Build test | pass | tools/build.sh one command: EPUB OK 3.4M, 34/34 mermaid rendered, validate-epub.py passes, spine/nav carry all appendices |
+| Build test | pass | tools/build.sh one command: EPUB OK 6.2M, 34/34 mermaid rendered (flowchart labels re-rasterized via mermaid-cli after the iteration-34 foreignObject fix), validate-epub.py passes, spine/nav carry all appendices |
 | Visual proof | partial | all figure renders verified in SVG/PNG; open item: reflow check finds 54 overlong lines in 10 files (freezes only at --budget 87) — fix-or-ratchet decision owed before upload |
-| Copyedit | owed | structural lint only so far; human-grade copyedit pass owed |
+| Copyedit | owed | structural lint only so far; human-grade copyedit pass owed. Known items for that pass: book-wide closer-format normalization (ch01–14 use `### Build it` H3 subsections; ch15–18 use bolded paragraphs — flag from ch18 Gate-2; H3 matches the 14-chapter majority); reflow decision (54 wide lines, fix or ratchet --budget) |
 | Final proof | not started | Kindle Previewer pass on the retail file owed; gated on technical-edit sweep, copyedit, and the reflow decision (runbook in Appendix F) |

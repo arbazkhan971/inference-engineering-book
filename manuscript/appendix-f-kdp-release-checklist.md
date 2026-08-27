@@ -10,13 +10,13 @@ The editorial system behind this book defines gates, not vibes. Here is the hone
 |---|---|---|
 | Architecture | Pass | Chapter map, four parts, capability ladder locked at scaffold; positioning verified against the books corpus — no dedicated inference/serving title appeared in the AI or NLP bestseller nodes reviewed 2026-08-27 |
 | Writer (Gate 1) | Pass, per chapter | 18/18 chapters + prologue carry logged self-reviews (structure, numbers traceability, fixes) in the project progress ledger |
-| Technical edit (Gate 2) | Partial | Chapter 1 reviewed: no blockers, three P1 and two P2 findings recorded and owed fixes; chapters 2–18 owe the same sweep before release |
+| Technical edit (Gate 2) | Pass | All 18 chapters reviewed (findings in review/); every P0/P1/P2 finding applied through the driver fix-passes (final chapter, ch18, closed 2026-08-27); verdicts were 17 MINOR and 1 MAJOR (ch04, resolved) |
 | Code test | Pass | Companion tinyengine type-checks clean under TypeScript 5.9.3; offline smoke suite green across repeated runs (chapter Break-it/Prove-it cases replayed as code) |
-| Build test | Pass | One command produces a validated EPUB (3.4 MB at last build); 34/34 mermaid diagrams render; structural validator passes |
-| Copyedit | Owed | Structural lint passes manuscript-wide; a human-grade copyedit pass is still owed |
+| Build test | Pass | One command produces a validated EPUB (6.2 MB at last build); 34/34 mermaid diagrams render with labels; structural validator passes |
+| Copyedit | Owed | Structural lint passes manuscript-wide; a human-grade copyedit pass is still owed — including the book-wide closer-format normalization (H3 subsections in ch01–14 vs bolded paragraphs in ch15–18) and the reflow decision (54 wide lines) |
 | Final proof | Owed | Conditional by design: commercial upload requires a Kindle Previewer pass on the retail file, which no build script can perform |
 
-Two release blockers therefore predate this checklist: the Gate-2 sweep for chapters 2–18, and the copyedit/proof passes. The checklist below assumes they close. A book that ships with an open P1 finding is a book that ships a correction nobody has written yet.
+One release blocker therefore predates this checklist: the copyedit/proof passes (the Gate-2 sweep closed 2026-08-27). The checklist below assumes it closes. A book that ships with an open P1 finding is a book that ships a correction nobody has written yet.
 
 ## F.2 The book as a product — categories, price, position
 
