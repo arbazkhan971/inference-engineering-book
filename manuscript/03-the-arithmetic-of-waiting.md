@@ -129,7 +129,7 @@ This is the structural rule of the batch dial, worth saying as an operating deci
 
 Prefill has a linear part and a quadratic part, and they grow apart. The linear part is dense computation: every prompt token flows through the model's weights, roughly 2·P·N FLOPs for P parameters and N input tokens — twice as many tokens, twice the matrix work (Dive into Deep Learning, ch. 11.3, 2026-08-27). The quadratic part is attention: every token must be scored against every other token, an N×N grid of relationships per layer, costing O(N²·d) where d is the head dimension. Total attention work across a generation of M tokens after a prompt of N is approximately:
 
-**c · N²  +  c · (N·M + M²/2)**
+**c · N² + c · (N·M + M²/2)**
 
 — a quadratic prompt term paid once at time-to-first-token, and a growing decode term paid per output token, each decode step attending over all tokens so far (NVIDIA Technical Blog on long-context attention, 2026-08-27; c bundles head-count constants). The two terms are the two guests in the party analogy: any single decode step is linear in context so far, but the prompt's arrival was quadratic.
 

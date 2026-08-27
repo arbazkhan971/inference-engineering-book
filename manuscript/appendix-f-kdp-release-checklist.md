@@ -13,10 +13,10 @@ The editorial system behind this book defines gates, not vibes. Here is the hone
 | Technical edit (Gate 2) | Pass | All 18 chapters reviewed (findings in review/); every P0/P1/P2 finding applied through the driver fix-passes (final chapter, ch18, closed 2026-08-27); verdicts were 17 MINOR and 1 MAJOR (ch04, resolved) |
 | Code test | Pass | Companion tinyengine type-checks clean under TypeScript 5.9.3; offline smoke suite green across repeated runs (chapter Break-it/Prove-it cases replayed as code) |
 | Build test | Pass | One command produces a validated EPUB (6.2 MB at last build); 34/34 mermaid diagrams render with labels; structural validator passes |
-| Copyedit | Owed | Structural lint passes manuscript-wide; a human-grade copyedit pass is still owed — including the book-wide closer-format normalization (H3 subsections in ch01–14 vs bolded paragraphs in ch15–18). The reflow decision is closed (see F.3 item 5): reader-facing code lines all fit 66 columns and the checker runs at budget 0 inside the build |
+| Copyedit | Pass (2026-08-27) | Book-wide style/terminology scan + fixes: closer format normalized (ch15–18 bolded paragraphs → H3 subsections, matching ch01–14); token-rate units unified to `tokens/s`; terminology/spelling stragglers fixed; structural conventions verified uniform; full record in QUALITY_REPORT.md §3. The reflow decision is closed (see F.3 item 5): reader-facing code lines all fit 66 columns and the checker runs at budget 0 inside the build |
 | Final proof | Owed | Conditional by design: commercial upload requires a Kindle Previewer pass on the retail file, which no build script can perform |
 
-One release blocker therefore predates this checklist: the copyedit/proof passes (the Gate-2 sweep closed 2026-08-27). The checklist below assumes it closes. A book that ships with an open P1 finding is a book that ships a correction nobody has written yet.
+The copyedit pass closed 2026-08-27; final proof (Kindle Previewer) is the one remaining gate before upload.
 
 ## F.2 The book as a product — categories, price, position
 
@@ -26,7 +26,7 @@ One release blocker therefore predates this checklist: the copyedit/proof passes
 
 **Price.** The practitioner anchors: $59.99 print list is the established level (Manning and Packt comparables), O'Reilly pushed flagships to ~$79.99, and eBook editions list $47.99–$54.99 with street prices typically 20–30% below list. Self-published AI eBooks cluster at $9.99 or below; that shelf sells volume and reviews, not depth, and pricing this series next to it would mis-signal the content. Kindle royalty mechanics and price bands are not part of this book's research corpus — verify current KDP terms in the pricing calculator at upload time rather than trusting this page.
 
-**Length.** Comparable practitioner successes run 368 to 534 pages; the corpus conclusion was that this volume need not exceed ~500. The manuscript weighs in north of 110,000 words before trim passes — expect the copyedit to earn its keep.
+**Length.** Comparable practitioner successes run 368 to 534 pages; the corpus conclusion was that this volume need not exceed ~500. The manuscript weighs in north of 110,000 words; the 2026-08-27 copyedit normalized style and terminology but did not mass-trim — chapter overages against the style bands were reviewed and logged as content-bearing (mechanism and both-sides framing were the casualty of cutting), per the progress ledger.
 
 **Sales expectations.** Niche technical books typically sustain ranks in the tens of thousands, which third-party calculators map to roughly 3–15 Kindle-equivalent sales a day — steady backlist, not spike bestsellers. Every such figure is a curve-fit; Amazon publishes no sales data, BSR updates hourly, print ranks follow a lower-velocity curve, and any single snapshot is an order-of-magnitude guide. Budget expectations accordingly: this book wins by being the only one in its lane, not by charting against celebrity titles.
 

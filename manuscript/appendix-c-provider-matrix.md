@@ -129,9 +129,9 @@ Claimed is admission; effective is quality — RULER measured claimed-vs-effecti
 
 For open-weight models, the provider *is* a performance dial (chapters 9, 16, 18):
 
-- Llama 4 Scout, same weights: output speed spread **8.3×** (Groq 446.7 t/s vs DeepInfra 53.5; Bedrock 172.0, Vertex 152.8); blended price spread **2.7×** ($0.12–$0.33/1M); and the fastest decoder was *not* the lowest-TTFT host (DeepInfra 0.57 s vs Groq 0.75 s).
-- DeepSeek R1 0528: **6.1×** speed spread (Vertex 154.8 vs DeepInfra 25.6 t/s) and **6.1×** blended price ($0.56 vs $3.40/1M).
-- gpt-oss-120b: ~3,000 t/s on Cerebras vs 500 on Groq — a 6× spread on identical weights.
+- Llama 4 Scout, same weights: output speed spread **8.3×** (Groq 446.7 tokens/s vs DeepInfra 53.5; Bedrock 172.0, Vertex 152.8); blended price spread **2.7×** ($0.12–$0.33/1M); and the fastest decoder was *not* the lowest-TTFT host (DeepInfra 0.57 s vs Groq 0.75 s).
+- DeepSeek R1 0528: **6.1×** speed spread (Vertex 154.8 vs DeepInfra 25.6 tokens/s) and **6.1×** blended price ($0.56 vs $3.40/1M).
+- gpt-oss-120b: ~3,000 tokens/s on Cerebras vs 500 on Groq — a 6× spread on identical weights.
 - Quantization is part of the spread: FP8 is near-lossless across the Llama-3.1 family (500K+ evaluations) and 18–23% faster and cheaper per token on B200/B300-class hardware; INT4 runs 2.7× faster than BF16 but lost ~8 points HumanEval in a single-H100 Qwen3-32B benchmark. Pin the variant; re-benchmark quarterly.
 
 And the own-vs-rent constants (chapter 18's crossover, re-dated here): H100 rental ≈ **$2.39–2.49/hr** (RunPod/Lambda, checked 2026-08-02, corroborated April 2026), marketplace A100 ≈ **$1.49–2.49/hr**, 4090-class from ~$1.49/hr; disaggregated per-token APIs from ~$0.02 to ~$2.85 per 1M (open-weight tiers, 2026); the mid-tier blended figure the crossover used, **$0.60/1M**. Leaderboard figures move with infrastructure changes — Artificial Analysis itself versions its index and could not be auto-extracted on 2026-08-27 (JavaScript-rendered), so treat provider rankings as snapshots of a snapshot.

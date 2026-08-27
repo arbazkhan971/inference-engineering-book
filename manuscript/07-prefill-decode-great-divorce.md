@@ -183,7 +183,7 @@ Teach it back before moving on — the rest of Part II assumes this chapter's sp
 
 ### Build it
 
-Add an ITL-gap logger to your streaming client (tinyengine's meter is the natural home): timestamp every chunk, compute inter-chunk gaps, and keep a histogram — median, p95, p99, and a counter of gaps above a fixed threshold such as 10× the median. That counter is your interference detector: a smoothly running engine produces a tight, unimodal gap distribution, while prefill bubbles show up as a sparse population of outliers far above the median (the threshold is a tool choice; no universal spike size is documented — pick one and count). It is twenty lines, and from that day on, "the provider feels slow at 6 pm" becomes a number with a timestamp you can correlate against your own cron jobs, fan-outs, and neighbors.
+Add an ITL-gap logger to your streaming client (tinyengine's meter is the natural home): timestamp every chunk, compute inter-chunk gaps, and keep a histogram — median, p95, p99, and a counter of gaps above a fixed threshold such as 10× the median. That counter is your interference detector: a smoothly running engine produces a tight, unimodal gap distribution, while prefill bubbles show up as a sparse population of outliers far above the median (the threshold is a tool choice; no universal spike size is documented — pick one and count). It is twenty lines, and from that day on, "the provider feels slow at 6 pm" becomes a number with a timestamp you can correlate against your own cron jobs, fanouts, and neighbors.
 
 ### Break it
 

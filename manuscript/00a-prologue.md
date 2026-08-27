@@ -64,7 +64,7 @@ The engine room is loud, hot, and mostly undocumented. Let's go in.
 
 ---
 
-*Field note.* The 6pm slowdown in the opening really happened, more than
-once, at more than one provider. When you finish Chapter 5, you'll be able
-to name three plausible causes and — more usefully — rank them by
-likelihood before you blame the model.
+> **Field note.** The 6pm slowdown in the opening really happened, more
+> than once, at more than one provider. When you finish Chapter 5, you'll
+> be able to name three plausible causes and — more usefully — rank them
+> by likelihood before you blame the model.

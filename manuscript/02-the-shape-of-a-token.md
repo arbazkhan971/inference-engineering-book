@@ -132,7 +132,7 @@ Here is the durable form, the one to write on the whiteboard:
 
 Three consequences, in increasing order of practical value.
 
-**First: linearity is brutal.** The decode term is strictly linear in output length — doubling TPOT doubles it, doubling N doubles it. Worked budgets for a 500-token reply (derived arithmetic): at 20 ms/token, 10.0 s of decode; at 40 ms/token, 20.0 s; at 80 ms/token, 40.0 s — plus TTFT in each case. The handy conversion used throughout this book: tokens/s = 1000 / TPOT_ms, so 20 ms → 50 t/s, 40 ms → 25 t/s, 80 ms → 12.5 t/s.
+**First: linearity is brutal.** The decode term is strictly linear in output length — doubling TPOT doubles it, doubling N doubles it. Worked budgets for a 500-token reply (derived arithmetic): at 20 ms/token, 10.0 s of decode; at 40 ms/token, 20.0 s; at 80 ms/token, 40.0 s — plus TTFT in each case. The handy conversion used throughout this book: tokens/s = 1000 / TPOT_ms, so 20 ms → 50 tokens/s, 40 ms → 25 tokens/s, 80 ms → 12.5 tokens/s.
 
 ```mermaid
 xychart-beta

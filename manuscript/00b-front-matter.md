@@ -57,7 +57,7 @@ This book was written the way it teaches engineers to work. The author
 defined the architecture — reader promise, chapter map, style contract,
 editorial gates, inherited from *Harness Engineering* — and an autonomous
 fleet of well over one hundred GLM-5.3 model instances ran the research
-(sixty-plus dated, sourced evidence digests, all committed to the public
+(seventy-plus dated, sourced evidence digests, all committed to the public
 repository) and drafted chapter by chapter on a headless writing driver,
 against a six-gate editorial system. Every claim traces to a digest or
 carries a visible hedge. The repo — manuscript, research corpus, and build
@@ -74,7 +74,7 @@ claim you can't check is just a boast. He is the author of *Harness
 Engineering: How to Build AI Agents That Actually Work* and *System Design
 Mastery*, and writes from the operator's chair, not the vendor's podium.
 
-*Agent spawner by day, loop optimiser by night.*
+*Agent spawner by day, loop optimizer by night.*
 
 - github.com/arbazkhan971 · github.com/arbazkhan971/harness-engineering
 - ccrank.dev/user/arbaz-khan
