@@ -11,7 +11,7 @@ The chapters said it in one sentence, and it remains the truest sentence in this
 | `cache-ledger.ts` | Chapter 14 | ~130 | 109 | the money meter |
 | `rate-scheduler.ts` | Chapter 15 | ~120 | 111 | quota ledger, bucket, jitter, wave pacer |
 | `router.ts` | Chapter 16 | ~150 | 133 | routing, breakers, classified fallback |
-| `session-store.ts` | Chapter 17 | ~160 | 113 | byte-exact sessions |
+| `session-store.ts` | Chapter 17 | ~160 | 114 | byte-exact sessions |
 
 (The estimates were tildes, not contracts; the shipped totals run a little under because TypeScript type declarations compress what the chapters described in prose. No chapter's promise is broken — every interface this table's chapters named exists in the code, under the name the chapter used.)
 

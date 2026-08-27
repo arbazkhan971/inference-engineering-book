@@ -28,7 +28,8 @@ export class SessionStore {
 
   create(template: Template, sessionId: string, now = Date.now() / 1000): void {
     this.sessions.set(sessionId, { template, events: [{ at: now, kind: "message" }], transcript: [], lastActivity: now,
-      breakpoints: [template.id + ":tools", template.id + ":system"] });
+      // breakpoint stack: the template's frozen layers, the last marking the shared block's end (ch. 17.5)
+      breakpoints: [template.id + ":tools", template.id + ":system", ...(template.staticContext ? [template.id + ":static"] : [])] });
     this.ledger.deploy(template.id, this.renderTemplate(template)); // template hash visible as a cache event
   }
 
