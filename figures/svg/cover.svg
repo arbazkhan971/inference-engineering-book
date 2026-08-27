@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2560" font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <!-- Inference Engineering cover — Harness Engineering Series Vol. II
+       Grayscale-e-ink safe: white/amber on deep navy, no color-only meaning. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#04122e"/>
+      <stop offset="0.55" stop-color="#062050"/>
+      <stop offset="1" stop-color="#020a1c"/>
+    </linearGradient>
+    <radialGradient id="engineGlow" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="#f5a623" stop-opacity="0.20"/>
+      <stop offset="0.5" stop-color="#f5a623" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#f5a623" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="2560" fill="url(#bg)"/>
+  <rect width="1600" height="2560" fill="url(#engineGlow)"/>
+
+  <!-- Engine motif: turbine rings + token stream -->
+  <g transform="translate(800,980)" fill="none" stroke="#f5a623" stroke-width="14" opacity="0.9">
+    <circle r="420" stroke-opacity="0.25"/>
+    <circle r="330" stroke-opacity="0.4"/>
+    <circle r="240" stroke-opacity="0.6"/>
+    <!-- rotor blades -->
+    <g stroke-width="26" stroke-linecap="round" stroke-opacity="0.85">
+      <line x1="0" y1="-90" x2="0" y2="-228"/>
+      <line x1="78" y1="-45" x2="197" y2="-114" transform="rotate(0)"/>
+      <line x1="78" y1="45" x2="197" y2="114"/>
+      <line x1="0" y1="90" x2="0" y2="228"/>
+      <line x1="-78" y1="45" x2="-197" y2="114"/>
+      <line x1="-78" y1="-45" x2="-197" y2="-114"/>
+    </g>
+    <circle r="64" fill="#f5a623" stroke="none" opacity="0.95"/>
+    <circle r="30" fill="#04122e" stroke="none"/>
+  </g>
+
+  <!-- Token stream entering the engine -->
+  <g fill="#ffffff">
+    <circle cx="180" cy="980" r="14" opacity="0.35"/>
+    <circle cx="260" cy="965" r="16" opacity="0.5"/>
+    <circle cx="340" cy="975" r="18" opacity="0.65"/>
+    <circle cx="420" cy="985" r="20" opacity="0.8"/>
+    <circle cx="500" cy="980" r="22" opacity="0.9"/>
+  </g>
+  <!-- Token stream leaving as decoded tokens -->
+  <g fill="#f5a623">
+    <circle cx="1100" cy="980" r="22" opacity="0.9"/>
+    <circle cx="1180" cy="975" r="20" opacity="0.8"/>
+    <circle cx="1260" cy="985" r="18" opacity="0.65"/>
+    <circle cx="1340" cy="970" r="16" opacity="0.5"/>
+    <circle cx="1420" cy="980" r="14" opacity="0.35"/>
+  </g>
+
+  <!-- Series badge -->
+  <g transform="translate(800,330)">
+    <rect x="-470" y="-52" width="940" height="104" rx="52" fill="none" stroke="#f5a623" stroke-width="6"/>
+    <text x="0" y="14" text-anchor="middle" font-size="44" font-weight="bold" letter-spacing="10" fill="#f5a623">HARNESS ENGINEERING · VOLUME II</text>
+  </g>
+
+  <!-- Title -->
+  <text x="800" y="1700" text-anchor="middle" font-size="168" font-weight="bold" letter-spacing="6" fill="#ffffff">INFERENCE</text>
+  <text x="800" y="1880" text-anchor="middle" font-size="168" font-weight="bold" letter-spacing="6" fill="#ffffff">ENGINEERING</text>
+  <rect x="440" y="1950" width="720" height="10" fill="#f5a623"/>
+
+  <!-- Subtitle -->
+  <text x="800" y="2070" text-anchor="middle" font-size="62" fill="#dbe6ff">Inside the Engine Room</text>
+  <text x="800" y="2160" text-anchor="middle" font-size="62" fill="#dbe6ff">of AI Agents</text>
+
+  <!-- Author -->
+  <text x="800" y="2400" text-anchor="middle" font-size="84" font-weight="bold" letter-spacing="14" fill="#ffffff">ARBAZ KHAN</text>
+
+  <!-- Cover hook, bottom edge -->
+  <text x="800" y="2500" text-anchor="middle" font-size="42" font-style="italic" fill="#9db4e8">The harness is the driver. This is the engine.</text>
+</svg>
