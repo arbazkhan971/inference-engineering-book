@@ -1,0 +1,50 @@
+/* Kindle EPUB stylesheet — Manning-inspired */
+body { font-family: Georgia, "Times New Roman", serif; line-height: 1.55; margin: 5%; }
+
+h1 { font-family: Helvetica, Arial, sans-serif; font-size: 1.7em; color: #16202e;
+     border-bottom: 3px solid #0e7490; padding-bottom: 0.25em; margin-top: 1.5em; }
+h2 { font-family: Helvetica, Arial, sans-serif; font-size: 1.25em; color: #16202e; margin-top: 1.4em; }
+h3 { font-family: Helvetica, Arial, sans-serif; font-size: 1.05em; color: #334155; }
+
+code, pre { font-family: "Menlo", "Courier New", monospace; }
+code { font-size: 0.9em; background-color: #f1f5f9; padding: 0 0.2em; }
+pre { font-size: 0.78em; background-color: #f6f8fa; border: 1px solid #cbd5e1;
+      border-left: 4px solid #0e7490; padding: 0.7em; overflow-x: auto;
+      white-space: pre-wrap; line-height: 1.35; }
+
+figure { margin: 1.4em 0; text-align: center; }
+img { display: block; max-width: 100%; height: auto; }
+img[alt^="Arbaz Khan"] { width: 56%; max-width: 24em; margin: 1.2em auto;
+                        border-radius: 0.6em; }
+/* Pandoc repeats Markdown image alt text as an aria-hidden caption. Keep the
+   accessible alt text, but avoid showing that text twice beside our captions. */
+figure > figcaption[aria-hidden="true"] { display: none; }
+figcaption { font-family: Helvetica, Arial, sans-serif; font-size: 0.82em;
+             color: #5a6678; text-align: left; margin-top: 0.5em; line-height: 1.4; }
+
+blockquote { border-left: 4px solid #b45309; margin: 1em 0 1em 0.5em;
+             padding: 0.4em 1em; background-color: #fffbeb; color: #3b2f14; }
+blockquote p { margin: 0.3em 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.85em; margin: 1em 0; }
+th { font-family: Helvetica, Arial, sans-serif; background-color: #f1f5f9;
+     color: #16202e; border: 1px solid #cbd5e1; padding: 0.4em 0.6em; text-align: left; }
+td { border: 1px solid #cbd5e1; padding: 0.35em 0.6em; vertical-align: top;
+     overflow-wrap: anywhere; }
+
+/* Pandoc emits syntax colors inside each chapter. Keep them readable on the
+   light code background as well as in grayscale and high-contrast readers. */
+code span.al, code span.er { color: #9b1c1c; }
+code span.an, code span.co, code span.cv, code span.in, code span.wa {
+  color: #334e68;
+}
+code span.at { color: #6b4f00; }
+code span.bn, code span.dv, code span.fl { color: #166534; }
+code span.bu, code span.im { color: #0f5c3a; }
+code span.cf, code span.kw, code span.ot { color: #006d77; }
+code span.ch, code span.sc, code span.st, code span.vs { color: #1e4d8c; }
+code span.cn, code span.do, code span.dt { color: #7a271a; }
+code span.fu, code span.va { color: #1e3a8a; }
+code span.op { color: #4b5563; }
+code span.pp { color: #7a3e00; }
+code span.ss { color: #7c2d5e; }
