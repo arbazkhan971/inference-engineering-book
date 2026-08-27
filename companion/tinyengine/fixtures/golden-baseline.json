@@ -1,0 +1,6 @@
+{
+  "date": "2026-08-26",
+  "variant": "pinned/sonnet-4.6@fp8-host-a",
+  "floor": 0.9,
+  "failing": ["ex-007"]
+}

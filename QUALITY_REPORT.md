@@ -3,8 +3,9 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-27, after the copyedit pass
-(iteration 46 of the writing driver).
+command where one exists. Last updated: 2026-08-27, after the tester-cadence
+and verify-harness pass (iteration 47 of the writing driver; copyedit was
+iteration 46).
 
 ## 1. Gate ledger
 
@@ -14,7 +15,7 @@ command where one exists. Last updated: 2026-08-27, after the copyedit pass
 | Gate 2 — Technical editor | **PASS, all 18 chapters** | Full review set in `review/` (verdicts: 17 MINOR, 1 MAJOR); every P0/P1/P2 finding applied via driver fix-passes, iterations 28–44 + ch01 post-review polish; citations re-verified against `research/` before each application |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
-| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; offline smoke suite replays the chapters' Break-it/Prove-it cases, green across repeated runs (`cd companion/tinyengine && npm test`) |
+| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases, and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence` |
 | Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 26 files. Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
 
 ## 2. Numbers discipline
@@ -84,23 +85,28 @@ front matter), and normalization fixes:
    mirrors documented mechanics, and says so.
 5. **Companion line-count estimates** in ch12–17 Build-its ("roughly N
    lines") vs shipped counts differ −16% to +100% per module; Appendix D
-   publishes the honest estimated-vs-shipped table (640 module lines
-   shipped).
-6. **Tester-role cadence scripts** (nightly golden set, invoice
-   reconciliation) are specified in Appendix D.8 but not automated —
-   release-time item.
-7. **verify.sh still references Vol. I companion paths** — inapplicable
-   here, release-time cleanup.
-8. **Appendix E bibliography is curated, not exhaustive** (~60 of >570
+   publishes the honest estimated-vs-shipped table (640 instrument lines
+   shipped, plus the 339-line tester cadence beyond the instruments).
+6. **Appendix E bibliography is curated, not exhaustive** (~60 of >570
    corpus URLs; the curation rule is published in E.1).
+
+Closed this iteration (were residuals 6 and 7): the tester-cadence scripts
+now ship (`golden-set.ts`, `cache-hit-gate.ts`, `invoice-reconcile.ts` +
+shared plumbing + fixtures + a second offline test suite), and `tools/verify.sh`
+no longer references the Volume I companion — it runs this repo's two suites,
+the budget-0 reflow gate, the build, and the validator end-to-end (exit 0 on
+this host; external validators skip-announced, STRICT_EXTERNAL=1 escalates
+a skip to an error, verified exit 1).
 
 ## 5. How to re-verify
 
 ```
 python3 tools/lint-manuscript.py          # structural lint
 python3 tools/reflow-check.py --budget 0  # reader-facing reflow gate
+bash tools/verify.sh                      # lint + suites + build + validator
 tools/build.sh                            # one-command EPUB (6.0M)
 python3 tools/validate-epub.py            # structural validator
-cd companion/tinyengine && npm test       # offline smoke suite
+cd companion/tinyengine && npm test       # both offline suites (smoke + cadence)
+cd companion/tinyengine && npm run cadence  # the three nightly gates over fixtures
 ls research/*.md | wc -l                  # 72 files / 71 dated digests
 ```

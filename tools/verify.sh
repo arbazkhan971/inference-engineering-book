@@ -30,26 +30,29 @@ if [[ "${SKIP_FIGURES:-0}" != "1" ]]; then
 fi
 
 python3 tools/lint-manuscript.py
-# Code width. The EPUB stylesheet wraps `pre` rather than scrolling it, so an
-# over-wide listing breaks mid-expression on a phone, exactly where the aligned
-# trailing `// (n)` markers stop pointing at what they annotate. Budget 3: the
-# only lines still over 66 columns are the three 64-hex SHA-256 digests printed
-# as comments in ch19's approval-key transcript, where `// ` plus a full digest
-# is 67 columns and shortening either would mean truncating a real value.
-python3 tools/reflow-check.py --budget 3
-# Parse-gate every source and test file before anything runs them, so a file
-# that no longer parses is named here rather than inside a runner's output.
-# `node --check` is deliberately not used: on Node 24 it exits 0 for a module
-# holding a syntax error -- it parses the file as CommonJS, fails, retries it
-# as ESM, and swallows the second error -- so it reports clean on exactly the
-# broken test file this step exists to catch. The companion's own gate parses
-# each file as the module it is and exits non-zero.
-(cd companion/tinyharness && npm run --silent check)
-# Run the companion through its own `npm test`, from its own directory. The
-# suite writes fixture workspaces under $PWD/.test-workspaces and the package's
-# posttest script is what removes them, so invoking `node --test` from the repo
-# root instead would litter the root on every verify.
-(cd companion/tinyharness && npm test --silent)
+# Reader-facing code width at budget 0 — the recorded reflow decision: every
+# reader-facing fenced line fits 66 columns (fixed, not ratcheted, 2026-08-27);
+# mermaid sources are skipped because the build replaces those fences with
+# images, and --check-mermaid still measures them on demand. tools/build.sh
+# enforces the same budget, so verify and build cannot drift apart.
+python3 tools/reflow-check.py
+# The companion's own gate parses each source file as the module it is (tsc
+# runs inside `npm test` before anything executes) and then runs both suites:
+# the smoke suite (the chapters' Break-it/Prove-it list) and the cadence
+# suite (the tester role's nightly instruments). `node --check` is not used
+# on purpose: on Node 24 it exits 0 for a module holding a syntax error, so
+# it reports clean on exactly the broken file this step exists to catch.
+if command -v tsc >/dev/null 2>&1; then
+  (cd companion/tinyengine && npm test --silent)
+elif [[ -f companion/tinyengine/dist/tests/smoke.js ]]; then
+  echo "note: tsc not on PATH — running the previously compiled dist;" \
+       "recompile before a release run" >&2
+  (cd companion/tinyengine && node dist/tests/smoke.js && node dist/tests/cadence.js)
+else
+  echo "error: tsc not on PATH and companion/tinyengine/dist is absent —" \
+       "install TypeScript (or run a build) so sources are type-checked" >&2
+  exit 1
+fi
 tools/build.sh
 python3 tools/validate-epub.py
 
@@ -82,11 +85,12 @@ fi
 # answer the question that decides how the book reads on a phone: whether
 # Enhanced Typesetting is supported. It exits 0 even on a book Amazon would
 # reject, so tools/check-kindle-log.py reads the logs it wrote and gates on
-# those instead of on the exit status.
+# those instead of on the exit status. This is the automated half of the
+# final-proof gate; the eyes-on page-through (Appendix F) is still human.
 KINDLE_PREVIEWER="${KINDLE_PREVIEWER:-/Applications/Kindle Previewer 3.app/Contents/MacOS/Kindle Previewer 3}"
 if [[ -x "$KINDLE_PREVIEWER" ]]; then
   echo "--- Kindle Previewer ---"
-  kindle_out="$(mktemp -d "${TMPDIR:-/tmp}/harness-engineering-kindle.XXXXXX")"
+  kindle_out="$(mktemp -d "${TMPDIR:-/tmp}/inference-engineering-kindle.XXXXXX")"
   trap 'rm -rf "$kindle_out"' EXIT
   "$KINDLE_PREVIEWER" "$PWD/build/inference-engineering.epub" \
     -convert -output "$kindle_out" >/dev/null

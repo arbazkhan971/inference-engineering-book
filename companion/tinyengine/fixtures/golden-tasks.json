@@ -1,0 +1,14 @@
+[
+  { "id": "ex-001", "tag": "invoice-fields" },
+  { "id": "ex-002", "tag": "invoice-fields" },
+  { "id": "ex-003", "tag": "quote-clause" },
+  { "id": "ex-004", "tag": "quote-clause" },
+  { "id": "ex-005", "tag": "arithmetic" },
+  { "id": "ex-006", "tag": "arithmetic" },
+  { "id": "ex-007", "tag": "arithmetic" },
+  { "id": "ex-008", "tag": "json-schema" },
+  { "id": "ex-009", "tag": "json-schema" },
+  { "id": "ex-010", "tag": "json-schema" },
+  { "id": "ex-011", "tag": "json-schema" },
+  { "id": "ex-012", "tag": "long-context" }
+]

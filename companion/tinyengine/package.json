@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "tsc -p tsconfig.json && node dist/tests/smoke.js"
+    "test": "tsc -p tsconfig.json && node dist/tests/smoke.js && node dist/tests/cadence.js",
+    "cadence": "node dist/golden-set.js --tasks fixtures/golden-tasks.json --results fixtures/golden-results.jsonl --baseline fixtures/golden-baseline.json; node dist/cache-hit-gate.js --usage fixtures/usage-day.jsonl --floor 0.6; node dist/invoice-reconcile.js --meter fixtures/meter-day.jsonl --invoice fixtures/invoice-day.csv --tolerance 0.02"
   }
 }

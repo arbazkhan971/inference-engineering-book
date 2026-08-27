@@ -89,12 +89,27 @@ The renderer serializes the five layers in the frozen order — template header,
 
 ```bash
 cd companion/tinyengine
-npm test  # tsc -p tsconfig.json && node dist/tests/smoke.js
+npm test  # tsc && both suites: smoke + cadence
 ```
 
-No network. Every stream is a fixture string; every price is a test constant. The suite is the chapters' Prove-it list: Portland in three fragments split mid-escape; the meta-only ping; the unknown finish reason; the usage identity; the $0.645 worked example; both break-evens; the TTL-expiry event; the budget-gated keep-alive; full-jitter bounds with `Retry-After` as floor; the burst trap; the zombie-fleet classifier; the dead-primary failover; the garbage-200 no-fallback rule; the all-open bypass; the priced pin break; the byte-exact hash; the leapfrog; the idle taxonomy; child isolation. Two `node:` built-ins are used (`crypto` for hashing, `assert` for tests) with minimal type shims in `env.d.ts`, so the project compiles with a bare `tsc` and zero npm dependencies — delete the shim if you install `@types/node`.
+No network. Every stream is a fixture string; every price is a test constant. The smoke suite is the chapters' Prove-it list: Portland in three fragments split mid-escape; the meta-only ping; the unknown finish reason; the usage identity; the $0.645 worked example; both break-evens; the TTL-expiry event; the budget-gated keep-alive; full-jitter bounds with `Retry-After` as floor; the burst trap; the zombie-fleet classifier; the dead-primary failover; the garbage-200 no-fallback rule; the all-open bypass; the priced pin break; the byte-exact hash; the leapfrog; the idle taxonomy; child isolation. The cadence suite replays the tester role's three nightly instruments over fixture files — the same gates, offline. Three `node:` built-ins are used (`crypto` for hashing, `assert` for tests, `fs` for fixtures) with minimal type shims in `env.d.ts`, so the project compiles with a bare `tsc` and zero npm dependencies — delete the shim if you install `@types/node`.
 
-Chapter 18's closing rule applies to the companion too: kill each instrument in turn and read what fails silently. The tests are the staging version of that drill. The nightly cadence — golden set, cache-hit gate, invoice reconciliation — is yours to wire; the instruments are on the shelf.
+Chapter 18's closing rule applies to the companion too: kill each instrument in turn and read what fails silently. The tests are the staging version of that drill — and the nightly cadence ships with it, three operator CLIs beyond the instruments (about 340 lines with shared plumbing, fixtures included):
+
+```bash
+node dist/golden-set.js --tasks fixtures/golden-tasks.json \
+  --results fixtures/golden-results.jsonl \
+  --baseline fixtures/golden-baseline.json
+node dist/cache-hit-gate.js --usage fixtures/usage-day.jsonl \
+  --floor 0.6
+node dist/invoice-reconcile.js \
+  --meter fixtures/meter-day.jsonl \
+  --invoice fixtures/invoice-day.csv --tolerance 0.02
+```
+
+**`golden-set.js`** is chapter 9's field note as code: a fixed task set, replayed nightly against the pinned variant, diffed against a dated baseline. A task that passed yesterday and failed tonight is DRIFT and fails the gate *even when the overall pass rate clears its floor* — the per-task diff catches the drift that averages away, and the floor catches the broad kind. Known failures (recorded in the baseline) do not page; the floor still applies to them. `--update-baseline` re-records tonight as the new dated reference only after you have reviewed the drift it reported. **`cache-hit-gate.js`** is chapter 14's "first-class production metric" as a gate: the day's usage rows (chapter 12's normalizer output, one JSON object per request) yield the book's hit rate — cached ÷ (cached + fresh input), writes reported as re-admissions but excluded from the rate — overall and per model, with thin models (fewer than `--min-rows` rows) reported but not gated, because thin data is noise. **`invoice-reconcile.js`** is chapter 16's daily rule: the ledger's four-term totals per model against the provider's invoice CSV within a tolerance, gaps reported signed as invoice − meter because provider billing wins ties, and the four usual suspects named by symptom — only-on-the-meter (batch usage up to 24 h late, or usage stripped so the meter estimated), only-on-the-invoice (a bucket the meter does not know), amount drift (stale price map, or their tokenizer versus your estimate).
+
+What the three scripts never do is call a model, trust a price, or invent a baseline: your cron replays the tasks and appends one result row per task, your invoice export feeds the reconciler, and every gate is a comparison of two things you already have. The fixtures double as executable documentation — `fixtures/golden-results.jsonl` carries a deliberately new failure (`ex-011`), and running the CLIs against the fixtures shows both the pass and the drift shapes.
 
 ---
 
