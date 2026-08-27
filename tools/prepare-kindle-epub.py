@@ -8,7 +8,7 @@ import os
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EPUB = ROOT / "build" / "harness-engineering.epub"
+EPUB = ROOT / "build" / "inference-engineering.epub"
 OPF = "EPUB/content.opf"
 NEEDLE = b'<itemref idref="cover_xhtml" />'
 REPLACEMENT = b'<itemref idref="cover_xhtml" linear="no" />'

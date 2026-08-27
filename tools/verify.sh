@@ -72,7 +72,7 @@ external_skipped=""
 # same as not knowing what the reader will see.
 if command -v epubcheck >/dev/null 2>&1; then
   echo "--- epubcheck ---"
-  epubcheck --failonwarnings build/harness-engineering.epub
+  epubcheck --failonwarnings build/inference-engineering.epub
 else
   external_skipped="$external_skipped epubcheck"
   echo "skip: epubcheck not installed (brew install epubcheck)" >&2
@@ -88,7 +88,7 @@ if [[ -x "$KINDLE_PREVIEWER" ]]; then
   echo "--- Kindle Previewer ---"
   kindle_out="$(mktemp -d "${TMPDIR:-/tmp}/harness-engineering-kindle.XXXXXX")"
   trap 'rm -rf "$kindle_out"' EXIT
-  "$KINDLE_PREVIEWER" "$PWD/build/harness-engineering.epub" \
+  "$KINDLE_PREVIEWER" "$PWD/build/inference-engineering.epub" \
     -convert -output "$kindle_out" >/dev/null
   python3 tools/check-kindle-log.py "$kindle_out"
 else

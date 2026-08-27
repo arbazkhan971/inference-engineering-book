@@ -18,17 +18,21 @@ if [[ "${SKIP_FIGURES:-0}" != "1" ]]; then
 fi
 mkdir -p build
 
+# Lint the true manuscript, then stage it (mermaid fences -> images).
+python3 tools/lint-manuscript.py
+python3 tools/prepare-manuscript.py
+
 # The argument list below is reading order, not filename order. The dedication
 # and the Prologue open the book (00a-prologue.md) so a sample lands on the
 # story; "Start here" orients the reader afterwards (00-front-matter.md); the
 # bio, evidence note and copyright page close it (zz-back-matter.md).
 pandoc \
-  manuscript/*.md \
+  build/staging-manuscript/*.md \
   --from markdown+smart+fenced_code_blocks+pipe_tables \
   --to epub3 \
   --css assets/style.css \
   --embed-resources \
-  --resource-path .:figures/png \
+  --resource-path .:figures/png:. \
   --epub-cover-image figures/png/cover.jpg \
   --toc --toc-depth=2 \
   --metadata identifier="$BOOK_IDENTIFIER" \

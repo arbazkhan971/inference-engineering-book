@@ -48,7 +48,7 @@ graph TD
     C --> D[Rejection sampler walks left to right]
     D -->|target plausibly agrees| E[Accept token, advance]
     E --> D
-    D -->|first disagreement| F[Resample from corrected distribution norm(max(0, p − q))]
+    D -->|first disagreement| F["Resample from corrected distribution norm(max(0, p − q))"]
     F --> G[Discard all later guesses]
     E --> H[Bonus token free from the verify pass]
     G --> H
