@@ -69,17 +69,24 @@ No slot ever idles waiting for a straggler, because there are no stragglers — 
 ```text
 Static batch, 4 slots (t = engine iterations):
 
-  slot A |████░░░░░░░░░░░░░░░|  A finishes at t=4... but the batch
-  slot B |████████████████████████████████|  runs until t=32: A's answer
-  slot C |██████░░░░░░░░░░░░░░░░░░░░░░░░░░|  is held ~28 idle steps;
-  slot D |██████████████████░░░░░░░░░░░░░░|  C and D pad ~26 and ~14 wasted steps.
+  slot A |████░░░░░░░░░░░░░░░░░░░░░░░░░░░|
+  slot B |████████████████████████████████|
+  slot C |██████░░░░░░░░░░░░░░░░░░░░░░░░░|
+  slot D |██████████████████░░░░░░░░░░░░░░|
+
+  A finishes at t=4... but the batch runs until
+  t=32: A's answer is held ~28 idle steps; C and
+  D pad ~26 and ~14 wasted steps.
 
 Continuous batching, same arrivals:
 
-  slot 1 |AAAA CCCC GGGG IIII KKKK MMMM OOOO ...|  EOS frees the slot
-  slot 2 |BBBBBB DDDD FF HHHH JJJ LLLL NNN ...|  at the NEXT iteration;
-  slot 3 |CCCCCC EEEE GGGGG IIIII KKK ...|       short jobs flow through,
-  slot 4 |DD EEEEEE HHHHH JJJJJ LLLL ...|        no hostage-taking.
+  slot 1 |AAAA CCCC GGGG IIII KKKK MMMM OOOO ...|
+  slot 2 |BBBBBB DDDD FF HHHH JJJ LLLL NNN ...|
+  slot 3 |CCCCCC EEEE GGGGG IIIII KKK ...|
+  slot 4 |DD EEEEEE HHHHH JJJJJ LLLL ...|
+
+  EOS frees the slot at the NEXT iteration; short
+  jobs flow through, no hostage-taking.
 ```
 
 One mechanical wrinkle had to be solved to make this work, and it is why Orca's paper is cited rather than just footnoted. Attention needs each sequence's *own* KV state — lengths differ, histories differ — so naively stacking ragged sequences into one tensor is awkward. Orca's answer was **selective batching**: operations that tolerate batching (the big linear layers, the weight streaming that chapter 3 showed is the expensive part) run batched across all riders, while attention runs per-sequence over each rider's own cache. You batch the part that pays (weights), and shape the part that differs (attention). Every modern engine — vLLM, TensorRT-LLM (which calls it **in-flight batching**, IFB), SGLang, and TGI (Text Generation Inference, Hugging Face's server) — ships a version of this loop (engine documentation, retrieved 2026-08-27).

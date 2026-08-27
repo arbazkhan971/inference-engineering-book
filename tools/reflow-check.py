@@ -13,8 +13,16 @@ Usage:
     tools/reflow-check.py --width 72            # a looser budget
     tools/reflow-check.py --budget 281          # ratchet: fail only if it grows
     tools/reflow-check.py --skip-lang text      # ignore terminal transcripts
+    tools/reflow-check.py --check-mermaid        # include mermaid sources too
     tools/reflow-check.py --summary             # per-file counts only
     tools/reflow-check.py manuscript/ch13-*.md  # explicit paths
+
+Mermaid fences are skipped by default: tools/prepare-manuscript.py replaces
+them with image references before the EPUB is built (degrading to text only
+when a render is missing, which build.sh already warns about), so their source
+width never reaches a reader -- and the mermaid DSL is line-based (a
+`title "..."` or `x-axis "..." [list]` cannot wrap without changing the
+figure). Pass --check-mermaid (or --only-lang mermaid) to measure them anyway.
 
 Exit status is 0 when the number of over-wide lines is within --budget and 1
 when it is not, so this can join tools/verify.sh either at budget 0 (once the
@@ -35,6 +43,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_GLOB = "manuscript/*.md"
 FENCE_CHARS = ("`", "~")
 ZERO_WIDTH_CATEGORIES = frozenset({"Mn", "Me", "Cf"})
+DEFAULT_SKIP_LANGS = frozenset({"mermaid"})
 
 
 def display_width(text: str, tabsize: int = 4) -> int:
@@ -154,6 +163,9 @@ def main(argv=None) -> int:
                         help="fence language to ignore, repeatable (e.g. text)")
     parser.add_argument("--only-lang", action="append", default=[], metavar="LANG",
                         help="fence language to restrict to, repeatable")
+    parser.add_argument("--check-mermaid", action="store_true",
+                        help="include mermaid fences in the width check "
+                             "(skipped by default: build replaces them with images)")
     parser.add_argument("--summary", action="store_true",
                         help="per-file counts only, no individual lines")
     parser.add_argument("--no-content", action="store_true",
@@ -178,13 +190,22 @@ def main(argv=None) -> int:
         print(f"error: nothing to scan (no files matched {DEFAULT_GLOB})", file=sys.stderr)
         return 2
 
+    effective_skip = set(args.skip_lang)
+    include_mermaid = (args.check_mermaid
+                       or "mermaid" in set(args.only_lang))
+    if not include_mermaid:
+        effective_skip |= DEFAULT_SKIP_LANGS
+
     findings, scanned_lines, scanned_blocks = scan(
-        paths, args.width, set(args.skip_lang), set(args.only_lang))
+        paths, args.width, effective_skip, set(args.only_lang))
     total = sum(len(hits) for blocks in findings.values()
                 for _, hits in blocks.values())
     bad_blocks = sum(len(blocks) for blocks in findings.values())
 
     print(f"reflow-check: fenced code lines wider than {args.width} columns")
+    if DEFAULT_SKIP_LANGS & effective_skip:
+        print("  (mermaid fences skipped -- the build replaces them with images; "
+              "--check-mermaid to measure them)")
     print(f"  scanned {scanned_lines} code lines in {scanned_blocks} fenced "
           f"blocks across {len(paths)} file(s)")
     print()

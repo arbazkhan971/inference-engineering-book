@@ -40,12 +40,15 @@ The composition properties from chapter 18 hold by construction: **one dial per 
 The seed instrument — chapter 1's ten-line promise, kept:
 
 ```typescript
-export function traceCall(sentAt: number, deltasAt: number[], tokens: number): Trace {
+export function traceCall(sentAt: number, deltasAt: number[],
+                          tokens: number): Trace {
   const first = deltasAt[0], last = deltasAt[deltasAt.length - 1];
   const itl = deltasAt.slice(1).map((t, i) => t - deltasAt[i]);
-  const mean = itl.length ? itl.reduce((a, b) => a + b, 0) / itl.length : 0;
-  return { ttftSeconds: first - sentAt, e2eSeconds: last - sentAt, itlSamples: itl, tokens,
-    identityGapSeconds: (last - sentAt) - (first - sentAt + (tokens - 1) * mean) };
+  const mean = itl.reduce((a, b) => a + b, 0) / (itl.length || 1);
+  return { ttftSeconds: first - sentAt, e2eSeconds: last - sentAt,
+    itlSamples: itl, tokens,
+    identityGapSeconds: (last - sentAt)
+      - (first - sentAt + (tokens - 1) * mean) };
 }
 ```
 
@@ -86,7 +89,7 @@ The renderer serializes the five layers in the frozen order — template header,
 
 ```bash
 cd companion/tinyengine
-npm test          # tsc -p tsconfig.json && node dist/tests/smoke.js
+npm test  # tsc -p tsconfig.json && node dist/tests/smoke.js
 ```
 
 No network. Every stream is a fixture string; every price is a test constant. The suite is the chapters' Prove-it list: Portland in three fragments split mid-escape; the meta-only ping; the unknown finish reason; the usage identity; the $0.645 worked example; both break-evens; the TTL-expiry event; the budget-gated keep-alive; full-jitter bounds with `Retry-After` as floor; the burst trap; the zombie-fleet classifier; the dead-primary failover; the garbage-200 no-fallback rule; the all-open bypass; the priced pin break; the byte-exact hash; the leapfrog; the idle taxonomy; child isolation. Two `node:` built-ins are used (`crypto` for hashing, `assert` for tests) with minimal type shims in `env.d.ts`, so the project compiles with a bare `tsc` and zero npm dependencies — delete the shim if you install `@types/node`.

@@ -20,6 +20,10 @@ mkdir -p build
 
 # Lint the true manuscript, then stage it (mermaid fences -> images).
 python3 tools/lint-manuscript.py
+# Reader-facing code width at budget 0: mermaid sources are skipped (the
+# staging step below replaces them with images) and every other fenced
+# line fits 66 columns. --check-mermaid exists for curiosity, not release.
+python3 tools/reflow-check.py
 python3 tools/prepare-manuscript.py
 
 # The argument list below is reading order, not filename order. The dedication

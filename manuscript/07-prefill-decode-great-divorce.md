@@ -44,9 +44,9 @@ Opposite bottlenecks would be fine if the phases took turns politely. They don't
 ```text
 iteration:   1        2        3        4        5        6
 decode-only: [15ms]   [15ms]   [15ms]
-with 20k prefill joined:       |——————————— prefill iteration ———————————|
-                                       (its forward pass alone: hundreds of ms)
-every decoding rider:  token…   token…   token…   ██ frozen ██   token (late!)
+20k prefill joined:            |——————— prefill iteration ——————|
+                          (its forward pass alone: hundreds of ms)
+every rider: token…   token…   token…   █ frozen █   token (late!)
 ```
 
 That frozen stretch is the **prefill bubble**: a long prompt's prefill iteration stalls every co-batched decode, producing TPOT (time per output token) / ITL (inter-token latency) spikes *exactly when new requests arrive* (Sarathi-Serve, OSDI 2024, arXiv:2403.02310). The cruelty is structural, not a bug in any scheduler: the phases were simply never shaped to share an iteration.

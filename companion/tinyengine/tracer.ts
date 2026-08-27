@@ -8,13 +8,13 @@ export type Trace = {
   identityGapSeconds: number;             // e2e − (TTFT + (N−1) × mean ITL): queueing + jitter live here
 };
 
-export function traceCall(sentAt: number, deltasAt: number[], tokens: number): Trace {
+export function traceCall(sentAt: number, deltasAt: number[],
+                          tokens: number): Trace {
   const first = deltasAt[0], last = deltasAt[deltasAt.length - 1];
   const itl = deltasAt.slice(1).map((t, i) => t - deltasAt[i]);
-  const mean = itl.length ? itl.reduce((a, b) => a + b, 0) / itl.length : 0;
-  return {
-    ttftSeconds: first - sentAt, e2eSeconds: last - sentAt,
+  const mean = itl.reduce((a, b) => a + b, 0) / (itl.length || 1);
+  return { ttftSeconds: first - sentAt, e2eSeconds: last - sentAt,
     itlSamples: itl, tokens,
-    identityGapSeconds: (last - sentAt) - (first - sentAt + (tokens - 1) * mean),
-  };
+    identityGapSeconds: (last - sentAt)
+      - (first - sentAt + (tokens - 1) * mean) };
 }

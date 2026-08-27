@@ -99,8 +99,10 @@ The gap between 32% and 83% is the most commonly misread number in cache economi
 Finally, the formula that meters all of it — chapter 12's usage fields feeding one ledger:
 
 ```
-cost = (fresh_input_tokens × P_in + cached_tokens × P_cached
-      + cache_write_tokens × P_write + output_tokens × P_out) / 1,000,000
+cost = (fresh_input_tokens × P_in
+      + cached_tokens × P_cached
+      + cache_write_tokens × P_write
+      + output_tokens × P_out) / 1,000,000
 ```
 
 Four terms, no estimates. On Anthropic's exclusive buckets every value is a provider-reported field; on the inclusive counters — OpenAI and Gemini, whose reported prompt totals *include* cached tokens (chapter 12's warning) — fresh input is total prompt minus the cached and cache-write tokens, chapter 12's normalizer output rather than a raw field. The cache-hit rate — cached tokens ÷ (cached + fresh input) — is the number to put on a dashboard next to latency, and chapter 6 already told you why it collapses after deploys. The remainder of this chapter is about never giving it a reason to.
