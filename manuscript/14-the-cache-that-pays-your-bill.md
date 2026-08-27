@@ -74,7 +74,7 @@ At 1.25/0.1: N ≥ 0.25/0.9 ≈ **0.28** — one reuse already pays the premium,
 
 - **No caching:** 525,000 units.
 - **Prefix-only caching** — only the frozen 8,000-token head ever hits: turn 1 writes (10,000 units), turns 2–25 read it (800 units each), and the growing 325,000-token history pays full price. Total ≈ **354,200 units — about 32.5% cheaper**.
-- **Incremental caching** — the provider also caches the growing transcript, because each turn's history is byte-identical to the last turn's prompt plus a suffix: every 1,000-token block is written once and read ever after. Total ≈ **55,000 units — about 90% cheaper**.
+- **Incremental caching** — the provider also caches the growing transcript, because each turn's history is byte-identical to the last turn's prompt plus a suffix: every 1,000-token block is written once and read ever after. Total ≈ **90,450 units — about 83% cheaper** (prefix: 10,000 written + 19,200 read; history: 25 blocks × 1,250 written once + 30,000 read — and even a provider charging no write premium at all floors at ≈ 82,200 units, ~84%).
 
 ```mermaid
 xychart-beta
@@ -82,13 +82,13 @@ xychart-beta
     x-axis "turn number" [1, 5, 10, 15, 20, 25]
     y-axis "input cost (units)" 0 --> 34000
     line [9000, 13000, 18000, 23000, 28000, 33000]
-    line [10000, 5800, 10800, 15800, 20800, 25800]
-    line [10000, 2350, 2850, 3350, 3850, 4350]
+    line [11000, 5800, 10800, 15800, 20800, 25800]
+    line [11250, 2450, 2950, 3450, 3950, 4450]
 ```
 
 *(Three lines: no caching (top), prefix-only caching (middle, parallel to it — the history still pays full price), incremental caching (bottom, nearly flat). The middle line is what you get by accident; the bottom line is what layout discipline buys.)*
 
-The gap between 32% and 90% is the most commonly misread number in cache economics. Marketing quotes the 90%; you will first measure something near a third of that, because the growing transcript only caches if *every earlier byte stays identical* — and three habits quietly break it: re-serializing history with shuffled tool-call ordering, compacting old turns (chapter 11's cliff, paid here as a cache miss), or letting the TTL lapse between turns.
+The gap between 32% and 83% is the most commonly misread number in cache economics. Marketing quotes the ~90% that fanout-shaped traffic can genuinely reach (the fanout example below); you will first measure something near a third of that, because the growing transcript only caches if *every earlier byte stays identical* — and three habits quietly break it: re-serializing history with shuffled tool-call ordering, compacting old turns (chapter 11's cliff, paid here as a cache miss), or letting the TTL lapse between turns.
 
 > **ELI5:** Now imagine the punch card expires five minutes after each purchase — but every card visit renews it. Order, drink, order again inside five minutes, and the card lives forever. Wander off for six minutes and the shop burns the card; your next visit pays a new enrollment fee. That is cache TTL: the clock resets on hits, and expiry doesn't just return you to full price — it re-charges the enrollment fee.
 
@@ -99,11 +99,11 @@ The gap between 32% and 90% is the most commonly misread number in cache economi
 Finally, the formula that meters all of it — chapter 12's usage fields feeding one ledger:
 
 ```
-cost = (input_tokens × P_in + cached_tokens × P_cached
+cost = (fresh_input_tokens × P_in + cached_tokens × P_cached
       + cache_write_tokens × P_write + output_tokens × P_out) / 1,000,000
 ```
 
-Four terms, four provider-reported fields, no estimates. The cache-hit rate — cached tokens ÷ (cached + fresh input) — is the number to put on a dashboard next to latency, and chapter 6 already told you why it collapses after deploys. The remainder of this chapter is about never giving it a reason to.
+Four terms, no estimates. On Anthropic's exclusive buckets every value is a provider-reported field; on the inclusive counters — OpenAI and Gemini, whose reported prompt totals *include* cached tokens (chapter 12's warning) — fresh input is total prompt minus the cached and cache-write tokens, chapter 12's normalizer output rather than a raw field. The cache-hit rate — cached tokens ÷ (cached + fresh input) — is the number to put on a dashboard next to latency, and chapter 6 already told you why it collapses after deploys. The remainder of this chapter is about never giving it a reason to.
 
 ## 14.4 Designing prefixes that hit
 
@@ -172,7 +172,7 @@ The warehouse, the punch card, and the letterhead carried the chapter; bill them
 ## Checkpoint
 
 1. Write price 2×, read price 0.1×. How many reuses before the write premium pays for itself, and what does the provider's own documentation call that threshold?
-2. Your 25-turn loop measures only ~32% savings, though the blog posts promised ~90%. Name the three habits that keep you on the middle line of the chart.
+2. Your 25-turn loop measures only ~32% savings, though the blog posts promised ~90% for fanout-shaped traffic. Name the three habits that keep you on the middle line of the chart.
 3. A teammate moves `Current time: 14:03` from the system prompt into the last user message. What happens to the hit rate, to the write premium, and to what the model conditions on?
 4. Your OpenAI org runs a 40-request-per-minute fanout over one shared prefix and sees cached share sag during bursts. What mechanism, what parameter groups the routing, and what harness-side fix finishes the job?
 5. A tool call waits 7 minutes for human approval; the model's cache TTL is 5 minutes. Price the next turn relative to a clean read, and name the two lifecycle fixes with their costs.
