@@ -27,6 +27,24 @@ system, voice, and gates.
 7. `git add -A && git commit -m "ch<NN>: draft + gate-1 self-review" && git push`.
    If push fails, rebase and retry once, then continue locally and note it.
 
+## Research gap-fill iterations
+
+If research/ has fewer than 60 digests after pull, or your next chapter
+lacks facts, spend the iteration producing digests yourself (use your
+subagents, model zai/glm-5.3-flash, and web search). Digest structure:
+
+```
+# <Topic>
+researched: <date> · researcher: glm-5.3-flash
+## Key facts — bullets, every number dated
+## How it works — mechanism in precise plain words
+## Harness angle — one harness decision it changes
+## Sources — primary URLs (5-10)
+```
+
+600-1200 words. Never invent a number. Commit digests with
+`research: <topics>`.
+
 ## Rules
 
 - One chapter per iteration. Depth beats breadth; do not stub.
