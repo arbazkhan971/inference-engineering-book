@@ -23,34 +23,7 @@ mkdir -p build
 # story; "Start here" orients the reader afterwards (00-front-matter.md); the
 # bio, evidence note and copyright page close it (zz-back-matter.md).
 pandoc \
-  manuscript/00a-prologue.md \
-  manuscript/00-front-matter.md \
-  manuscript/ch01-landscape.md \
-  manuscript/ch02-the-field.md \
-  manuscript/ch03-the-loop.md \
-  manuscript/ch04-first-agent.md \
-  manuscript/ch05-tools.md \
-  manuscript/ch06-tui.md \
-  manuscript/ch07-context.md \
-  manuscript/ch08-sessions.md \
-  manuscript/ch09-safety.md \
-  manuscript/ch10-subagents.md \
-  manuscript/ch11-sockets.md \
-  manuscript/ch12-eyes.md \
-  manuscript/ch13-scoreboard.md \
-  manuscript/ch14-adapters.md \
-  manuscript/ch15-flight-recorder.md \
-  manuscript/ch16-reliability.md \
-  manuscript/ch17-budgets.md \
-  manuscript/ch18-product-architecture.md \
-  manuscript/ch19-reference.md \
-  manuscript/ch20-ship.md \
-  manuscript/aa-glossary.md \
-  manuscript/aa1-typescript.md \
-  manuscript/ab-tinyagent.md \
-  manuscript/ac-production-checklist.md \
-  manuscript/ad-sources.md \
-  manuscript/zz-back-matter.md \
+  manuscript/*.md \
   --from markdown+smart+fenced_code_blocks+pipe_tables \
   --to epub3 \
   --css assets/style.css \
