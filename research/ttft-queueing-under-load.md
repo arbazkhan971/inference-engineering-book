@@ -1,0 +1,33 @@
+# TTFT under load: queueing shape, tail latency, and what it does to client timeouts
+researched: 2026-08-27 · researcher: glm-5.3-flash
+
+## Key facts
+- TTFT is not one number: it is queue wait + prefill compute. vLLM explicitly instruments the split with `vllm:request_queue_time_seconds` (QUEUED→SCHEDULED interval), `vllm:request_prefill_time_seconds`, and `vllm:time_to_first_token_seconds` measured from frontend `arrival_time` so queue wait is included in TTFT (vLLM metrics design docs, fetched 2026-08-27).
+- The queueing-theory shape is the classic M/G/1 (and M/M/1 special case) blow-up: mean queueing delay E[W] = λE[S²]/(2(1−ρ)), where ρ = λ/μ. As utilization ρ → 1, the denominator goes to zero and waiting time diverges — going from ρ = 0.8 to ρ = 0.95 multiplies mean queue delay by ~4 (derived: 0.2/0.05), and tail percentiles diverge faster than the mean (arXiv:2407.05347, 2024).
+- Under FCFS admission, heavy-tailed output token counts inflate E[S²] and therefore inflate queueing delay for everyone behind them; the paper shows clipping max output tokens on a small fraction of requests significantly reduces mean queue delay, because E[W] depends on the *second moment* of service time, not the mean (arXiv:2407.05347, 2024).
+- Prefill interference makes queue waits worse in colocated systems: DistServe (OSDI 2024) shows prefill-decoding interference forces existing systems to either sacrifice TTFT or TPOT or over-provision; disaggregation served 7.4× more requests or achieved a 12.6× tighter SLO while keeping >90% of requests within latency constraints (arXiv:2401.09670, 2024).
+- Prefill itself scales linearly with batch size: on a LLaMA-2-7b on A100, first-token generation time increases linearly with batch size, so a burst that inflates the prefill batch directly inflates every queued request's TTFT, not just its own (arXiv:2407.05347, measurements in-paper, 2024).
+- KV-cache pressure caps concurrency before GPU compute does: the same paper measured a maximum batch of 49 requests at 1280 sequence length for LLaMA-2-7b-chat on one A100 — beyond that, requests wait or get preempted (arXiv:2407.05347, 2024). vLLM's scheduler also preempts requests back to the waiting queue when KV cache runs short, restarting their prefill and adding directly to TTFT (vLLM metrics docs, PREEMPTED event, fetched 2026-08-27).
+- vLLM's own example `/metrics` output shows the tail plainly: of 140 requests, 97 finished first token by 40 ms and 138 by 80 ms, but 2 requests took 80–100+ ms — the p99 sits at or above the slowest bucket while the median is ~40 ms (vLLM docs example output, fetched 2026-08-27; illustrative, not a benchmark).
+- Community benchmarks consistently report p99 TTFT several multiples above median at moderate concurrency, with the gap widening sharply as offered load approaches server capacity; treat any single multiplier as workload-specific (community benchmarks, approximate, mid-2026 snapshot — no primary-source universal ratio).
+- Provider-side queueing is visible in the wild: provider status incidents and peak-hour degradation reports describe elevated time-to-first-token under capacity pressure; OpenAI's engineering guidance is to use exponential backoff with jitter and honor `Retry-After` headers, implicitly acknowledging queueing transients (OpenAI API docs guidance, fetched 2026-08-27).
+- Client-side guidance: LLM inference spans roughly 500 ms to 30+ s depending on prompt size and current load, so fixed low timeouts fail; timeouts must be sized from measured tail latency (p99) plus retry budget, not the mean (LLM error-handling/timeout best-practice writeups, 2025–2026, secondary sources).
+- A timeout below p99 converts tail latency into client-visible errors and, with naive immediate retries, feeds synchronized retry bursts back into the queue — the retry storm amplifies exactly the arrival burst that caused the tail (derived from queueing argument above; consistent with OpenAI backoff guidance).
+
+## How it works
+An inference server is a queue in front of a GPU. Requests arrive with Poisson-ish randomness (bursts happen), and each request needs a variable amount of service: prompt-length-dependent prefill plus output-length-dependent decode. Under FCFS admission, TTFT = time waiting for the scheduler to admit you + your prefill compute (plus the tail of any in-flight prefill batch you joined). The first term is governed by queueing math: mean wait is λE[S²]/2(1−ρ). Two consequences follow. First, the 1/(1−ρ) term means latency is flat-ish at 50–70% utilization and then climbs a wall — a 10% increase in offered load near saturation can multiply queue wait several-fold, and p99 diverges faster than the mean because waiting time is skewed (a few requests sit through the whole backlog). Second, the E[S²] term means *variability* of service time matters as much as its mean: one 4000-token prompt being prefilled ahead of you, or one long-generating request pinning KV-cache blocks, stretches everyone behind it.
+
+Bursts make it worse because real arrivals are not smooth. A fleet of agents firing at the same moment, a cron-triggered batch of summaries, or a retry storm after a hiccup all concentrate arrivals. Since KV-cache capacity caps how many prefills/decodes run concurrently (49 concurrent requests at 1280-token sequences on a 7B model on one A100, per the 2024 measurement), the burst overflows into the waiting queue, and preemption can evict mid-flight requests back to it. The system then spends GPU time recomputing prefills it already did once — extra service demand that pushes ρ higher still, a mild feedback loop.
+
+For the client, the practical picture: your median TTFT can be tens of milliseconds while p99 is a multiple of that, and the ratio is not fixed — it is whatever 1/(1−ρ) and the burst pattern make it that day. Tail TTFT is a property of the *load*, not of your request.
+
+## Harness angle
+Size the client's first-token timeout from a continuously measured p99 TTFT (streaming: abort if no first chunk within, say, p99 × safety factor) plus one full exponential-backoff-with-jitter retry budget — never from the mean or a fixed constant. An undersized timeout doesn't protect you: it converts provider queueing into your own error rate, and immediate retries re-arrive as a burst, deepening the queue you were trying to escape.
+
+## Sources
+- https://arxiv.org/abs/2407.05347
+- https://arxiv.org/abs/2401.09670
+- https://docs.vllm.ai/en/stable/design/metrics/
+- https://platform.openai.com/docs/guides/rate-limits
+- https://docs.vllm.ai/en/stable/configuration/optimization/
+- https://futureagi.com/blog/llm-latency-tail-evaluation-2026/

@@ -1,0 +1,35 @@
+# Sampler mechanics at decode time and provider defaults
+researched: 2026-08-27 · researcher: glm-5.3-flash
+
+## Key facts
+- Every decoding step is the same loop: the model emits a raw logit vector (one score per vocabulary token), the sampler reshapes that vector, converts it to a probability distribution, and draws one token. Temperature, top-k, top-p, min-p, and the penalties are all just different edits to that per-step logit vector (vLLM `sampling_params.py`, fetched 2026-08-27).
+- vLLM `SamplingParams` is the canonical engine-side parameter set. Defaults in source: `temperature=1.0`, `top_p=1.0`, `top_k=0` (0 or −1 means "all tokens"), `min_p=0.0`, `frequency_penalty=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`, `seed=None`, `max_tokens=16`, `min_tokens=0`, `n=1` (vLLM `vllm/sampling_params.py` @ main, fetched 2026-08-27). vLLM states it follows the OpenAI completions-API parameter set.
+- vLLM validation ranges: `temperature ∈ [0, 2]`, `top_p ∈ (0, 1]`, `min_p ∈ [0, 1]`, `presence_penalty` and `frequency_penalty` each `∈ [−2, 2]` (vLLM source, fetched 2026-08-27).
+- vLLM treats `temperature < 1e-5` as greedy: it forces `top_p=1.0`, `top_k=0`, `min_p=0.0` and rejects `n > 1`. Temperatures in `(0, 0.01)` are silently clamped up to `0.01` to avoid NaN/Inf in the softmax tensor math (vLLM source, fetched 2026-08-27).
+- OpenAI's published API schema shows `temperature` and `top_p` defaults of 1 and penalty defaults of 0; assistant objects in the same spec are returned with `"temperature": 1.0, "top_p": 1.0` (openai-openapi repo, spec version 2.3.0, fetched 2026-08-27). So the "neutral" OpenAI request is pure sampling from the model's own distribution.
+- Gemini's `GenerationConfig` no longer hardcodes defaults: docs say temperature defaults "vary by model" (exposed via the `Model.temperature` attribute from `getModel`), with temperature range `[0.0, 2.0]`; `topP` and `topK` defaults also vary by model, and models running nucleus sampling "don't allow topK setting" (Google AI `generateContent` API reference, fetched 2026-08-27).
+- Gemini's `seed` is optional: "If not set, the request uses a randomly generated seed" (Google AI API reference, fetched 2026-08-27). OpenAI's schema includes a nullable `seed` for best-effort determinism (openai-openapi, fetched 2026-08-27). vLLM supports per-request `seed` and internally distinguishes greedy, random, and random-with-seed sampling types (vLLM source, fetched 2026-08-27).
+- Anthropic's Messages API historically documents temperature default 1.0 (range 0 to 1) and `top_k` where 0 disables the k-filter; the current docs pages (`docs.claude.com/...sampling`, `platform.claude.com/docs/en/api/messages`) could not be fetched on 2026-08-27 to re-verify, so treat those exact numbers as unconfirmed for mid-2026.
+- min-p sampling (ICLR 2025, arXiv:2407.01082, 2024) truncates the distribution dynamically: a token survives only if its probability ≥ min_p × p(top token). When the model is confident, the cutoff rises (fewer tokens); when unsure, it falls. Adopted in Hugging Face Transformers and vLLM (arXiv:2407.01082, abstract, fetched 2026-08-27).
+- Penalties are additive logit shifts computed from tokens already generated: presence penalty is binary per token (seen or not), frequency penalty scales with count. Gemini docs explicitly warn that large negative frequency penalties make the model repeat one token until `maxOutputTokens` (Google API reference, fetched 2026-08-27).
+- Constrained decoding composes with sampling by masking logits before the draw: vLLM's `StructuredOutputsParams` (json/regex/choice/grammar, mutually exclusive) builds a logit processor that bans tokens outside the grammar, and the same request can still carry temperature/top-p/min-p/seed — you sample within the legal set (vLLM source, fetched 2026-08-27).
+- vLLM also exposes `logit_bias` (bias clamped to [−100, 100]) and `allowed_token_ids` (hard allowlist) as explicit per-request logit processors (vLLM source, fetched 2026-08-27).
+- "Determinism" is layered: a seed fixes the random draws, but batch composition, nondeterministic GPU reductions, engine version, and provider-side model updates can still change outputs. Only seed + fixed engine + fixed batch shape approaches reproducibility; hosted providers offer at best best-effort seed semantics (OpenAI schema note; vLLM RANDOM_SEED sampling type, both fetched 2026-08-27).
+
+## How it works
+At each decode step the model produces logits z over the vocabulary. The sampler pipeline is fixed in order: penalties and biases first (add/subtract on logits based on history and `logit_bias`), then grammar masking (illegal tokens get −inf), then temperature (divide logits by T before softmax — T < 1 sharpens, T > 1 flattens), then truncation filters (top-k keeps k tokens; top-p keeps the smallest prefix whose cumulative probability reaches p; min-p keeps tokens with p_i ≥ min_p × p_max). The surviving probabilities are renormalized and one token is drawn — or, at T≈0, the argmax is taken.
+
+Temperature is the only knob that changes the shape continuously. The truncation knobs are hard cuts: a token either survives the filter or gets probability zero. That's why stacking top-k + top-p + min-p can interact surprisingly — vLLM applies them in sequence on the already-temperature-scaled distribution, and setting temperature to zero disables them all, because greedy sampling ignores the distribution entirely.
+
+The two OpenAI-style penalties differ only in the history term: presence adds the same penalty whether a token appeared once or fifty times; frequency adds penalty × count. Neither looks at the prompt — that's what `repetition_penalty` (Hugging Face-style, default 1.0 = off) does. Constrained decoding is deliberately placed before sampling, not after: you never waste a draw on an illegal token and never have to retry — but the effective distribution the model "intended" is distorted, which is why heavy constraints plus low temperature can push the model into ungrammatical-but-legal continuations.
+
+## Harness angle
+Your harness should pin sampling parameters explicitly per call site instead of trusting provider defaults — defaults differ (OpenAI 1.0/1.0, vLLM same, Gemini "varies by model"), so the same prompt behaves differently across backends. Concretely: record `temperature/top_p/seed` in every stored model I/O event so agent transcripts are reproducible to the extent the backend allows, and treat `seed` as best-effort only — put reproducibility logic in evaluation harnesses (fixed engine, fixed seeds, fixed prompts), never in production control flow.
+
+## Sources
+- https://raw.githubusercontent.com/vllm-project/vllm/main/vllm/sampling_params.py
+- https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml
+- https://ai.google.dev/api/generate-content#generationconfig
+- https://arxiv.org/abs/2407.01082
+- https://docs.vllm.ai/en/latest/api/vllm/sampling_params.html
+- https://platform.claude.com/docs/en/api/messages
