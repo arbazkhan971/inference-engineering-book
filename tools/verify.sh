@@ -43,17 +43,41 @@ python3 tools/reflow-check.py
 # attack suites (gate-6 rounds 1 and 2) — regression evidence, enforced.
 # `node --check` is not used on purpose: on Node 24 it exits 0 for a module
 # holding a syntax error, so it reports clean on exactly the broken file this
-# step exists to catch.
-if command -v tsc >/dev/null 2>&1; then
+# step exists to catch. tsc resolution: PATH first, then the companion's own
+# pinned devDependency (node_modules/.bin/tsc, present after the documented
+# fresh-clone step `npm install` in companion/tinyengine). Either way
+# `npm test` type-checks before anything executes.
+if command -v tsc >/dev/null 2>&1 \
+   || [[ -x companion/tinyengine/node_modules/.bin/tsc ]]; then
   (cd companion/tinyengine && npm test --silent)
 elif [[ -f companion/tinyengine/dist/tests/smoke.js ]]; then
-  echo "note: tsc not on PATH — running the previously compiled dist;" \
-       "recompile before a release run" >&2
+  # Stale-dist guard: the fallback must never present old code as the
+  # checked-out code. If any source, test, or config file is newer than the
+  # compiled marker, refuse instead of reporting a false green. Sources are
+  # flat (top-level *.ts plus tests/*.ts); the check uses bash's -nt builtin —
+  # a find(1) -new pipeline failed OPEN on this host (unsupported predicate
+  # errored into a passing condition), and a guard must fail closed.
+  marker=companion/tinyengine/dist/tests/smoke.js
+  stale=""
+  for f in companion/tinyengine/*.ts companion/tinyengine/tests/*.ts \
+           companion/tinyengine/package.json companion/tinyengine/tsconfig.json; do
+    [[ "$f" -nt "$marker" ]] && { stale="$f"; break; }
+  done
+  if [[ -n "$stale" ]]; then
+    echo "error: companion/tinyengine/dist is older than its sources —" \
+         "$stale changed after the last compile. Recompile" \
+         "(cd companion/tinyengine && npm install && npm test)" \
+         "before trusting a suite run" >&2
+    exit 1
+  fi
+  echo "note: tsc not on PATH — running the previously compiled dist" \
+       "(verified current against sources)" >&2
   (cd companion/tinyengine && node dist/tests/smoke.js && node dist/tests/cadence.js \
     && node dist/tests/attack-gate6.js && node dist/tests/attack2-gate6.js)
 else
   echo "error: tsc not on PATH and companion/tinyengine/dist is absent —" \
-       "install TypeScript (or run a build) so sources are type-checked" >&2
+       "install TypeScript (npm install in companion/tinyengine pulls the" \
+       "pinned devDependency) so sources are type-checked" >&2
   exit 1
 fi
 tools/build.sh

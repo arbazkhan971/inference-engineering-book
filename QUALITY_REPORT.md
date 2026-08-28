@@ -3,21 +3,42 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the architect-queued
-fuzz round 2 (iteration 87): a second adversarial pass over the companion's
-round-1-untouched surfaces — `tests/attack2-gate6.ts` + `fixtures/attack2/`
-(interleaved streams, usage-after-finish, mid-flight/double reconcile,
-duplicate-id and corrupt baselines, floor boundaries, CRLF/quoted/negative/BOM
-file shapes, two-scheduler interleavings). Pre-fix: 33 attacks, 12 findings
-(2 P1-class, 10 P2), 18 held. All 12 applied, both P1s included — cache-hit-gate's
-non-finite `--floor`/`--min-rows` guard (the round-1 D2 class in the other gate:
-library reason + CLI exit 2) and the unknown-model continue-path
+command where one exists. Last updated: 2026-08-28, after the clean-room
+re-seal pass (iteration 88): the sealed release candidate was proven to
+reproduce BIT-FOR-BIT from a fresh clone at HEAD 3d4c00a — full protocol:
+`git clone` from origin → one-command `tools/build.sh` (figures on, 34/34
+mermaid staged, 0 degraded, no build dirt) → `validate-epub.py` passes →
+companion `rm -rf node_modules dist && npm install && npm test` (local tsc
+5.9 compile from the pinned devDependency; all four suites green) →
+`tools/verify.sh` ALL OFFLINE CHECKS PASSED. Four independent builds across
+the clean room and the main tree produced one md5 (f228b1bf…, 6,308,902
+bytes — exactly iteration 87's sealed figure). Hardening landed in the same
+pass: verify.sh's dist fallback could silently run STALE compiled code as
+if it were the checked-out code (a false-green hazard — the fuzz rounds'
+own bug class, found this time in the harness itself); the fallback now
+carries a fail-closed stale-dist guard (bash's -nt builtin, after a find(1)
+-new draft failed OPEN on this host — unsupported predicate errored into a
+passing condition; guard proven both ways: refuses on a touched source,
+naming the file, and passes after recompile), and verify.sh now uses the
+companion's own node_modules/.bin/tsc when global tsc is absent, so the
+documented fresh-clone path is one `npm install` + verify.sh (README Build
+section updated). All four branches of the suite step proven in the clean
+room: local-tsc, guarded fallback, stale-refusal, absent-refusal. Manuscript
+change this pass: one Appendix F.1 ledger row (the build-test record, plus
+its 6.2→6.3 MB refresh) — no reading text touched; rebuild at the edited
+HEAD re-validates clean (fresh size and hash recorded in PROGRESS). Prior pass kept as history: the
+architect-queued fuzz round 2 (iteration 87) — a second adversarial pass
+over the companion's round-1-untouched surfaces (`tests/attack2-gate6.ts`
++ `fixtures/attack2/`: interleaved streams, usage-after-finish,
+mid-flight/double reconcile, duplicate-id and corrupt baselines, floor
+boundaries, CRLF/quoted/negative/BOM file shapes, two-scheduler
+interleavings): pre-fix 33 attacks, 12 findings (2 P1-class, 10 P2), 18
+held; all 12 applied — cache-hit-gate's non-finite `--floor`/`--min-rows`
+guard (library reason + CLI exit 2) and the unknown-model continue-path
 (`recordSafe()` prices 0 + a `mispriced` event; `record()` keeps the named
-fail-fast error — the queued P1). Key repros wired into smoke/cadence; both
-attack suites now enforced in `npm test` and `tools/verify.sh`; round-1's
-by-construction C1 print converted to assert the fixed contract. Appendix D,
-README, and ch18 updated to shipped behavior and counts (six modules 783 lines
-vs the 720 estimate sum, ~9% over, all guard-bearing — "roughly eight hundred"
+fail-fast error — the queued P1); repros wired into smoke/cadence, both
+attack suites enforced in `npm test` and `tools/verify.sh`, and Appendix
+D, README, and ch18 updated to shipped counts ("roughly eight hundred"
 everywhere the book said seven). Prior pass kept as history: the pedagogy
 wave's twenty-fifth fix pass (iteration 86) completed the plain-English guide,
 the wave's final surface, and with it the entire 25-surface pedagogy queue
@@ -982,9 +1003,13 @@ a skip to an error, verified exit 1).
 python3 tools/lint-manuscript.py          # structural lint
 python3 tools/reflow-check.py --budget 0  # reader-facing reflow gate
 bash tools/verify.sh                      # lint + suites + build + validator
-tools/build.sh                            # one-command EPUB (6.0M)
+tools/build.sh                            # one-command EPUB (6.3M)
 python3 tools/validate-epub.py            # structural validator
-cd companion/tinyengine && npm test       # both offline suites (smoke + cadence)
+cd companion/tinyengine && npm test       # all four offline suites (smoke, cadence, both attack suites)
 cd companion/tinyengine && npm run cadence  # the three nightly gates over fixtures
 ls research/*.md | wc -l                  # 72 files / 71 dated digests
+
+# Fresh clone, from nothing: one install of the pinned TypeScript, then the
+# full verification above runs itself (verify.sh finds the local tsc).
+(cd companion/tinyengine && npm install) && tools/verify.sh
 ```

@@ -39,6 +39,10 @@ Start there if any chapter runs ahead of you.
 ```bash
 tools/build.sh    # → build/inference-engineering.epub
 tools/verify.sh   # structural checks
+
+# Fresh clone, full verification: the companion's pinned TypeScript installs
+# once (verify.sh then type-checks and runs all four suites itself).
+(cd companion/tinyengine && npm install) && tools/verify.sh
 ```
 
 ## Editorial stance
