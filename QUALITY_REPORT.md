@@ -10,7 +10,14 @@ re-verified post-seal in iteration 55: first figures-on retail build from
 the exact final text (EPUB 6,282,581 bytes, 34/34 mermaid, 0 degraded),
 fresh strict tsc recompile + both companion suites green, `tools/verify.sh`
 ALL OFFLINE CHECKS PASSED, and a full rebuild left the working tree
-byte-clean — zero drift against the sealed commit.
+byte-clean — zero drift against the sealed commit. Re-verified again at
+iteration 56 (driver re-invoked, queue empty): `tools/verify.sh` ALL
+OFFLINE CHECKS PASSED end-to-end, the EPUB rebuilt byte-identical
+(6,282,581 bytes) with the tree clean apart from two ledger-accuracy
+fixes made that pass (EDITORIAL_SYSTEM's final-proof row had kept
+calling copyedit a pending gate though it passed 2026-08-27; §4's "closed
+this iteration" was undated) — no manuscript, figure, or companion file
+changed; the seal stands.
 
 ## 1. Gate ledger
 
@@ -95,7 +102,7 @@ front matter), and normalization fixes:
 6. **Appendix E bibliography is curated, not exhaustive** (~60 of >570
    corpus URLs; the curation rule is published in E.1).
 
-Closed this iteration (were residuals 6 and 7): the tester-cadence scripts
+Closed at iteration 47 (were residuals 6 and 7): the tester-cadence scripts
 now ship (`golden-set.ts`, `cache-hit-gate.ts`, `invoice-reconcile.ts` +
 shared plumbing + fixtures + a second offline test suite), and `tools/verify.sh`
 no longer references the Volume I companion — it runs this repo's two suites,
