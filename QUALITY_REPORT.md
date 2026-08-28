@@ -4,7 +4,42 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twenty-third fix pass: iteration 84 completed the front-matter
+wave's twenty-fourth fix pass: iteration 85 completed the back-matter
+pass (zz-back-matter.md, graded 4.0/5, zero [LOST]; the audit's three
+worst gaps: an authority hook written at engineer density, 
+terminology-rule drift, and an unlabeled proof destination). Seven of
+nine findings applied — finding 8 keep-as-is per the audit (intentional
+"harness engineer" branding), finding 9 (an optional "read next"
+closer) skipped as a marketing addition, not a defect, per the audit's
+own framing: the authority-hook sentence de-jargoned for exactly the
+outsider most likely to read it ("GLM-5.3 model instances" glossed as
+"one AI model, running in a hundred-plus parallel copies" — documented
+deviation from the audit's "one hundred parallel copies" for numeric
+consistency with "well over one hundred"; "drafted chapter by chapter
+on a headless writing driver, against a six-gate editorial system" →
+"drafted chapter by chapter through an automated writing loop that ran
+on its own, under a six-checkpoint editorial system", "through" not
+the audit's "by" to avoid the chapter-by-chapter-by double-by); the
+book's own banned-term rule enforced on its own back cover — both
+reader-facing "digest" sites now "research notes" (the back matter
+had escaped the copyedit sweep's scan; grep-verified zero
+reader-facing "digest" remains outside Appendix E's method term and
+ch06/ch07's legitimate technical senses); "The repo — manuscript,
+research corpus, and build pipeline —" → "The project — the full
+manuscript, the research notes behind every number, and the scripts
+that assemble the book —", with the parenthetical's "all committed to
+the public repository" rippled to "all stored in the public project"
+(findings 4+6's principle applied to the file's other "committed");
+the ccrank.dev link glossed "— the public meter" so the
+200-billion-token claim's receipt is labeled; Copyright's "committed
+alongside the manuscript" → "archived alongside" and "the front
+matter's rule about numbers" → "the rule about numbers at the front of
+the book". zz now 426 words (+35, all gloss/plain-words-bearing); no
+figures (no mermaid — SKIP_FIGURES sound). Ledger repair in the same
+pass: Appendix F.1's pedagogy-row status cell had drifted stale at the
+front-matter iteration (the record was appended but the status cell
+still read "front/back matter queued") — now current.
+Prior pass kept as history: iteration 84 completed the front-matter
 pass (00a-prologue + 00b-front-matter, audited together as one surface)
 — all 16 findings settled (4.25/5 — 1 [LOST] + 7 [CONFUSING] +
 8 [POLISH]; the auditor's verdict: "all fixes are one-clause insertions;
