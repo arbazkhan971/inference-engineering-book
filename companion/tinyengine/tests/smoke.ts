@@ -28,7 +28,7 @@ const stopOf = (es: Event[]) => { const e = es.find((e) => e.type === "stop_reas
   assert.deepEqual(n.ingest(": keep-alive"), []);
   assert.deepEqual(n.ingest("event: ping"), []);
   assert.deepEqual(n.ingest("data: [DONE]"), []);
-  // Text delta with ttft_seconds stamped on the first content delta only.
+  // Text delta with ttftSeconds stamped on the first content delta only.
   const first = n.ingest(`data: ${JSON.stringify({ choices: [{ delta: { role: "assistant", content: "Hel" } }] })}`);
   assert.equal(first[0].type, "text_delta");
   assert.ok("ttftSeconds" in first[0]);

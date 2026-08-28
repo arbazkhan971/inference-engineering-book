@@ -6,7 +6,7 @@ Every chapter before this one described machinery you cannot see: schedulers, KV
 
 Here is the misunderstanding. Teams treat streaming as a user-interface nicety — "we'll turn it on when the chat window is ready." In practice streaming is the *default mode of operation* for agents, and not streaming is the exceptional case that requires justification. Three reasons, all from earlier chapters. First, agent turns are short and TTFT (time to first token)-dominated (chapter 2's two regimes): the 20-token tool-call turn spends nearly all its wall clock waiting for the first token, and only a stream can show you that first token the moment it exists. Second, the non-streaming request is a timeout trap: OpenAI's and Anthropic's SDK (software development kit) defaults are ten minutes long largely because a request that returns nothing until it returns *everything* gives you no progress signal to hang a deadline on. Third, cancellation barely works without streaming — the server that has nothing to write cannot easily notice that you stopped reading.
 
-This chapter is about what actually travels on the wire: Server-Sent Events and their grammar, the three incompatible dialects the major providers speak on top of that one standard, the fragmented way tool calls arrive, what happens when a stream dies mid-token, and the one normalization layer your harness needs so none of the dialect differences ever reach your agent loop. It ends with the product lesson: the only engine metric your users can feel is TTFT, and the stream is where you measure it.
+This chapter is about what actually travels on the wire: Server-Sent Events and their grammar, the four incompatible dialects the major providers speak on top of that one standard, the fragmented way tool calls arrive, what happens when a stream dies mid-token, and the one normalization layer your harness needs so none of the dialect differences ever reach your agent loop. It ends with the product lesson: the only engine metric your users can feel is TTFT, and the stream is where you measure it.
 
 ## 12.1 Words before machinery
 
@@ -27,7 +27,7 @@ This chapter is about what actually travels on the wire: Server-Sent Events and 
 
 Two terms from chapter 2 ride along all chapter: **TTFT** (time to first token) and **TPOT** (time per output token). If you skipped that chapter: TTFT is send-to-first-delta; TPOT is the average gap between deltas after that.
 
-## 12.2 Three grammars on one wire
+## 12.2 Four grammars on one wire
 
 > **ELI5:** Imagine three postal companies that all agreed to deliver by motorcycle courier — same road, same engine noise — but each designed its own envelope format. One numbers every envelope and stamps "LAST ONE" on the final envelope. One doesn't number anything but colors each envelope by what's inside. One delivers the whole letter as a single parcel, then texted you separately that it had arrived. The road is the standard. The envelopes are not.
 
@@ -45,10 +45,12 @@ The second thing that breaks harnesses is that the three major providers put com
 
 ```mermaid
 graph LR
-    A[OpenAI chunks<br/>delta.content + finish_reason + DONE sentinel]
+    A[OpenAI Chat chunks<br/>delta.content + finish_reason + DONE sentinel]
+    R[OpenAI Responses typed events<br/>output_text.delta → response.completed]
     B[Anthropic event log<br/>block_start / block_delta / block_stop + stop_reason]
     C[Gemini response chunks<br/>?alt=sse + finishReason on last chunk]
-    A --> N[Stream normalizer<br/>one internal event type]
+    A --> N[Stream normalizer<br/>four internal event types]
+    R --> N
     B --> N
     C --> N
     N --> T[text_delta events]
@@ -57,13 +59,13 @@ graph LR
     N --> W[stop_reason event]
 ```
 
-The diagram is the whole chapter in one picture: three grammars, one normalizer, four internal event types. Section 12.5 builds the normalizer; first you need to know the two places the grammars diverge hardest.
+The diagram is the whole chapter in one picture: four grammars, one normalizer, four internal event types. Section 12.5 builds the normalizer; first you need to know the two places the grammars diverge hardest.
 
 **How streams end.** Sentinel vs finish reason vs stop reason vs finishReason — and the values underneath diverge enough to break schemas. LiteLLM, the open-source proxy, maintains an explicit `map_finish_reason()` layer because providers emit values OpenAI never defined: ZhipuAI's GLM can emit `finish_reason: "network_error"` *mid-stream*, which once raised a Pydantic validation error inside LiteLLM's own stream assembler before unknown values were mapped to a fallback (LiteLLM PR #22673, retrieved 2026-08-27). Read that failure mode carefully: an unmapped enum value in a final event crashed an agent-loop library. Your finish-reason table needs an unknown-value fallback the way your rate-limit code needs a default branch — not because providers are sloppy, but because you cannot enumerate values you haven't seen yet.
 
 **Off the SSE road entirely.** Realtime and speech APIs use stateful **WebSockets** — full duplex, event-driven, bidirectional. OpenAI's Realtime API runs over WebSocket or WebRTC (web real-time communication); Google's Live API is WebSocket-only, accepts raw 16-bit PCM (pulse-code modulation) audio at 16 kHz, returns 24 kHz, and resets the socket roughly every ten minutes, which forces harnesses to implement session resumption as a *feature of the transport* (both provider docs, retrieved 2026-08-27). SSE is one-way and simple; WebSocket is two-way and stateful. Everything in this chapter is about the SSE world your agent loops live in; the realtime world inherits its lessons (event grammars, fragment assembly, resumption) with the addition that *you* now send events too.
 
-> **Dated snapshot — the three SSE grammars, mid-2026.** OpenAI Chat Completions: `data:` chunks, `choices[].delta`, terminate on `finish_reason` + `data: [DONE]`; Responses API: typed events (`response.output_text.delta`, `response.function_call_arguments.delta`, `response.completed`), termination is `response.completed`. Anthropic: ordered event log (`message_start` → `content_block_*` → `message_delta` → `message_stop`), `ping`/`error` anywhere, `stop_reason` in `message_delta`; `pause_turn` means re-send the partial turn to continue. Gemini: `streamGenerateContent?alt=sse` (the parameter is mandatory for SSE framing), `finishReason` on the last chunk. All three verified against provider docs 2026-08-27; all three drift — subscribe to changelogs.
+> **Dated snapshot — the four SSE grammars, mid-2026.** OpenAI Chat Completions: `data:` chunks, `choices[].delta`, terminate on `finish_reason` + `data: [DONE]`; Responses API: typed events (`response.output_text.delta`, `response.function_call_arguments.delta`, `response.completed`), termination is `response.completed`. Anthropic: ordered event log (`message_start` → `content_block_*` → `message_delta` → `message_stop`), `ping`/`error` anywhere, `stop_reason` in `message_delta`; `pause_turn` means re-send the partial turn to continue. Gemini: `streamGenerateContent?alt=sse` (the parameter is mandatory for SSE framing), `finishReason` on the last chunk. All four verified against provider docs 2026-08-27; all four drift — subscribe to changelogs.
 
 ## 12.3 Tool calls arrive in pieces
 
@@ -110,13 +112,13 @@ What survives a kill? More than you'd think, if you plan for it. Anthropic docum
 
 ## 12.5 The mailroom: one normalizer, one event type
 
-> **ELI5:** An office gets mail from three couriers in three envelope formats. Instead of training every employee to read all three, the mailroom opens everything, discards the envelopes, and puts one standardized slip on each desk: letter, package, invoice, or "note from the boss." Nobody downstream knows or cares which courier delivered it.
+> **ELI5:** An office gets mail from three couriers — four envelope formats between them, since one courier runs two lines. Instead of training every employee to read all four, the mailroom opens everything, discards the envelopes, and puts one standardized slip on each desk: letter, package, invoice, or "note from the boss." Nobody downstream knows or cares which courier delivered it.
 
 The normalizer is a thin component with an unglamorous job: swallow every provider grammar, emit one internal event type. The internal shape needs only four members — `text_delta`, `tool_call_delta(call_id, fragment)`, `usage(counts)`, `stop_reason(mapped)` — plus the timestamps the next section will need. Everything provider-shaped dies at this boundary.
 
 Two pieces of state do the real work. The **tool-call accumulator** from 12.3, keyed by a provider-agnostic call id (Chat `index`, Responses `item_id`, Anthropic block index + `toolu_` id, Gemini `step.start` id — map them all to your own id at intake). And the **stop-reason state machine**: `tool_calls`/`tool_use` → flush assembled arguments to the executor; `length`/`max_tokens` → flag truncation so the loop knows the answer was cut, not finished; `pause_turn` → re-send the partial turn as-is to continue; safety values → surface distinctly, because retrying a safety stop is a different decision than retrying a timeout. And the fallback row for unknown values, owed to GLM's `network_error`: map to an explicit internal `unknown` and log it, never throw (the LiteLLM lesson from 12.2).
 
-You do not have to build this layer from nothing. LiteLLM converts every provider stream into OpenAI-shaped chunks and maps finish reasons along the way; the Vercel AI SDK defines its own intermediate stream protocol with typed parts that provider adapters target (both documented, retrieved 2026-08-27). DeepSeek even exposes *both* an OpenAI-format and an Anthropic-format endpoint for the same model — the OpenAI shapes have become de facto interchange formats (DeepSeek docs, retrieved 2026-08-27). Using a middleware is reasonable; what is not reasonable is your agent loop parsing three grammars itself, because every provider difference then leaks into every feature you build on top.
+You do not have to build this layer from nothing. LiteLLM converts every provider stream into OpenAI-shaped chunks and maps finish reasons along the way; the Vercel AI SDK defines its own intermediate stream protocol with typed parts that provider adapters target (both documented, retrieved 2026-08-27). DeepSeek even exposes *both* an OpenAI-format and an Anthropic-format endpoint for the same model — the OpenAI shapes have become de facto interchange formats (DeepSeek docs, retrieved 2026-08-27). Using a middleware is reasonable; what is not reasonable is your agent loop parsing four grammars itself, because every provider difference then leaks into every feature you build on top.
 
 **The usage event is the billing interface, and it is where chapter 6 and chapter 11's promissory notes come due.** Both chapters said "watch cached-vs-fresh input tokens per turn; chapter 12 covers parsing." Here is the parsing. The usage object arrives on the stream's final events, and every provider names the same four facts differently:
 
@@ -171,7 +173,7 @@ The mailroom analogy says streams are just envelopes in house dress — passive,
 
 ### Build it
 
-Build tinyengine's `StreamNormalizer`. Intake: raw SSE lines from any of the three grammars. Output: four internal events — `text_delta`, `tool_call_delta(call_id, fragment)`, `usage(fresh_in, cached_in, out, reasoning)`, `stop_reason(mapped)` — each stamped with a receive timestamp, plus a `ttft_seconds` field on the first content delta. Inside: the meta-event skip, a `ToolCallAccumulator` keyed by provider-agnostic call id (Chat `index` → id, Responses `item_id`, Anthropic block index + `toolu_` id, Gemini `step.start` id), a finish-reason mapping table with an explicit `unknown` fallback, and the `""` → `{}` coercion. Roughly 150 lines in any language; it is the most-reused component in the whole book's companion.
+Build tinyengine's `StreamNormalizer`. Intake: raw SSE lines from any of the four grammars. Output: four internal events — `text_delta`, `tool_call_delta(call_id, fragment)`, `usage(fresh_in, cached_in, out, reasoning)`, `stop_reason(mapped)` — each stamped with a receive timestamp, plus a `ttftSeconds` field on the first content delta. Inside: the meta-event skip, a `ToolCallAccumulator` keyed by provider-agnostic call id (Chat `index` → id, Responses `item_id`, Anthropic block index + `toolu_` id, Gemini `step.start` id), a finish-reason mapping table with an explicit `unknown` fallback, and the `""` → `{}` coercion. Roughly 150 lines in any language; it is the most-reused component in the whole book's companion.
 
 ### Break it
 
@@ -179,7 +181,7 @@ Break it with recorded streams, replayed and mutilated. Truncate mid-tool-call: 
 
 ### Prove it
 
-Golden-case tests: the three-chunk Portland assembly; a five-call parallel burst keyed by three different id schemes; the usage-identity assertion (`total = prompt + completion`, cache reads ≤ input) run against captured real responses from each provider you use, so field drift breaks CI and not your invoice. Replay tests: record one real stream per provider (they're just text files of `data:` lines), assert the normalizer's four-event output is byte-identical across library versions. Metric test: feed a synthetic stream with known send/first-delta timestamps and assert the emitted `ttft_seconds`.
+Golden-case tests: the three-chunk Portland assembly; a five-call parallel burst keyed by three different id schemes; the usage-identity assertion (`total = prompt + completion`, cache reads ≤ input) run against captured real responses from each provider you use, so field drift breaks CI and not your invoice. Replay tests: record one real stream per provider (they're just text files of `data:` lines), assert the normalizer's four-event output is byte-identical across library versions. Metric test: feed a synthetic stream with known send/first-delta timestamps and assert the emitted `ttftSeconds`.
 
 ### See it in the wild
 
