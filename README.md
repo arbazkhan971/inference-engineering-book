@@ -13,9 +13,9 @@ decides whether a brilliant agent loop ships or stalls.
 | Stage | State |
 |---|---|
 | Architecture | done — GOAL.md, CHAPTER_MAP.md, STYLE.md |
-| Research corpus | fanout in progress → research/ (dated sourced digests) |
-| Manuscript | autonomous driver (pi in tmux on the ldp devbox) |
-| Build | tools/build.sh → EPUB 3 (pandoc), inherited from Vol. I |
+| Research corpus | sealed — 72 files, 71 dated digests (research/) |
+| Manuscript | sealed release candidate — prologue + 18 chapters + appendices A–F + back matter (~115k words), all six gates green |
+| Build | tools/build.sh → EPUB 3 (pandoc); clean-checkout build verified (review/gate6-clean-build.md) |
 
 ## Layout
 

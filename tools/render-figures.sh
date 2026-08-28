@@ -24,6 +24,14 @@ for svg in figures/svg/*.svg; do
   if [[ "$name" == "cover" ]]; then
     render_width=1600
   fi
+  # mtime guard (same pattern as tools/render-mermaid.sh): a committed PNG
+  # that is not older than its SVG is current. Skipping keeps a stranger's
+  # first build from dirtying the tree with this machine's rsvg/font bytes —
+  # the committed renders are canonical; re-render by touching the SVG.
+  if [ -f "figures/png/$name.png" ] && [ ! "$svg" -nt "figures/png/$name.png" ]; then
+    echo "$name.png up to date (mtime guard)"
+    continue
+  fi
   if command -v rsvg-convert >/dev/null 2>&1; then
     rsvg-convert -w "$render_width" "$svg" -o "$STAGE_DIR/${name}.png"
   elif command -v inkscape >/dev/null 2>&1; then
@@ -37,25 +45,31 @@ for svg in figures/svg/*.svg; do
 done
 
 for png in "$STAGE_DIR"/*.png; do
+  [ -e "$png" ] || continue  # empty stage when every render was guarded out
   name="$(basename "$png")"
   mv "$png" "figures/png/$name"
 done
 
-# KDP wants a JPEG cover.
-if command -v sips >/dev/null 2>&1; then
-  sips -s format jpeg figures/png/cover.png --out figures/png/cover.jpg >/dev/null
-elif command -v convert >/dev/null 2>&1; then
-  convert figures/png/cover.png -background white -alpha remove \
-    -quality 92 figures/png/cover.jpg
-elif command -v ffmpeg >/dev/null 2>&1; then
-  # cover.png renders opaque RGB (rsvg-convert flattens the SVG background),
-  # so a plain encode is safe; -q:v 2 ≈ ImageMagick quality 92.
-  ffmpeg -y -loglevel error -i figures/png/cover.png -q:v 2 figures/png/cover.jpg
+# KDP wants a JPEG cover (same mtime guard: convert only when missing or
+# older than the PNG it is made from).
+if [ -f figures/png/cover.jpg ] && [ ! figures/png/cover.png -nt figures/png/cover.jpg ]; then
+  echo "cover.jpg up to date (mtime guard)"
 else
-  echo "error: install sips, ImageMagick, or ffmpeg to make the cover JPEG" >&2
-  exit 1
+  if command -v sips >/dev/null 2>&1; then
+    sips -s format jpeg figures/png/cover.png --out figures/png/cover.jpg >/dev/null
+  elif command -v convert >/dev/null 2>&1; then
+    convert figures/png/cover.png -background white -alpha remove \
+      -quality 92 figures/png/cover.jpg
+  elif command -v ffmpeg >/dev/null 2>&1; then
+    # cover.png renders opaque RGB (rsvg-convert flattens the SVG background),
+    # so a plain encode is safe; -q:v 2 ≈ ImageMagick quality 92.
+    ffmpeg -y -loglevel error -i figures/png/cover.png -q:v 2 figures/png/cover.jpg
+  else
+    echo "error: install sips, ImageMagick, or ffmpeg to make the cover JPEG" >&2
+    exit 1
+  fi
+  echo "rendered cover.jpg"
 fi
-echo "rendered cover.jpg"
 
 if [[ -f tools/optimize-figures.py ]]; then
   python3 tools/optimize-figures.py

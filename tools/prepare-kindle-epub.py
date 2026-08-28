@@ -66,7 +66,7 @@ def main() -> None:
     temporary: str | None = None
     try:
         with NamedTemporaryFile(
-            dir=EPUB.parent, prefix="harness-engineering-", suffix=".epub", delete=False
+            dir=EPUB.parent, prefix="inference-engineering-", suffix=".epub", delete=False
         ) as handle:
             temporary = handle.name
         with ZipFile(temporary, "w") as target:

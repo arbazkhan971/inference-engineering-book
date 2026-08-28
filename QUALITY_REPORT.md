@@ -4,8 +4,13 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the gate-6
-companion-attack P2 pass (iteration 60 of the writing driver) closed the
-last open queue and re-sealed the release candidate; full history below.
+clean-checkout-build P2 pass (iteration 61 of the writing driver) applied
+the three hygiene findings that iteration 60's seal had left unqueued
+(review/gate6-clean-build.md — cover-render mtime guard so a stranger's
+first build keeps a clean tree, stale README status table refreshed to the
+sealed state, Volume-I temp-file prefix fixed) and re-sealed the release
+candidate; full history below. Previously: the gate-6 companion-attack P2
+pass (iteration 60) closed the companion queue; full history below.
 Previously: the appendix-E and appendix-F technical-edit fix passes
 (iterations 49–54, closing Gate 2 across chapters and appendices;
 copyedit was iteration 46), and
@@ -78,8 +83,15 @@ companion pass, one no-fix by judgment — and the wave is closed. The
 gate-6 companion attack (0 P0 / 7 P1 / 11 P2) is fully settled too:
 all 7 P1s applied 2026-08-28 (iteration 58) and all 10 surviving P2s
 applied 2026-08-28 (iteration 60) with repros wired into the suites
-and the attack file held as regression evidence — the gate-6 queue is
-closed (details in Appendix F.1's two gate-6 rows) |
+and the attack file held as regression evidence. The gate-6
+clean-checkout build attack (0 P0 / 0 P1 / 3 P2) — committed before the
+seal but left out of iteration 60's queue accounting — is settled at
+iteration 61: the cover render gained render-mermaid's mtime guard (a
+stranger's first build no longer dirties the committed cover pair), the
+README status table refreshed to the sealed state, and the Volume-I
+temp-file prefix fixed; both guard paths verified live and the full
+build/verify chain green — the gate-6 queue is now closed in full
+(details in Appendix F.1's three gate-6 rows) |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
 | Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions (P1 set from iteration 58, P2 set from iteration 60), and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row, formula-agreement, retired-task and non-finite-floor regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion attack fully applied (7 P1s + 10 P2s, 2026-08-28) with `tests/attack-gate6.ts` kept as regression evidence — 10/10 P2 attacks HELD at the fixed tree, all 14 previously-held attacks still hold, C1 reports by construction on any throw (documented; its gate lives in smoke's `assert.throws(UnknownModelError)`) |
