@@ -4,8 +4,51 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's eleventh fix pass: iteration 72 completed the ch11 pass — all 11
-findings applied (4.2/5 — 1 [LOST] + 5 [CONFUSING] + 5 [POLISH]).
+wave's twelfth fix pass: iteration 73 completed the ch12 pass — all 12
+findings applied (4.4/5 — zero [LOST]; 6 [CONFUSING] + 6 [POLISH])
+plus both advisory worst-gap items. Headlined by the audit's single
+worst gap: the event/delta/chunk triple at the chapter's front door —
+three table rows that felt 90% identical — now disambiguated in one
+sentence after the Two-terms paragraph ("the *event* is the envelope,
+the *delta* is the slice inside it, and *chunk* is simply the common
+vendor name for an event that carries deltas (OpenAI's, most famously)
+— two things, three words, because providers named them separately";
+documented deviation: the audit's "simply OpenAI's name" became "the
+common vendor name (OpenAI's, most famously)" because the chapter's
+own Gemini sentence uses "chunks" two sections later, and the digest
+attests chunks for both wire formats). The parallel-calls sentence's
+self-contradictory "do not interleave … but … can mix" construction is
+rewritten digest-exactly ("Fragments belonging to the *same* call
+always arrive in order, never mixed with another call's fragments
+inside one slot; between one call's fragments and the next, a
+different call's fragments or plain text may appear — which is why you
+buffer per call slot, never in one global buffer"; documented
+deviation: the audit's "with nothing else in between" dropped — the
+digest attests same-call order and no cross-call interleaving within
+one index, but not that text cannot interrupt one call's fragment
+run). Pydantic and enum carry first-use glosses at their 12.2 sites;
+p99/p50 are glossed as spaced recalls at the two-clocks paragraph (the
+99th-percentile first-token time, the slow end of normal; the median —
+typical throughput); the cache-lifetime parenthetical now points at
+chapter 14 ("the two cache lifetimes chapter 14 prices"); the 12.5
+stop-reason state machine gained the first-stop-wins clause ("Finish
+chunks can arrive more than once — first one wins, the rest are
+ignored" — machinery Build-it previously introduced only at exercise
+time, now consistent with Appendix D's rule 3 and the companion's
+stop() dedup); the opening's double acronym expansion gained its
+everyday handle ("the paper form your code mails to the provider and
+gets stamped back"); the "ride along all chapter" grammar slip, the
+PCM gloss (uncompressed digital sound), and the middleware gloss
+(extra software layers sitting between client and engine) are fixed;
+the dated four-grammars box opens with its recap flag; and both
+worst-gap reference-wall flags are in (12.2's provider walk and 12.5's
+usage bullets each tell the reader they are not meant to memorize —
+the normalizer exists so they never have to). Ch12 now 5,678 words
+(raw wc; +227, all gloss/on-ramp/flag-bearing), 3.2% over the 5,500
+concept cap — logged rather than trimmed, consistent with the ch06
+(2.5%) / ch02 (2.9%) / ch04 (5.6%) pedagogy precedent. Prior pass kept
+as history: iteration 72 completed the ch11 pass — all 11 findings
+applied (4.2/5 — 1 [LOST] + 5 [CONFUSING] + 5 [POLISH]).
 Headlined by the audit's one [LOST]: the 11.2 tier-cliff money example,
 the chapter's only spot where a careful beginner builds an actively
 wrong model — the ambiguous "100K more usable room" clause is replaced
