@@ -4,7 +4,27 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's sixth fix pass: iteration 67 applied all 19 ch06 findings (4.4/5,
+wave's seventh fix pass: iteration 68 applied all 6 ch07 findings (4.70/5,
+zero [LOST] — 3 [CONFUSING] + 3 [POLISH]) — headlined by the audit's
+worst-gap hardware-name cluster: "tensor-core-shaped" dropped in favor of
+chapter 3's own coinage ("built for the chip's specialized matrix-math
+units" — grep showed ch03's iteration-64 fix had removed "tensor cores"
+book-wide, making ch07 the term's only survivor), and the NVLink/InfiniBand
+brand sentence retaught as plain hops ("the fast chip-to-chip links within
+one machine (NVLink)" vs "the network links between machines"). The
+opener's "under tail-latency constraints" became "under strict
+worst-case-wait limits" (the term keeps its self-glossed 7.3 site and 7.5's
+proper use), "full of retrieved documents" became "full of attached
+documents" (RAG stays named where it is expanded), Checkpoint Q2's
+previously unnamed formula is now taught in 7.2 ("arithmetic intensity
+climbing toward ≈ 512, chapter 3's batch dial turned up by the prompt's own
+length"), and "forward pass" — used book-wide since ch01 but never defined
+— is glossed below the timeline fence rather than inside it (the audit's
+in-fence parenthetical breaks the 66-column reader-fit budget at the note's
+alignment indent). Ripple greps clean book-wide. Ch07 now 5,062 words
+(+73, all gloss/on-ramp-bearing), inside the 5,500 concept cap.
+
+History: iteration 67 applied all 19 ch06 findings (4.4/5,
 zero [LOST] — 12 [CONFUSING] + 7 [POLISH]) — headlined by the audit's
 worst-gap machinery cluster, now glossed at first use: the attention
 kernel ("the chip's read-the-notes routine"), goodput (glossed against
