@@ -33,17 +33,17 @@ Two habits follow. Provider documentation is simultaneously the most authoritati
 
 Organized by the book's four parts, then the reference shelf. Papers are listed by the name the chapters use; provider pages by their role. Chapter pointers show where each source did load-bearing work. All URLs were retrieved 2026-08-27 unless the entry says otherwise; provider pages should be presumed to have moved since.
 
-### Part I — The engine room from the street (chapters 1–4)
+### Part I — The layer beneath the prompt (chapters 1–4)
 
 - **GPT-3: Language Models are Few-Shot Learners** — Brown et al., arXiv:2005.14165 (2020). The autoregressive next-token definition the whole book stands on. (ch 3)
-- **PaLM: Scaling Language Modeling with Pathways** — Chowdhery et al., arXiv:2204.02311 (2022). Training-scale MFU anchor: 46.2% on 6,144 TPU v4 chips. (ch 3)
+- **PaLM: Scaling Language Modeling with Pathways** — Chowdhery et al., arXiv:2204.02311 (2022). Training-scale MFU anchor: 46.2% on 6,144 TPU v4 chips. (ch 1, 3)
 - **Efficiently Scaling Transformer Inference** — Pope et al., arXiv:2211.05102 (2022). The 29 ms/token decode figure; the bandwidth-bound decode argument at scale. (ch 1–3)
 - **FlashAttention** — Dao et al., arXiv:2205.14135; NeurIPS 2022. Exact attention with the quadratic *memory* term removed — the fusion argument of chapter 3, including the BERT-large 15% and GPT-2 3× numbers. (ch 3)
 - **Cross-lingual token costs** — arXiv:2305.13707 / EMNLP 2023. Same information, widely different token counts across 22 languages. (ch 2)
 - **Strawberry / character-level token blindness** — arXiv:2505.14172 / EMNLP 2025. Tokens carry low mutual information with characters. (ch 2)
 - **Code formatting token overhead** — arXiv:2508.13666 (2025). The measured 24.5% input reduction from formatting removal. (ch 2)
 - **Token fertility and downstream accuracy** — arXiv:2509.05486 (2025). Fertility as a cost-and-quality predictor. (ch 2)
-- **Lost in the Middle** — Liu et al., arXiv:2307.03172 (2023). Position, not presence, determines attention quality. (ch 11)
+- **Lost in the Middle** — Liu et al., arXiv:2307.03172 (2023). Position, not presence, determines attention quality. (ch 1, 11)
 - **RULER: What's the Real Context Size of Your Long-Context Language Models?** — Hsieh et al., arXiv:2404.06654 (2024). Claimed-vs-effective window gaps. (ch 4, 11)
 - **Fast Transformer Decoding: One Write-Head is All You Need (MQA)** — Shazeer, arXiv:1911.02150 (2019). Single shared KV head. (ch 4)
 - **GQA: Training Generalized Multi-Query Transformer Models** — Ainslie et al., arXiv:2305.13245 (2023). Grouped-query interpolation. (ch 4)
@@ -51,7 +51,7 @@ Organized by the book's four parts, then the reference shelf. Papers are listed 
 - **DeepSeek-V2 (MLA mechanism)** — arXiv:2405.04434 (2024). Latent-cache attention. (ch 4)
 - **DeepSeek-V3 Technical Report** — arXiv:2412.19437 (2024). The 576-element latent cache, aux-loss-free routing, production topologies. (ch 4, 10)
 - **Gemma 3 Technical Report** — arXiv:2503.19786 (2025); **Gemma 4** — arXiv:2607.02770 (2026). 5:1 local:global sliding windows to tame KV at 128K. (ch 4)
-- **Attention-variant survey** — arXiv:2502.07864 (2025) and MLA-on-accelerators hardware analysis, arXiv:2506.02523 (2025). The cache-compression ladder as a measured tradeoff. (ch 4)
+- **Attention-variant ladder (TransMLA, GQA→MLA migration)** — arXiv:2502.07864 (2025) and MLA-on-accelerators hardware analysis, arXiv:2506.02523 (2025). The cache-compression ladder as a measured tradeoff. (ch 4)
 
 ### Part II — Inside the engine (chapters 5–11)
 
@@ -73,25 +73,26 @@ Organized by the book's four parts, then the reference shelf. Papers are listed 
 - **AWQ** — Lin et al., arXiv:2306.00978; MLSys 2024. Salient-channel protection via ~512 calibration samples. (ch 9)
 - **LLaMA-3 quantization survey** — arXiv:2404.14047 (2024); **COLM 2025 quantization benchmark study** — arXiv:2504.04823 (2025). The 8-bit-near-lossless / 4-bit-risky quality map. (ch 9)
 - **Give Me BF16 or Give Me Death** — arXiv:2411.02355 (2024). FP8 serving near-losslessness across 500k+ evaluations. (ch 9, Appendix C)
-- **GShard / Switch Transformer** — arXiv:2006.16668 (2020); arXiv:2101.03961 (2021). Expert capacity factors and token dropping.
+- **GShard / Switch Transformer** — arXiv:2006.16668 (2020); arXiv:2101.03961 (2021). Expert capacity factors and token dropping. (ch 10)
 - **Mixtral of Experts** — arXiv:2401.04088 (2024). Top-2-of-8 sparsity in the open. (ch 10)
 - **gpt-oss model card** — arXiv:2508.10925 (2025). 128-expert, top-4, MXFP4 configuration. (ch 9, 10)
 - **Ring Attention** — Liu et al., arXiv:2310.01889 (2023). Sequence sharding across devices; exact attention. (ch 10, 11)
 - **Unified Sequence Parallelism (USP)** — arXiv:2405.07719 (2024). Head-vs-sequence parallel composition. (ch 10, 11)
 - **Context Parallelism for Scalable Million-Token Inference** — arXiv:2411.01783; MLSys 2025. The 77 s / 1M-token / 128-H100 measurement. (ch 10, 11)
 - **MemGPT** — Packer et al., arXiv:2310.08560 (2023). OS-style memory paging for context. (ch 11)
-- **TokenPilot** — arXiv:2606.17016 (2026). Agent-loop cost telemetry; cache-invalidation losses up to 87%. (ch 11, 14)
-- **Lost in Compaction** — arXiv:2608.11242 (2026). Side-constraint survival under compaction (73%→40%→7%). (ch 11, 17)
+- **TokenPilot** — arXiv:2606.17016 (2026). Agent-loop cost telemetry; its cache-aware layout cuts continuous-task-stream inference cost by up to 87%. (ch 11, 17)
+- **Lost in Compaction** — arXiv:2608.11242 (2026). Side-constraint survival under compaction (only ~17% survive on average); the recall decay 73%→40%→7% is from the separate lost-in-compaction Zenodo benchmark (10.5281/zenodo.20273814). (ch 11, 17)
 - **Goodput research line** — TurboSpec, arXiv:2406.14066 (2024); aggregation-vs-disaggregation tradeoffs, arXiv:2508.01989 (2025); SLO-budget fair serving, arXiv:2608.06557 (2026). Where the goodput definition is heading. (ch 5, 18)
 
 ### Part III — The API contract (chapters 12–16)
 
-- **Outlines: A Generator for Constrained Sampling** — Willard & Louf, arXiv:2307.09702 (2023). FSM-based masking; the compile-cost problem (0.22 req/s, 38.5 s TTFT). (ch 13)
+- **Outlines: A Generator for Constrained Sampling** — Willard & Louf, arXiv:2307.09702 (2023). FSM-based masking; the compile-cost problem (vLLM's Outlines backend: 0.22 req/s, 38.5 s mean TTFT, PR #10785). (ch 13)
 - **XGrammar** — Dong et al., arXiv:2411.15100 (2024). Adaptive token masks; context-independent precompute; the 100×/80× claims. (ch 13)
 - **Grammar-Aligned Decoding** — NeurIPS 2024. Off-distribution corrections; the expensive reweighting fix. (ch 13)
 - **Let Me Speak Freely?** — arXiv:2408.02442 (2024). The format-restriction quality ordering. (ch 13)
 - **CRANE** — arXiv:2502.09061 (2025). Reasoning-before-answer under strict schemas. (ch 13)
-- **Capacity, Not Format** — arXiv:2606.09410 (2026). The 11-model base-vs-instruct tax split. (ch 13)
+- **The Hidden Cost of Structure** — RANLP 2025. The 11-model base-vs-instruct tax split. (ch 13)
+- **Capacity, Not Format** — arXiv:2606.09410 (2026). Format cost tracks model spare capacity (4 models, 5 benchmarks). (ch 13)
 - **Token Space Compression** — arXiv:2605.29986 (2026). Vocabulary-linear per-step grammar overhead. (ch 13)
 - **PSC (per-step constrained-decoding cost)** — arXiv:2608.03065 (2026). The throughput limiter for large-vocab constrained decoding. (ch 13)
 - **Provider streaming and tool-delta documentation** — OpenAI streaming/chunk-shape docs incl. the `[DONE]` sentinel and Responses event types; Anthropic Messages streaming reference (ordered event log, `message_delta` stop reasons, ping events); Gemini `streamGenerateContent` reference (`alt=sse` as the stream switch) and Live API (WebSocket, PCM 16 kHz in / 24 kHz out). The four grammars chapter 12 normalizes. (ch 12)
@@ -115,14 +116,14 @@ Organized by the book's four parts, then the reference shelf. Papers are listed 
 - **llama.cpp GGUF quantization table** — Q4_0/Q4_1/Q5_0 sizes and perplexity deltas; Q4_K_M default. (ch 18)
 - **Ollama MLX backend announcement** — the unified-memory rationale. (ch 18)
 - **MLX vs llama.cpp head-to-head** — arXiv:2511.05502 (2025). First peer-quality Apple-Silicon comparison. (ch 18)
-- **vLLM documentation and issues** — FP8 KV-cache measurements (2026-04-22: 14.9%/54%/~7k break-even); speculative-decoding caveats (issue #9565); cancellation at step granularity (issue #10087); guided-decoding correctness (PR #10785); `--goodput` CLI; scheduler knobs (`max_num_seqs`, `max_num_batched_tokens`, batch-wait ratio). The engine's actual defaults, straight from the engine. (ch 5–9, 12, 13, 18)
+- **vLLM documentation and issues** — FP8 KV-cache measurements (2026-04-22: 14.9%/54%/~7k break-even); speculative-decoding caveats (issue #9565); cancellation at step granularity (issue #10087); guided-decoding correctness (PR #10785); `--goodput` CLI; scheduler knobs (`max_num_seqs`, `max_num_batched_tokens`). The engine's actual defaults, straight from the engine. (ch 5–9, 12, 13, 18)
 - **GPU rental market snapshots** — H100 $2.39–2.49/hr and A100 marketplace rates, checked 2026-08-02 and 2026-08-27. (ch 18, Appendix C)
 
 ### The reference shelf (appendices and positioning)
 
 - **Provider pricing pages** — OpenAI, Anthropic, Gemini, DeepSeek price tables (the DeepSeek off-peak halves and the two-snapshot hit-price divergence). Appendix C's source of truth. (Appendix C)
 - **Artificial Analysis** — same-weights provider spreads (Scout 8.3×, R1 6.1×) and latency medians; flagged JS-rendered and third-party throughout. (ch 1, 2, 9, Appendix C)
-- **Comparables shelf** — Raschka, *Build a Large Language Model (From Scratch)* (Manning); Alammar & Grootendorst, *Hands-On Large Language Models* (O'Reilly); Iusztin & Labagne, *LLM Engineer's Handbook* (Packt); Huyen, *AI Engineering* (O'Reilly); Ousterhout, *A Philosophy of Software Design*. Price/length anchors and launch precedents for Appendix F. (Appendix F)
+- **Comparables shelf** — Raschka, *Build a Large Language Model (From Scratch)* (Manning); Alammar & Grootendorst, *Hands-On Large Language Models* (O'Reilly); Iusztin & Labonne, *LLM Engineer's Handbook* (Packt); Huyen, *AI Engineering* (O'Reilly); Ousterhout, *A Philosophy of Software Design*. Price/length anchors and launch precedents for Appendix F. (Appendix F)
 - **Amazon category and BSR data** — bestseller nodes (Artificial Intelligence 491300, NLP 271581011, Generative AI 211759007011) and third-party BSR-to-sales calculators — curve-fits only, flagged as such. (Appendix F)
 - **Launch playbooks** — Huyen's AI Engineering launch sequence (announcement-to-print timeline, companion repo, podcast tour); Ousterhout's second-edition free-extract precedent. (Appendix F)
 
