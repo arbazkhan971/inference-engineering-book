@@ -124,7 +124,7 @@ Organized by the book's four parts, then the reference shelf. Papers are listed 
 - **Provider pricing pages** — OpenAI, Anthropic, Gemini, DeepSeek price tables (the DeepSeek off-peak halves and the two-snapshot hit-price divergence). Appendix C's source of truth. (Appendix C)
 - **Artificial Analysis** — same-weights provider spreads (Scout 8.3×, R1 6.1×) and latency medians; flagged JS-rendered and third-party throughout. (ch 1, 2, 9, Appendix C)
 - **Comparables shelf** — Raschka, *Build a Large Language Model (From Scratch)* (Manning); Alammar & Grootendorst, *Hands-On Large Language Models* (O'Reilly); Iusztin & Labonne, *LLM Engineer's Handbook* (Packt); Huyen, *AI Engineering* (O'Reilly); Ousterhout, *A Philosophy of Software Design*. Price/length anchors and launch precedents for Appendix F. (Appendix F)
-- **Amazon category and BSR data** — bestseller nodes (Artificial Intelligence 491300, NLP 271581011, Generative AI 211759007011) and third-party BSR-to-sales calculators — curve-fits only, flagged as such. (Appendix F)
+- **Amazon category and Best Sellers Rank (BSR) data** — bestseller nodes (Artificial Intelligence 491300, NLP 271581011, Generative AI 211759007011) and third-party BSR-to-sales calculators — curve-fits only, flagged as such. (Appendix F)
 - **Launch playbooks** — Huyen's AI Engineering launch sequence (announcement-to-print timeline, companion repo, podcast tour); Ousterhout's second-edition free-extract precedent. (Appendix F)
 
 ## E.4 The volatility map — what ages, and how fast

@@ -10,7 +10,7 @@ The editorial system behind this book defines gates, not vibes. Here is the hone
 |---|---|---|
 | Architecture | Pass | Chapter map, four parts, capability ladder locked at scaffold; positioning verified against the books corpus — no dedicated inference/serving title appeared in the AI or NLP bestseller nodes reviewed 2026-08-27 |
 | Writer (Gate 1) | Pass, per chapter | 18/18 chapters + prologue carry logged self-reviews (structure, numbers traceability, fixes) in the project progress ledger |
-| Technical edit (Gate 2) | Pass (chapters); appendix fix-pass underway | All 18 chapters reviewed (findings in review/); every P0/P1/P2 finding applied through the driver fix-passes (final chapter, ch18, closed 2026-08-27); verdicts were 17 MINOR and 1 MAJOR (ch04, resolved). Appendices A–F reviewed next (all MINOR, P0 = 0); appendix A's 2 P1 + 3 P2, appendix B's 1 P1 + 6 P2, appendix C's 3 P1 + 2 P2, appendix D's 3 P1 + 6 P2, and appendix E's 4 P1 + 6 P2 applied 2026-08-28 (E's P2 Splitwise finding rejected as false positive — ch03:40 carries the quote), F last |
+| Technical edit (Gate 2) | Pass (chapters + appendices) | All 18 chapters reviewed (findings in review/); every P0/P1/P2 finding applied through the driver fix-passes (final chapter, ch18, closed 2026-08-27); verdicts were 17 MINOR and 1 MAJOR (ch04, resolved). Appendices A–F reviewed next (all MINOR, P0 = 0); appendix A's 2 P1 + 3 P2, B's 1 P1 + 6 P2, C's 3 P1 + 2 P2, D's 3 P1 + 6 P2, E's 4 P1 + 6 P2, and F's 1 P1 + 3 P2 all applied 2026-08-28 (E's P2 Splitwise finding rejected as false positive — ch03:40 carries the quote) — sweep complete |
 | Code test | Pass | Companion tinyengine type-checks clean under TypeScript 5.9.3; two offline suites green across repeated runs — the smoke suite (chapter Break-it/Prove-it cases replayed as code) and the cadence suite (the tester role's three nightly gates over fixtures: golden set, cache-hit gate, invoice reconciliation) |
 | Build test | Pass | One command produces a validated EPUB (6.2 MB at last build); 34/34 mermaid diagrams render with labels; structural validator passes |
 | Copyedit | Pass (2026-08-27) | Book-wide style/terminology scan + fixes: closer format normalized (ch15–18 bolded paragraphs → H3 subsections, matching ch01–14); token-rate units unified to `tokens/s`; terminology/spelling stragglers fixed; structural conventions verified uniform; full record in QUALITY_REPORT.md §3. The reflow decision is closed (see F.3 item 5): reader-facing code lines all fit 66 columns and the checker runs at budget 0 inside the build |
@@ -24,7 +24,7 @@ The copyedit pass closed 2026-08-27; final proof (Kindle Previewer) is the one r
 
 **Categories.** Practitioner AI titles dual-list in Amazon's "Artificial Intelligence" node (491300) and "Natural Language Processing" node (271581011); the cheaper "Generative AI" node (211759007011) is dominated by low-cost self-published titles and is not this book's shelf. Bestseller-list reality from the 2026-08-27 snapshot: trade and business AI books plus practitioner project guides dominate the top-20; technical deep-dives are the minority — which is the point of the wedge, not a defect.
 
-**Price.** The practitioner anchors: $59.99 print list is the established level (Manning and Packt comparables), O'Reilly pushed flagships to ~$79.99, and eBook editions list $47.99–$54.99 with street prices typically 20–30% below list. Self-published AI eBooks cluster at $9.99 or below; that shelf sells volume and reviews, not depth, and pricing this series next to it would mis-signal the content. Kindle royalty mechanics and price bands are not part of this book's research corpus — verify current KDP terms in the pricing calculator at upload time rather than trusting this page.
+**Price.** The practitioner anchors: $59.99 print list is the established level (Manning and Packt comparables), O'Reilly pushed flagships to ~$79.99, and eBook editions list $47.99–$54.99 with street prices typically 20–30% below list. Self-published AI eBooks cluster at $9.99 or below; that shelf sells volume and reviews, not depth, and pricing this series next to it would mis-signal the content. Kindle royalty mechanics and price bands are not part of this book's research corpus — verify current Kindle Direct Publishing (KDP) terms in the pricing calculator at upload time rather than trusting this page.
 
 **Length.** Comparable practitioner successes run 368 to 534 pages; the corpus conclusion was that this volume need not exceed ~500. The manuscript weighs in north of 110,000 words; the 2026-08-27 copyedit normalized style and terminology but did not mass-trim — chapter overages against the style bands were reviewed and logged as content-bearing (mechanism and both-sides framing were the casualty of cutting), per the progress ledger.
 
@@ -64,7 +64,7 @@ In order, on one calendar day:
 2. Clean-tree build; structural validator passes on the retail EPUB.
 3. Kindle Previewer pass (F.3 item 6) — phone and e-reader profiles, front to back matter.
 4. Reflow decision recorded (F.3 item 5).
-5. Metadata: title, subtitle, author, edition line, publication date, description led by the one-line tether.
+5. Metadata: title, subtitle, author, edition line, publication date, description led by the one-line tether — and let the subtitle and series keywords (harness, agents, provider APIs) carry search: a 2026 Baseten book shares this exact title and its free companion site dominates the phrase (positioning research, retrieved 2026-08-27).
 6. Categories: AI (491300) primary, NLP (271581011) secondary; stay off the self-pub Generative AI shelf.
 7. Price set per F.2 after checking current KDP royalty bands.
 8. Companion repository made public; README states what the code is (Appendix D's guide) and where it is referenced chapter by chapter.
@@ -79,7 +79,7 @@ A dated book is not a sin; an undated drift is. The maintenance calendar:
 | Cadence | Task | Target |
 |---|---|---|
 | Every pricing cycle (quarterly at most) | Re-date prices, cache multipliers, rate limits | Appendix C |
-| Quarterly | Re-verify engine defaults after each major vLLM/SGLang/TRT-LLM upgrade | Chapters 5–9 knob values via Appendix E's engine-doc tier |
+| Quarterly | Re-verify engine defaults after each major vLLM/SGLang/TensorRT-LLM upgrade | Chapters 5–9 knob values via Appendix E's engine-doc tier |
 | On any provider announcement you act on | Re-date the affected matrix row immediately, not at quarter's end | Appendix C |
 | Annually | Re-check claimed-vs-effective context windows (RULER-style) and same-weights provider spreads | Chapters 4, 11, Appendix C |
 | On any reader-visible error | Errata entry, dated; fix in source; new edition only when accumulated change justifies a new ISBN-scale event | Errata page + progress ledger |
