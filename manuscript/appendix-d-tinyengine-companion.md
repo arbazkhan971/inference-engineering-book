@@ -2,7 +2,7 @@
 
 > **Appendices — the reference shelf.** The chapters estimated the code; this guide delivers it. Every "Build it" in the book, assembled in one place.
 
-The chapters said it in one sentence, and it remains the truest sentence in this appendix: **tinyengine is roughly seven hundred lines that sit between your agent loop and every model endpoint it calls.** Each module was designed in the chapter that needed it, at the size that chapter estimated, and every estimate carried a tilde. The shipped code keeps those promises:
+The chapters said it in one sentence, and it remains the truest sentence in this appendix: **tinyengine is roughly seven hundred lines that sit between your agent loop and every model endpoint it calls.** Each module was designed in the chapter that needed it, at the size that chapter estimated, and every estimate carried a tilde. The shipped code keeps those promises — with one deliberate exception, noted under the table below.
 
 | Module | Designed in | Estimated | Shipped | Owns |
 |---|---|---|---|---|
@@ -13,7 +13,7 @@ The chapters said it in one sentence, and it remains the truest sentence in this
 | `router.ts` | Chapter 16 | ~150 | 133 | routing, breakers, classified fallback |
 | `session-store.ts` | Chapter 17 | ~160 | 114 | byte-exact sessions |
 
-(The estimates were tildes, not contracts; the shipped totals run a little under because TypeScript type declarations compress what the chapters described in prose. No chapter's promise is broken — every interface this table's chapters named exists in the code, under the name the chapter used, with one aggregation: chapters 15 and 18 name a `RateScheduler`, and its four parts ship in `rate-scheduler.ts` under their own names — `QuotaLedger`, `TokenBucket` and `Semaphore`, `RetryPolicy`, the wave pacer's `waveDelays` and `kOfN`.)
+(The estimates were tildes, not contracts; the shipped totals run a little under because TypeScript type declarations compress what the chapters described in prose. No chapter's promise is broken — every interface this table's chapters named exists in the code, under the name the chapter used, with one aggregation: chapters 15 and 18 name a `RateScheduler`, and its four parts ship in `rate-scheduler.ts` under their own names — `QuotaLedger`, `TokenBucket` and `Semaphore`, `RetryPolicy`, the wave pacer's `waveDelays` and `kOfN` — and one deliberate omission: chapter 13's `SchemaGuard` stays in your harness because its schemas are yours; what ships of that chapter is the guarantee-tier ladder itself (`router.ts`'s `GuaranteeTier`) plus free-form `tags` on each deployment, so the tier is a routing input (D.6) even though the validator is yours.)
 
 ## D.1 The wiring order
 
@@ -56,7 +56,7 @@ Three timestamps in, the decode-time identity out, and — the part most tracers
 
 ## D.3 The stream normalizer (chapter 12)
 
-Intake: raw SSE (server-sent events) lines from any of the four grammars (`openai-chat`, `openai-responses`, `anthropic`, `gemini`). Output: the four internal events — `text_delta`, `tool_call_delta`, `usage`, `stop_reason` — plus two finish-time markers the accumulator emits (the assembled `tool_call`, and `incomplete_call` when arguments do not parse), each stamped with a receive timestamp, and `ttftSeconds` on the first content delta. Three rules carry the chapter's lessons:
+Intake: raw SSE (server-sent events) lines from any of the four grammars (`openai-chat`, `openai-responses`, `anthropic`, `gemini`). Output: the four streaming events — `text_delta`, `tool_call_delta`, `usage`, `stop_reason` — plus two finish-time markers the accumulator emits (the assembled `tool_call`, and `incomplete_call` when arguments do not parse), each stamped with a receive timestamp, and `ttftSeconds` on the first content delta. Three rules carry the chapter's lessons:
 
 1. **Meta-only events skip, never crash.** Lines that do not start with `data:` — comments, `event:`, pings — return nothing. The WHATWG (the web-standards body behind the SSE spec) allows them; the normalizer survives them.
 2. **Tool arguments parse exactly once, at the finish.** The `ToolCallAccumulator` keys fragments by provider-agnostic call id (Chat `index` → id once it arrives, Responses `item_id`, Anthropic `toolu_` id from `content_block_start`, Gemini function name), concatenates blindly, and parses once when the stream ends. A fragment split mid-escape-sequence (`\"Portla` / `nd\"`) reassembles fine because no fragment is ever parsed alone. Empty arguments coerce `""` → `{}`; unparseable arguments become an `incomplete_call` marker, not an exception.

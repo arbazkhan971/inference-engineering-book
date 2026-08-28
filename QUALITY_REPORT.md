@@ -17,14 +17,21 @@ OFFLINE CHECKS PASSED end-to-end, the EPUB rebuilt byte-identical
 fixes made that pass (EDITORIAL_SYSTEM's final-proof row had kept
 calling copyedit a pending gate though it passed 2026-08-27; §4's "closed
 this iteration" was undated) — no manuscript, figure, or companion file
-changed; the seal stands.
+changed; the seal stands. Iteration 57 then re-opened the seal under the
+architect's gate-6 queue: the adversarial claims + xref wave (committed
+2026-08-28) found 0 P0 / 5 P1 / 11 P2; all five P1s were applied with
+recompute discipline (see the Gate 2 row and Appendix F.1), validation
+green afterwards (lint OK 113,707 words, reflow budget 0, 34/34 figures,
+EPUB 6,282,454 bytes, validator passes, both companion suites green from
+the unchanged dist), and the eleven P2s remain queued — the candidate
+re-seals when that pass lands.
 
 ## 1. Gate ledger
 
 | Gate | Status | Evidence |
 |---|---|---|
 | Gate 1 — Writer (self-review) | **PASS, all 18 chapters + prologue + appendices A–F + back matter** | Per-chapter Gate-1 logs in PROGRESS.md (structure checklist, numbers audit, fix lists). Structural lint green manuscript-wide: `python3 tools/lint-manuscript.py` → MANUSCRIPT OK, 18/18 chapters, 27 files |
-| Gate 2 — Technical editor | **PASS, all 18 chapters + appendices A–F** | Full review set in `review/` (verdicts: 17 MINOR, 1 MAJOR); every chapter P0/P1/P2 finding applied via driver fix-passes, iterations 28–44 + ch01 post-review polish; citations re-verified against `research/` before each application. Appendix reviews A–F complete 2026-08-28 (all MINOR, P0 = 0, 14 P1 + 27 P2 total); every appendix finding applied via the appendix fix-pass, iterations 49–54, one appendix per iteration: A 2 P1 + 3 P2, B 1 P1 + 6 P2, C 3 P1 + 2 P2, D 3 P1 + 6 P2, E 4 P1 + 6 P2 (one P2 rejected as false positive with evidence: ch03:40 carries the quote), F 1 P1 + 3 P2 — sweep complete, Gate 2 closed |
+| Gate 2 — Technical editor | **PASS, all 18 chapters + appendices A–F** | Full review set in `review/` (verdicts: 17 MINOR, 1 MAJOR); every chapter P0/P1/P2 finding applied via driver fix-passes, iterations 28–44 + ch01 post-review polish; citations re-verified against `research/` before each application. Appendix reviews A–F complete 2026-08-28 (all MINOR, P0 = 0, 14 P1 + 27 P2 total); every appendix finding applied via the appendix fix-pass, iterations 49–54, one appendix per iteration: A 2 P1 + 3 P2, B 1 P1 + 6 P2, C 3 P1 + 2 P2, D 3 P1 + 6 P2, E 4 P1 + 6 P2 (one P2 rejected as false positive with evidence: ch03:40 carries the quote), F 1 P1 + 3 P2 — sweep complete, Gate 2 closed. Post-seal, the architect's gate-6 adversarial wave (claims falsifiers + book-wide xref audit, 2026-08-28: 0 P0 / 5 P1 / 11 P2) was applied under the same discipline: all 5 P1s recomputed against digests/code and applied 2026-08-28 with ripple-greps (details in Appendix F.1); the 11 P2s are queued and the release seal re-opens until that pass lands |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
 | Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases, and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence` |
