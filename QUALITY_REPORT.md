@@ -5,7 +5,12 @@ per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the appendix-E and appendix-F
 technical-edit fix passes (iterations 49–54 of the writing driver, closing
-Gate 2 across chapters and appendices; copyedit was iteration 46).
+Gate 2 across chapters and appendices; copyedit was iteration 46), and
+re-verified post-seal in iteration 55: first figures-on retail build from
+the exact final text (EPUB 6,282,581 bytes, 34/34 mermaid, 0 degraded),
+fresh strict tsc recompile + both companion suites green, `tools/verify.sh`
+ALL OFFLINE CHECKS PASSED, and a full rebuild left the working tree
+byte-clean — zero drift against the sealed commit.
 
 ## 1. Gate ledger
 
