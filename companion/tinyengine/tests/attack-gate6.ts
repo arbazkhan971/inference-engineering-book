@@ -5,13 +5,15 @@
 //   node dist/tests/attack-gate6.js
 // P2 fix pass note: the A8 and D2 blocks originally asserted the *buggy* behavior
 // by construction (they can only pass a finding); after the fixes they assert the
-// fixed contracts like every other block. C1 still prints its finding by
-// construction — both branches report; its regression gate lives in smoke.ts.
+// fixed contracts like every other block. C1 printed its finding by construction
+// through the round-2 pass (both branches reported; its regression gate lived in
+// smoke.ts) — with the round-2 recordSafe() continue-path shipped, it too now
+// asserts the fixed contract: named error, mispriced event, loop survives.
 import assert from "node:assert/strict";
 import { exit } from "node:process";
 import { StreamNormalizer, type Event } from "../stream-normalizer.js";
 import { QuotaLedger, TokenBucket, Semaphore, classify, backoffDelayMs } from "../rate-scheduler.js";
-import { CacheLedger } from "../cache-ledger.js";
+import { CacheLedger, UnknownModelError } from "../cache-ledger.js";
 import { scoreGolden, makeBaseline, type GoldenTask, type GoldenRow, type GoldenBaseline } from "../golden-set.js";
 import { reconcile, type MeterRow, type InvoiceRow } from "../invoice-reconcile.js";
 import { gateHits } from "../cache-hit-gate.js";
@@ -187,14 +189,17 @@ const eventsOf = (n: StreamNormalizer, lines: string[]) => lines.flatMap((l) => 
   const prices = { "m1": { date: "2026-08-27", in: 3, out: 15, cacheWriteMultiplier: 1.25, cacheReadMultiplier: 0.1 } };
   const led = new CacheLedger(prices);
 
-  // C1: unknown model mid-stream crashes the meter
-  try {
-    led.record("s1", { freshIn: 100, cachedIn: 0, cacheWriteIn: 0, out: 10 }, "m2-unknown");
-    finding("C1", "P1", "unknown model silently mispriced or ignored",
-      "record() with a model missing from prices must NOT succeed silently — check cost(): p.in on undefined throws; if it returned, prices lookup was not consulted.");
-  } catch (e) {
-    finding("C1", "P1", "unknown model throws a raw TypeError that kills the meter mid-stream",
-      `record("s1", {...}, "m2-unknown") → ${(e as Error).message}. A renamed alias (ch16 suspect: "renamed alias / bucket the meter does not know") crashes the whole ledger loop instead of pricing 0 + emitting a loud event. Fix: unknown-model should throw a NAMED error the caller can route, or record a mispriced event and continue.`);
+  // C1: unknown model mid-stream — a NAMED error routed by the caller, plus a shipped
+  // continue-path (round-2 M1): the meter loop survives a renamed alias.
+  {
+    let named = false;
+    try { led.record("s1", { freshIn: 100, cachedIn: 0, cacheWriteIn: 0, out: 10 }, "m2-unknown"); }
+    catch (e) { named = e instanceof UnknownModelError && (e as UnknownModelError).model === "m2-unknown"; }
+    const survived = led.recordSafe("s1", { freshIn: 100, cachedIn: 0, cacheWriteIn: 0, out: 10 }, "m2-unknown");
+    const mispriced = led.events.filter((e) => e.kind === "mispriced").length;
+    if (named && survived === 0 && mispriced === 1) pass("C1", "unknown model: named error + recordSafe continue-path (mispriced event, price 0)");
+    else finding("C1", "P1", "unknown-model contract regressed",
+      `named=${named} survived=${survived} mispriced=${mispriced} — record() must throw the named error; recordSafe() must price 0, emit one mispriced event, and keep the loop alive.`);
   }
 
   // C2: two shipped hit-rate formulas disagree (CacheLedger vs cache-hit-gate)

@@ -66,6 +66,11 @@ export class Semaphore {
 // Per-provider quota ledger. Reservations match the provider's own meter arithmetic.
 export class QuotaLedger {
   private books = new Map<string, { rpm: TokenBucket; tpm: TokenBucket }>();
+  // Bedrock reservations awaiting settlement, FIFO (attack2 H1/H2): reconcile
+  // consumes the oldest — a double-fire (timeout + late success) or a reconcile
+  // for a request the ledger never booked finds nothing outstanding and no-ops,
+  // so a retry wrapper cannot manufacture quota nobody paid for.
+  private outstanding = new Map<string, number[]>();
   configure(m: QuotaMeters, now?: number): void {
     this.books.set(m.provider, { rpm: new TokenBucket(m.rpm ?? 60, (m.rpm ?? 60) / 60, now), tpm: new TokenBucket(m.tpm ?? m.itpm ?? 1e6, (m.tpm ?? m.itpm ?? 1e6) / 60, now) });
   }
@@ -86,15 +91,24 @@ export class QuotaLedger {
     // return the TPM tokens — a leaked slot is a phantom 429 for a request that never went out.
     if (!b.tpm.tryAcquire(Math.max(0, charge), now)) return false; // TPM first: a miss burns nothing
     if (!b.rpm.tryAcquire(1, now)) { b.tpm.credit(Math.max(0, charge), now); return false; }
+    if (provider === "bedrock") {
+      const out = this.outstanding.get(provider) ?? [];
+      out.push(charge); this.outstanding.set(provider, out);   // booked — one reconcile settles it
+    }
     return true;
   }
   // Bedrock books input + cache-write + max_tokens up front, then reconciles at completion
   // (final charge = input + writes + output × burndown; cache reads never counted — ch. 15's
   // worked example). Under-runs re-credit the unused reservation; OVER-runs debit the
   // difference (gate-6 B2) — output × burndown can outrun max_tokens, and a ledger that only
-  // credits lets a fleet of overrunners sail past TPM with the bucket green.
+  // credits lets a fleet of overrunners sail past TPM with the bucket green. One reconcile
+  // settles ONE outstanding reservation, oldest first (attack2 H1/H2): with nothing
+  // outstanding it is a no-op — reconcile in completion order, once per completed request.
   reconcile(provider: string, booked: { input: number; cacheWrite?: number; maxTokens: number }, actual: { input: number; cacheWrite?: number; output: number; burndown?: number }, now?: number): void {
     const b = this.books.get(provider); if (!b || provider !== "bedrock") return;
+    const out = this.outstanding.get(provider);
+    if (!out || out.length === 0) return;                       // nothing booked to settle — no-op
+    out.shift();
     const bookedTotal = booked.input + (booked.cacheWrite ?? 0) + booked.maxTokens;
     const finalCharge = actual.input + (actual.cacheWrite ?? 0) + actual.output * (actual.burndown ?? 1);
     const delta = finalCharge - bookedTotal;

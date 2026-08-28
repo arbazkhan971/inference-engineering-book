@@ -18,7 +18,7 @@ export class UnknownModelError extends Error {
 }
 
 export interface CacheEvent {
-  session: string; kind: "write" | "read" | "miss" | "ttl_expired" | "deploy" | "keep_alive";
+  session: string; kind: "write" | "read" | "miss" | "ttl_expired" | "deploy" | "keep_alive" | "mispriced";
   tokens: number; costUsd: number; ttlRemainingSeconds?: number; note?: string; at: number;
 }
 
@@ -86,6 +86,23 @@ export class CacheLedger {
     const M = 1e6;
     const w = p.cacheWriteMultiplier ?? 0, r = p.cacheReadMultiplier ?? 0;
     return (u.freshIn * p.in + u.cacheWriteIn * w * p.in + u.cachedIn * r * p.in + u.out * p.out) / M;
+  }
+
+  // The continue-path (attack2 M1): record() keeps the fail-fast contract for callers that
+  // want a named error; recordSafe() is what a meter LOOP calls — an unknown model (a renamed
+  // alias, a new model the price map has not dated yet) prices 0, emits a loud mispriced
+  // event, and lets the loop keep metering every other turn. The meter never dies mid-stream,
+  // and the mispricing is visible in the event log the nightly instruments already read.
+  recordSafe(session: string, u: Usage, model: string, now = Date.now() / 1000): number {
+    try { return this.record(session, u, model, now); }
+    catch (e) {
+      if (!(e instanceof UnknownModelError)) throw e;
+      const t = [u.freshIn, u.cachedIn, u.cacheWriteIn, u.out]
+        .reduce((a, x) => a + (Number.isFinite(x) ? Math.max(0, x) : 0), 0);
+      this.events.push({ session, kind: "mispriced", tokens: t, costUsd: 0, at: now,
+        note: `unknown model ${e.model}: priced 0 — add it to the price map (chapter 16's renamed-alias suspect); metering continued` });
+      return 0;
+    }
   }
 
   // The book's formula, one place (ch. 14): cached ÷ (cached + fresh). Writes are priced as

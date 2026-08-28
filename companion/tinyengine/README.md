@@ -1,15 +1,15 @@
 # tinyengine — the Inference Engineering companion
 
-Roughly seven hundred lines of TypeScript that sit between your agent loop and
+Roughly eight hundred lines of TypeScript that sit between your agent loop and
 every model endpoint it calls. Every module was designed in the chapter that
 needed it; this directory is the delivery of every "Build it" in the book.
 
 | Module | Chapter | Shipped lines | Owns |
 |---|---|---|---|
 | `tracer.ts` | 1–2 | 20 | TTFT, inter-token latency, the identity e2e ≈ TTFT + (N−1) × ITL |
-| `stream-normalizer.ts` | 12 | 193 | one event grammar for four provider grammars; tool-call assembly; usage extraction |
-| `cache-ledger.ts` | 14 | 141 | the money meter: four-term cost, hit rate, TTL clock, keep-alive gate, deploy hook |
-| `rate-scheduler.ts` | 15 | 127 | quota ledger per provider meter, token bucket, jittered retries, wave pacer |
+| `stream-normalizer.ts` | 12 | 217 | one event grammar for four provider grammars; tool-call assembly; usage extraction |
+| `cache-ledger.ts` | 14 | 158 | the money meter: four-term cost, hit rate, TTL clock, keep-alive gate, deploy hook, unknown-model continue-path |
+| `rate-scheduler.ts` | 15 | 141 | quota ledger per provider meter, token bucket, jittered retries, wave pacer |
 | `router.ts` | 16 | 133 | weighted routing with session pinning, error-class breakers, classified-error fallback |
 | `session-store.ts` | 17 | 114 | five-layer byte-exact renderer, append-only log, TTL policy, staggered spawn |
 
@@ -24,9 +24,9 @@ kept insisting on, shipped with fixtures:
 
 | Script | Chapter | Shipped lines | Owns |
 |---|---|---|---|
-| `cadence-io.ts` | — | 44 | argv flags, JSON/JSONL/CSV reads (shared plumbing) |
-| `golden-set.ts` | 9, 13 | 114 | drift canary: per-task diff vs dated baseline + pass-rate floor |
-| `cache-hit-gate.ts` | 14 | 84 | hit-rate floor over the day's usage rows; thin models not gated |
+| `cadence-io.ts` | — | 48 | argv flags, JSON/JSONL/CSV reads (shared plumbing; BOM tolerated) |
+| `golden-set.ts` | 9, 13 | 137 | drift canary: per-task diff vs dated baseline + pass-rate floor |
+| `cache-hit-gate.ts` | 14 | 103 | hit-rate floor over the day's usage rows; thin models not gated |
 | `invoice-reconcile.ts` | 16 | 124 | meter vs invoice within tolerance; duplicates summed; the four drift suspects named |
 
 ```bash

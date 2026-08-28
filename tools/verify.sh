@@ -37,17 +37,20 @@ python3 tools/lint-manuscript.py
 # enforces the same budget, so verify and build cannot drift apart.
 python3 tools/reflow-check.py
 # The companion's own gate parses each source file as the module it is (tsc
-# runs inside `npm test` before anything executes) and then runs both suites:
-# the smoke suite (the chapters' Break-it/Prove-it list) and the cadence
-# suite (the tester role's nightly instruments). `node --check` is not used
-# on purpose: on Node 24 it exits 0 for a module holding a syntax error, so
-# it reports clean on exactly the broken file this step exists to catch.
+# runs inside `npm test` before anything executes) and then runs all four
+# suites: the smoke suite (the chapters' Break-it/Prove-it list), the cadence
+# suite (the tester role's nightly instruments), and the two adversarial
+# attack suites (gate-6 rounds 1 and 2) — regression evidence, enforced.
+# `node --check` is not used on purpose: on Node 24 it exits 0 for a module
+# holding a syntax error, so it reports clean on exactly the broken file this
+# step exists to catch.
 if command -v tsc >/dev/null 2>&1; then
   (cd companion/tinyengine && npm test --silent)
 elif [[ -f companion/tinyengine/dist/tests/smoke.js ]]; then
   echo "note: tsc not on PATH — running the previously compiled dist;" \
        "recompile before a release run" >&2
-  (cd companion/tinyengine && node dist/tests/smoke.js && node dist/tests/cadence.js)
+  (cd companion/tinyengine && node dist/tests/smoke.js && node dist/tests/cadence.js \
+    && node dist/tests/attack-gate6.js && node dist/tests/attack2-gate6.js)
 else
   echo "error: tsc not on PATH and companion/tinyengine/dist is absent —" \
        "install TypeScript (or run a build) so sources are type-checked" >&2

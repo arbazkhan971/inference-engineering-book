@@ -30,6 +30,15 @@ export interface HitReport {
 }
 
 export function gateHits(rows: UsageRow[], floor: number, minRows: number): HitReport {
+  const reasons: string[] = [];
+  // A non-finite floor or min-rows silently disables the gate (attack2 J3/J4 — the
+  // round-1 D2 class in this gate): `hitRate < NaN` is always false and `rows >= NaN`
+  // never gates, so a typo'd flag turns chapter 14's first-class metric into a no-op.
+  // Refuse loudly instead.
+  if (!Number.isFinite(floor))
+    reasons.push(`floor is not a finite number (${floor}) — misconfigured gate, refusing to pass silently`);
+  if (!Number.isFinite(minRows))
+    reasons.push(`min-rows is not a finite number (${minRows}) — misconfigured gate, refusing to pass silently`);
   const byModel = new Map<string, UsageRow[]>();
   for (const r of rows) {
     const list = byModel.get(r.model) ?? [];
@@ -47,7 +56,6 @@ export function gateHits(rows: UsageRow[], floor: number, minRows: number): HitR
       gated: list.length >= minRows, belowFloor: false,
     };
   }).sort((a, b) => b.rows - a.rows);
-  const reasons: string[] = [];
   for (const m of models) {
     m.belowFloor = m.hitRate < floor;
     if (m.gated && m.belowFloor)
@@ -69,7 +77,18 @@ export function main(): void {
     exit(2);
   }
   const floor = Number(flag("floor"));
-  const minRows = flag("min-rows") !== undefined ? Number(flag("min-rows")) : 20;
+  const minRowsRaw = flag("min-rows");
+  const minRows = minRowsRaw !== undefined ? Number(minRowsRaw) : 20;
+  // Typo'd flags exit 2 instead of silently disabling the gate (attack2 J3/J4):
+  // --floor o.6 or --min-rows twenty must fail the invocation, not the check's purpose.
+  if (!Number.isFinite(floor) || floor < 0 || floor > 1) {
+    console.error(`--floor must be a finite number between 0 and 1 (got '${flag("floor")}') — refusing to disable the gate by typo`);
+    exit(2);
+  }
+  if (minRowsRaw !== undefined && !Number.isFinite(minRows)) {
+    console.error(`--min-rows must be a finite number (got '${minRowsRaw}') — refusing to un-gate every model by typo`);
+    exit(2);
+  }
   const r = gateHits(readJsonl<UsageRow>(usagePath), floor, minRows);
   console.log(`cache-hit gate: overall ${(r.overallHitRate * 100).toFixed(1)}% ` +
     `(floor ${(floor * 100).toFixed(1)}%, min ${minRows} rows/model)`);

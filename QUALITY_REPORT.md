@@ -3,10 +3,25 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the pedagogy wave's twenty-fifth fix
-pass — iteration 86 completed the plain-English guide, the wave's final
-surface, and with it the entire pedagogy queue (all 25 surfaces:
-ch01–18, appendices A–D, front matter, back matter, plain guide).
+command where one exists. Last updated: 2026-08-28, after the architect-queued
+fuzz round 2 (iteration 87): a second adversarial pass over the companion's
+round-1-untouched surfaces — `tests/attack2-gate6.ts` + `fixtures/attack2/`
+(interleaved streams, usage-after-finish, mid-flight/double reconcile,
+duplicate-id and corrupt baselines, floor boundaries, CRLF/quoted/negative/BOM
+file shapes, two-scheduler interleavings). Pre-fix: 33 attacks, 12 findings
+(2 P1-class, 10 P2), 18 held. All 12 applied, both P1s included — cache-hit-gate's
+non-finite `--floor`/`--min-rows` guard (the round-1 D2 class in the other gate:
+library reason + CLI exit 2) and the unknown-model continue-path
+(`recordSafe()` prices 0 + a `mispriced` event; `record()` keeps the named
+fail-fast error — the queued P1). Key repros wired into smoke/cadence; both
+attack suites now enforced in `npm test` and `tools/verify.sh`; round-1's
+by-construction C1 print converted to assert the fixed contract. Appendix D,
+README, and ch18 updated to shipped behavior and counts (six modules 783 lines
+vs the 720 estimate sum, ~9% over, all guard-bearing — "roughly eight hundred"
+everywhere the book said seven). Prior pass kept as history: the pedagogy
+wave's twenty-fifth fix pass (iteration 86) completed the plain-English guide,
+the wave's final surface, and with it the entire 25-surface pedagogy queue
+(ch01–18, appendices A–D, front matter, back matter, plain guide).
 PLAIN-ENGLISH-GUIDE.md graded 4.87/5 — the wave's highest average —
 with 0 [LOST] · 3 [CONFUSING] · 7 [POLISH]; all 10 findings applied
 plus one napkin ripple: (C1) the helper economy's premature reveal
@@ -878,7 +893,7 @@ build/verify chain green — the gate-6 queue is now closed in full
 (details in Appendix F.1's three gate-6 rows) |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
-| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions (P1 set from iteration 58, P2 set from iteration 60), and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row, formula-agreement, retired-task and non-finite-floor regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion attack fully applied (7 P1s + 10 P2s, 2026-08-28) with `tests/attack-gate6.ts` kept as regression evidence — 10/10 P2 attacks HELD at the fixed tree, all 14 previously-held attacks still hold, C1 reports by construction on any throw (documented; its gate lives in smoke's `assert.throws(UnknownModelError)`) |
+| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; four offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions (P1 set from iteration 58, P2 set from iteration 60), and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row, formula-agreement, retired-task and non-finite-floor regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion attack fully applied (7 P1s + 10 P2s, 2026-08-28) with `tests/attack-gate6.ts` kept as regression evidence — 10/10 P2 attacks HELD at the fixed tree, all 14 previously-held attacks still hold. Fuzz round 2 (2026-08-28) fully applied: 12/12 findings, repros wired into smoke/cadence, `tests/attack2-gate6.ts` (33 attacks) green at the fixed tree — both attack suites now run in `npm test` and `tools/verify.sh`, and round-1's by-construction C1 print now asserts the fixed contract (named error + `recordSafe` continue-path) |
 | Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 27 files (prologue through back matter). Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
 
 ## 2. Numbers discipline

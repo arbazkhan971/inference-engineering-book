@@ -53,6 +53,21 @@ import { readJson, readJsonl, readCsv } from "../cadence-io.js";
     { date: "d", floor: 0.9, failing: [] }, NaN);
   assert.equal(nanFloor.ok, false, "a NaN floor never passes");
   assert.ok(nanFloor.reasons.some((s) => s.includes("finite")), "the misconfiguration is the reason");
+  // Attack2 I1/I2 regressions: duplicate task ids dedupe + fail loudly, and a corrupt
+  // baseline (failing as a string — it would spread into characters inside a Set) is a
+  // DRIFT reason, never a silent shape change.
+  const dup = scoreGolden(readJson<GoldenTask[]>("fixtures/attack2/golden-dup-tasks.json"),
+    [{ task: "t1", ok: true }, { task: "t2", ok: true }], { date: "d", floor: 0.9, failing: [] });
+  assert.equal(dup.ok, false, "a duplicated id is a config error the gate reports");
+  assert.equal(dup.scored, 2, "scored counts deduped tasks, not file rows");
+  assert.ok(dup.reasons.some((s) => /duplicate task id/.test(s)));
+  const corrupt = scoreGolden([{ id: "t1" }], [{ task: "t1", ok: true }],
+    readJson<GoldenBaseline>("fixtures/attack2/golden-corrupt-baseline.json"));
+  assert.equal(corrupt.ok, false, "a corrupt baseline never passes");
+  assert.ok(corrupt.reasons.some((s) => /corrupt/.test(s)), "the reason says corrupt, not stack trace");
+  // Attack2 K3b: a BOM'd nightly config still reads (JSON.parse rejects a BOM outright).
+  const bommed = readJson<GoldenBaseline>("fixtures/attack2/golden-bom.json");
+  assert.equal(bommed.floor, 0.9, "the BOM was stripped at the read edge");
 }
 
 // ---- The cache-hit gate: ch. 14's metric, thin data not gated ------------------------
@@ -79,6 +94,14 @@ import { readJson, readJsonl, readCsv } from "../cadence-io.js";
   // A thin model below floor stays ungated — noise is not signal.
   const thinOnly = gateHits(rows.filter((x) => x.model === "haiku-4.5"), 0.6, 20);
   assert.equal(thinOnly.ok, true);
+  // Attack2 J3/J4 regressions: a typo'd floor or min-rows must disable NOTHING silently —
+  // the round-1 D2 class, guarded in this gate too.
+  const nanGateFloor = gateHits(rows, NaN, 20);
+  assert.equal(nanGateFloor.ok, false, "a NaN floor never passes");
+  assert.ok(nanGateFloor.reasons.some((s) => s.includes("finite")));
+  const nanMinRows = gateHits(rows, 0.6, NaN);
+  assert.equal(nanMinRows.ok, false, "a NaN min-rows never passes");
+  assert.ok(nanMinRows.reasons.some((s) => s.includes("min-rows")));
   // One formula, one place (gate-6 C2b): the ledger's hitRate over the same rows is the
   // gate's number — a dashboard and a gate must never disagree on the same day.
   const led = new CacheLedger({ "sonnet-4.6": { date: "2026-08-27", in: 3, out: 15, cacheWriteMultiplier: 1.25, cacheReadMultiplier: 0.1 } });

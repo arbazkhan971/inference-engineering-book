@@ -17,13 +17,17 @@ export function has(name: string): boolean {
   return argv.includes(`--${name}`);
 }
 
+/** Strip a UTF-8 BOM if present — JSON.parse rejects it outright (attack2 K3b),
+ *  and a BOM'd first cell would silently mis-key a CSV header. */
+const deBom = (s: string): string => (s.charCodeAt(0) === 0xfeff ? s.slice(1) : s);
+
 export function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(path, "utf-8")) as T;
+  return JSON.parse(deBom(readFileSync(path, "utf-8"))) as T;
 }
 
 /** One JSON object per non-empty line — the append-only nightly format. */
 export function readJsonl<T>(path: string): T[] {
-  return readFileSync(path, "utf-8")
+  return deBom(readFileSync(path, "utf-8"))
     .split("\n")
     .filter((line) => line.trim() !== "")
     .map((line) => JSON.parse(line) as T);

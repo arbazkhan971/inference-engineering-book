@@ -19,15 +19,28 @@ const FINISH: Record<string, StopReason> = {
 
 class ToolCallAccumulator {
   private calls = new Map<string, { name: string; parts: string[] }>();
+  private finished = false; // assemble once: a second finish or a late fragment is an ended-stream artifact (attack2 G1)
   add(callId: string, name: string | undefined, fragment: string): Event[] {
+    if (this.finished) return []; // the stream already ended; never re-open the accumulator
     const c = this.calls.get(callId) ?? { name: name ?? "", parts: [] };
     if (name) c.name = name;
     c.parts.push(fragment);
     this.calls.set(callId, c);
     return [{ type: "tool_call_delta", callId, name, fragment, ts: Date.now() / 1000 }];
   }
+  // A late-arriving id re-keys fragments already banked under the synthetic id
+  // (attack2 F2): the call stays whole instead of splitting into markers.
+  renameKey(oldId: string, newId: string): void {
+    if (this.finished) return;
+    const banked = this.calls.get(oldId);
+    if (!banked || this.calls.has(newId)) return;
+    this.calls.delete(oldId);
+    this.calls.set(newId, banked);
+  }
   // Parse exactly once, at the finish. "" coerces to {}. Mid-escape splits survive.
   finish(ts: number): Event[] {
+    if (this.finished) return [];
+    this.finished = true;
     const out: Event[] = [];
     for (const [callId, c] of this.calls) {
       const raw = c.parts.join("");
@@ -100,7 +113,10 @@ export class StreamNormalizer {
       out.push(...this.text(ch.delta?.content ?? "", ts));
       for (const tc of ch.delta?.tool_calls ?? []) {
         let id = tc.id ?? this.pendingIndexToId.get(tc.index);
-        if (tc.id) { this.pendingIndexToId.set(tc.index, tc.id); id = tc.id; }
+        if (tc.id) {
+          this.tools.renameKey(`idx:${tc.index}`, tc.id); // no-op unless fragments banked before the id arrived (attack2 F2)
+          this.pendingIndexToId.set(tc.index, tc.id); id = tc.id;
+        }
         const frag = tc.function?.arguments ?? "";
         if (frag !== "" || id) out.push(...this.tools.add(id ?? `idx:${tc.index}`, tc.function?.name, frag));
       }
@@ -159,6 +175,8 @@ export class StreamNormalizer {
     return out;
   }
 
+  private geminiSeq = new Map<string, number>(); // per-name call sequence (attack2 F4/F5)
+
   private gemini(c: any, ts: number): Event[] {
     const out: Event[] = [];
     const u = c.usageMetadata;
@@ -170,9 +188,15 @@ export class StreamNormalizer {
         // args is an object in Gemini's grammar. A JSON-text string is a lenient variant
         // (fed as a fragment, parsed at finish); any other non-object is rejected there
         // by the accumulator's object guard (gate-6 A10).
+        // Gemini delivers each functionCall part COMPLETE — so a second call to the same
+        // function (parallel calls) is a new call, not more fragments: the synthetic id
+        // sequences per name (attack2 F4/F5) or same-name calls would join and fail parse.
+        const seq = (this.geminiSeq.get(part.functionCall.name) ?? 0) + 1;
+        this.geminiSeq.set(part.functionCall.name, seq);
+        const callId = seq === 1 ? `step:${part.functionCall.name}` : `step:${part.functionCall.name}#${seq - 1}`;
         const frag = typeof part.functionCall.args === "string"
           ? part.functionCall.args : JSON.stringify(part.functionCall.args ?? {});
-        out.push(...this.tools.add(`step:${part.functionCall.name}`, part.functionCall.name, frag));
+        out.push(...this.tools.add(callId, part.functionCall.name, frag));
       }
     }
     const fr = c.candidates?.[0]?.finishReason;

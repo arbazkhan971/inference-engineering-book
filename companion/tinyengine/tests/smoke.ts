@@ -141,6 +141,30 @@ const stopOf = (es: Event[]) => { const e = es.find((e) => e.type === "stop_reas
   assert.equal(stop.value, "stop");
   assert.ok(u.freshIn === 20 && u.cachedIn === 30 && u.out === 5 && u.reasoning === 2);
 }
+{
+  // Attack2 round-2 regressions: finish() assembles ONCE (a second finish and a late
+  // duplicate fragment are ended-stream artifacts); a late-arriving id re-keys fragments
+  // already banked under the synthetic id; parallel same-name gemini calls are two calls.
+  const n = new StreamNormalizer("openai-chat");
+  n.ingest(`data: ${JSON.stringify({ choices: [{ delta: { tool_calls: [{ index: 0, id: "c1", function: { name: "f", arguments: "{}" } }] } }] })}`);
+  const once = toolOf(n.finish(), "c1");
+  assert.deepEqual(once.args, {});
+  n.ingest(`data: ${JSON.stringify({ choices: [{ delta: { tool_calls: [{ index: 0, function: { arguments: "{}" } }] } }] })}`); // late dup
+  assert.equal(n.finish().length, 0, "a second finish emits nothing");
+  const late = new StreamNormalizer("openai-chat");
+  const f = (id: string | undefined, args: string) => `data: ${JSON.stringify({ choices: [{ delta: { tool_calls: [{ index: 1, id, function: { arguments: args } }] } }] })}`;
+  late.ingest(f(undefined, '{"y":'));            // banked under idx:1 — id not yet seen
+  late.ingest(f("call_b", "2}"));                 // the id arrives late: re-key, stay whole
+  assert.deepEqual(toolOf(late.finish(), "call_b").args, { y: 2 }, "late id re-keys the banked fragments");
+  const par = new StreamNormalizer("gemini");
+  par.ingest(`data: ${JSON.stringify({ candidates: [{ content: { parts: [
+    { functionCall: { name: "get_weather", args: { city: "sf" } } },
+    { functionCall: { name: "get_weather", args: { city: "nyc" } } } ] } }] })}`);
+  const both = par.finish().filter((e) => e.type === "tool_call") as Extract<Event, { type: "tool_call" }>[];
+  assert.equal(both.length, 2, "parallel same-name calls are two calls");
+  assert.deepEqual(both[0].args, { city: "sf" });
+  assert.deepEqual(both[1].args, { city: "nyc" });
+}
 
 // ---- Chapter 14: the cache ledger -----------------------------------------------------
 const PRICES = {
@@ -168,6 +192,15 @@ const PRICES = {
     (e: unknown) => e instanceof UnknownModelError && e.model === "renamed-alias");
   led.record("s", { freshIn: 1_000, cachedIn: 1_000, cacheWriteIn: 4_000, out: 0 }, "sonnet-4.6");
   assert.ok(Math.abs(led.hitRate("s") - 0.5) < 1e-9); // cached ÷ (cached + fresh); writes excluded
+  // Attack2 M1: the shipped continue-path — a meter LOOP calls recordSafe, so a renamed
+  // alias prices 0 with a loud mispriced event instead of killing the loop mid-stream.
+  const survived = led.recordSafe("s", { freshIn: 500, cachedIn: 0, cacheWriteIn: 0, out: 5 }, "renamed-alias");
+  assert.equal(survived, 0, "unknown model prices 0, never negative or invented money");
+  const mis = led.events.filter((e) => e.kind === "mispriced");
+  assert.equal(mis.length, 1, "exactly one mispriced event");
+  assert.ok(/renamed-alias/.test(mis[0].note ?? ""), "the event names the unknown model");
+  const after = led.recordSafe("s", { freshIn: 1_000, cachedIn: 0, cacheWriteIn: 0, out: 0 }, "sonnet-4.6");
+  assert.ok(after > 0, "the loop kept metering every other turn");
 }
 {
   // Gate-6 C3/C4 regressions: the meter is the trust boundary — usage clamps non-negative
@@ -260,6 +293,18 @@ const PRICES = {
   clamp.configure({ provider: "bedrock", tpm: 10, rpm: 10 }, 0);
   assert.equal(clamp.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 5_000, cacheWriteTokens: -5_000 }, 0), false,
     "a negative cache-write cannot zero the charge");
+  // Attack2 H1/H2 regressions: reconcile settles ONE outstanding reservation — a
+  // double-fire (timeout + late success) or a reconcile for a request never booked
+  // finds nothing outstanding and no-ops; quota nobody paid for is never minted.
+  const once = new QuotaLedger();
+  once.configure({ provider: "bedrock", tpm: 1000, rpm: 100 }, 0);
+  assert.equal(once.reserve("bedrock", { maxTokens: 600, estimatedPromptTokens: 0 }, 0), true);
+  once.reconcile("bedrock", { input: 0, cacheWrite: 0, maxTokens: 600 }, { input: 0, output: 100 }, 0); // settles → 900
+  once.reconcile("bedrock", { input: 0, cacheWrite: 0, maxTokens: 600 }, { input: 0, output: 100 }, 0); // double-fire
+  once.reconcile("bedrock", { input: 0, cacheWrite: 0, maxTokens: 300 }, { input: 0, output: 0 }, 0);   // never booked
+  assert.equal(once.reserve("bedrock", { maxTokens: 950, estimatedPromptTokens: 0 }, 0), false,
+    "double reconcile + rogue reconcile leave the bucket at its honest 900");
+  assert.equal(once.reserve("bedrock", { maxTokens: 850, estimatedPromptTokens: 0 }, 0), true, "…and the honest credit is still spendable");
   // Gate-6 B4 regression: a backwards clock (NTP step, VM resume) never drains the bucket.
   const clock = new TokenBucket(10, 10, 100);
   clock.tryAcquire(5, 100);                    // 5 tokens left

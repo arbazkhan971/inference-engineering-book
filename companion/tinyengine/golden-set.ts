@@ -39,21 +39,38 @@ export function scoreGolden(
   tasks: GoldenTask[], rows: GoldenRow[], baseline: GoldenBaseline,
   floor = baseline.floor,
 ): GoldenReport {
+  const reasons: string[] = [];
+  // A corrupt baseline must be a DRIFT reason, never a silent shape change (attack2 I2):
+  // `failing` as a string would spread into characters inside a Set — the gate would run
+  // green while diffing task ids against characters. Re-record with --update-baseline.
+  if (typeof baseline !== "object" || baseline === null || !Array.isArray(baseline.failing)) {
+    reasons.push(`baseline is corrupt (failing is ${typeof baseline?.failing}, expected a list) — re-record with --update-baseline`);
+    return { total: tasks.length, scored: 0, passRate: 0, floor,
+      newFailures: [], stillFailing: [], fixed: [], missing: [], ok: false, reasons };
+  }
+  // Duplicate task ids are a config error, not a bigger set (attack2 I1): dedupe and say so —
+  // a copy-paste in the task file must never quietly inflate the scored count.
+  const seen = new Set<string>(); const dupes = new Set<string>();
+  const taskList: GoldenTask[] = [];
+  for (const t of tasks) {
+    if (seen.has(t.id)) { dupes.add(t.id); continue; }
+    seen.add(t.id); taskList.push(t);
+  }
+  if (dupes.size > 0) reasons.push(`duplicate task id(s) in the set (deduped): ${[...dupes].sort().join(", ")} — fix the task file`);
   const latest = new Map<string, GoldenRow>();       // last row per task wins
   for (const r of rows) latest.set(r.task, r);
-  const missing = tasks.filter((t) => !latest.has(t.id)).map((t) => t.id);
+  const missing = taskList.filter((t) => !latest.has(t.id)).map((t) => t.id);
   const failed = new Set(
-    tasks.filter((t) => latest.get(t.id)?.ok === false).map((t) => t.id));
-  const scored = tasks.length - missing.length;
+    taskList.filter((t) => latest.get(t.id)?.ok === false).map((t) => t.id));
+  const scored = taskList.length - missing.length;
   const passRate = scored === 0 ? 0 : (scored - failed.size) / scored;
   const baseFailing = new Set(baseline.failing);
-  const taskIds = new Set(tasks.map((t) => t.id));
+  const taskIds = new Set(taskList.map((t) => t.id));
   const newFailures = [...failed].filter((id) => !baseFailing.has(id)).sort();
   const stillFailing = [...failed].filter((id) => baseFailing.has(id)).sort();
   // Only a task still in the set can be "fixed" (gate-6 D1): a retired task greeting the
   // operator as a victory every night is the canary lying in the other direction.
   const fixed = [...baseFailing].filter((id) => !failed.has(id) && taskIds.has(id)).sort();
-  const reasons: string[] = [];
   if (!Number.isFinite(floor))
     reasons.push(`floor is not a finite number (${floor}) — misconfigured gate, refusing to pass silently (gate-6 D2)`);
   if (missing.length > 0)
@@ -88,10 +105,16 @@ export function main(): void {
   const rows = readJsonl<GoldenRow>(resultsPath);
   const baseline = readJson<GoldenBaseline>(baselinePath);
   // A typo'd --floor (o.9) must fail the invocation loudly (gate-6 D2): Number("o.9") is NaN,
-  // and a NaN floor silently disables the pass-rate comparison. Exit 2 = your invocation is wrong.
+  // and a NaN floor silently disables the pass-rate comparison. A floor outside [0, 1] is the
+  // same misconfiguration one typo over (attack2 J2): 1.5 can never clear, 0 always does.
+  // Exit 2 = your invocation is wrong.
   const floorRaw = flag("floor");
   if (floorRaw !== undefined && !Number.isFinite(Number(floorRaw))) {
     console.error(`--floor must be a finite number between 0 and 1 (got '${floorRaw}') — refusing to disable the floor gate by typo`);
+    exit(2);
+  }
+  if (floorRaw !== undefined && (Number(floorRaw) < 0 || Number(floorRaw) > 1)) {
+    console.error(`--floor must be between 0 and 1 (got '${floorRaw}') — a floor you can never clear or never fail is a misconfigured gate`);
     exit(2);
   }
   const floor = floorRaw !== undefined ? Number(floorRaw) : baseline.floor;

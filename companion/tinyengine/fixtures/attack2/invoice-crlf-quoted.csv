@@ -1,0 +1,4 @@
+model,input_tokens,output_tokens,cached_tokens,amount_usd
+m1,1000,1000,0,5.00
+m1,0,0,0,-1.00
+m2,"1,200",300,0,"4.50"
