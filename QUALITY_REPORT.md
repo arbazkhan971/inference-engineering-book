@@ -4,7 +4,45 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's fifteenth fix pass: iteration 76 completed the ch15 pass —
+wave's sixteenth fix pass: iteration 77 completed the ch16 pass —
+all 8 findings applied (4.41/5 — zero [LOST]; 6 [CONFUSING] + 2
+[POLISH], every one a one-phrase fix). Headlined by the audit's #1
+gap: 16.6's inclusive-vs-exclusive teaching floor arrived field-first —
+it is now fronted by one bridge sentence ("Some providers fold the
+discounted part into the grand total; others list it as separate line
+items. Read the receipt's shape before you multiply"), converting the
+section's core concept from a field-name swim into the receipt picture
+the vocab table already owns. The worksheet's undefined hit-rate
+variable h introduced at its load-bearing moment ("so the hit rate,
+h, is measured, not assumed" — it recurs in Prove it); "affine" kept
+but glossed plain ("a straight-line (affine) formula: one term you
+control, one you rent" — the audit's parenthetical option, keeping
+the technical term for the expert basement); the 16.2 strategy-name
+wall glossed per name ("least-busy (pick the idlest wire),
+latency-based-routing (pick the fastest)" — the wire ties to the
+switchboard ELI5); the RouteLLM benchmark wall tagged inline at
+book-first use ("MT Bench (chat), MMLU (multiple-choice knowledge),
+GSM8K (grade-school math)" — MT Bench and MMLU are book-first uses
+here, GSM8K's tag a spaced recall after ch09's gloss; the follow-up
+gloss sentence kept verbatim as emphasis per the audit's design); the
+hashed model_id implementation detail cut from 16.5 (zero teaching
+load; grep-verified nowhere else — the hash detail stays in LiteLLM's
+docs, cited in See it); the headroom sentence made self-contained
+("the small notes providers staple to every response — the
+x-ratelimit-remaining-* headers (chapter 15)"); and the Langfuse
+cliff sentence split in two, the plain restatement being the quoted
+rule's direct consequence ("one non-OpenAI field in the payload and
+the normalization no longer applies" — documented wording deviation
+from the audit's literal "it applies only if", which would have
+repeated the quote verbatim). No reviewer false positives; ripple
+greps clean (affine survives only in ch09's quant machinery and the
+new parenthetical; hashed / scrape-x-ratelimit / identified-by-a-
+hashed gone book-wide). Mermaid blocks byte-identical (no figures
+touched — SKIP_FIGURES validation sound). Ch16 now 6,393 words (raw
+wc; +58, all gloss/bridge-bearing) on a base already logged ~11% over
+the 5,500 concept cap as content-bearing (iterations 20/42) — logged
+rather than trimmed, consistent with the pedagogy precedent. Prior
+pass kept as history: iteration 76 completed the ch15 pass —
 all 15 findings applied (4.36/5 — zero [LOST]; 7 [CONFUSING] +
 8 [POLISH]) plus the advisory worst-gap recaps. Headlined by the
 audit's worst gap — cache write/read, load-bearing in 15.2's quota
@@ -227,7 +265,7 @@ in the glossary. All touched arithmetic re-derived before applying
 (300/199 ≈ 1.5; $4/$2 = 2; $1.20/$0.40 = 3; 30K vs 15K = 2×; 30K × 1.25
 = 2.5×; 30K × 0.1 = 3K, 5× cheaper). Ch11 now 5,319 words (raw wc;
 +169, all gloss/on-ramp/picture-bearing), inside the 5,500 concept cap.
-Prior pass kept as history: iteration 71 completed the ch10 pass — all
+History: iteration 71 completed the ch10 pass — all
 21 findings applied (4.3/5 — zero [LOST]; 9 [CONFUSING] + 12 [POLISH]),
 recovered from an interrupted session's uncommitted working tree and
 verified hunk-by-hunk against the audit. Headlined by the audit's worst
