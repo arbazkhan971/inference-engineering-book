@@ -2,9 +2,9 @@
 
 > **Part II — Inside the engine** — chapter 3 gave you the arithmetic of the batch dial. This chapter opens the machine and shows you the hand that turns it — a scheduler that replans the batch every single token.
 
-Here is the promissory note chapter 3 left you, come due. At 6 pm, TPOT (time per output token) on one product leg roughly doubled while TTFT (time to first token) stayed flat, and the fix was cutting concurrency. The diagnosis was "the decode step got heavier." But *why* does one request's decode step get heavier when nothing about that request changed? Nothing in your prompt grew. Nothing in the model changed. The answer is the least discussed fact in the inference stack: **your request is computed together with strangers, and the scheduler that mixes you together replans the mix on every single token.** Your token pace is not a property of your request. It is a property of the batch you happen to be riding in.
+Here is the promise chapter 3 left you — now due. At 6 pm, TPOT (time per output token) on one of our products roughly doubled while TTFT (time to first token) stayed flat, and the fix was cutting concurrency — running fewer of our requests at the same time. The diagnosis was "the decode step got heavier." But *why* does one request's decode step get heavier when nothing about that request changed? Nothing in your prompt grew. Nothing in the model changed. The answer is the least discussed fact in the inference stack: **your request is computed together with strangers, and the scheduler that mixes you together replans the mix on every single token.** Your token pace is not a property of your request. It is a property of the batch you happen to be riding in.
 
-Chapter 3 showed why batching *pays*: one pass over the weights can serve many requests at once, and arithmetic intensity rises with batch size. That was physics. This chapter is machinery — how the engine actually forms, fills, drains, and re-forms batches, from the naive scheme that wastes most of the GPU (graphics processing unit) to the iteration-level scheduling trick behind every modern engine. And it is contract: what batching does *to you* — the latency you donate to other people's throughput, and the latency they donate to yours. By the end you will read a scheduler's two configuration knobs like a native speaker, predict which way TPOT and TTFT move when load rises, and know the one metric that separates an engine that *feels* fast from an engine that benchmarks fast — which are, measurably, not the same machine.
+Chapter 3 showed why batching *pays*: one pass over the weights can serve many requests at once, and arithmetic intensity (how much useful math each byte of model-reading buys) rises with batch size. That was physics. This chapter is machinery — how the engine actually forms, fills, drains, and re-forms batches, from the naive scheme that wastes most of the GPU (graphics processing unit) to the iteration-level scheduling trick behind every modern engine. And it is contract: what batching does *to you* — the latency you donate to other people's throughput, and the latency they donate to yours. By the end you will read a scheduler's two configuration knobs like a native speaker, predict which way TPOT and TTFT move when load rises, and know the one metric that separates an engine that *feels* fast from an engine that benchmarks fast — which are, measurably, not the same machine.
 
 ## 5.1 Words before machinery
 
@@ -27,11 +27,11 @@ This chapter opens the engine's vocabulary, so here is the entrance ramp. Keep i
 
 > **ELI5:** Imagine a charter bus that fills up, departs, and — this is the strange part — does not come back until the *last* passenger finishes their errands. One rider needs two minutes at the pharmacy; another wanders a mall for four hours. The bus, and every seat on it, is hostage to the slowest shopper. Tomorrow the mall-goer rides again; the pharmacy rider starts wondering why their two-minute trip took all afternoon.
 
-The naive serving scheme works exactly like that charter. The engine collects N requests, **pads** them to the same length so their tensors stack, and runs the whole batch until *every* request has emitted its full output. Two kinds of waste follow, and both are structural, not accidental.
+The naive serving scheme works exactly like that charter. The engine collects N requests, **pads** them to the same length so they stack into one uniform block of numbers (a *tensor*), and runs the whole batch until *every* request has emitted its full output. Two kinds of waste follow, and both are structural, not accidental.
 
 First, padding. Requests in a batch must be rectangular; a 12-token output sitting next to a 500-token output means the engine computes — or at least reserves — positions for 500 everywhere. Second, and worse, stragglers. A slot frees only when the *slowest* member of the batch finishes, so finished requests keep occupying seats, and short requests that finished long ago still wait for the batch to end before their answer is returned. GPU work for the batch is proportional to N × the longest member's length. If one request wants 900 output tokens and the other fifteen want 100 each, roughly 80% of the batch's arithmetic is padding or idling (illustrative arithmetic, but the shape is measured: the Orca paper's evaluation found large fractions of static-batch iterations executing on padded or already-finished slots — Yu et al., OSDI 2022).
 
-Sit with that waste from the provider's chair and you see why it could not survive. The expensive resource — the weight streaming of chapter 3 — is being paid in full on every step, while the seats it could amortize across sit empty or padded. Static batching is the worst point on the throughput curve: the engine holds the batch *open* precisely when it is least useful. Something had to change, and the first change was smaller than you would guess.
+Sit with that waste from the provider's chair and you see why it could not survive. The expensive resource — reading the model's whole memory every step, the weight traffic chapter 3 priced — is being paid in full on every step, while the seats it could amortize across sit empty or padded. Static batching is the worst point on the throughput curve: the engine holds the batch *open* precisely when it is least useful. Something had to change, and the first change was smaller than you would guess.
 
 ## 5.3 Leaving on a schedule: dynamic batching
 
@@ -39,7 +39,7 @@ Sit with that waste from the provider's chair and you see why it could not survi
 
 **Dynamic batching** improves *admission*, nothing else. Requests queue at the door; the server launches a batch when the queue reaches its size limit or a timeout elapses (it is the term of record in NVIDIA's Triton Inference Server, and most gateways expose something equivalent). This genuinely helps utilization at the door — departures are fuller — but inside the bus, nothing changed. The batch is still static once launched: padding waste remains, finished requests still hold seats, and short requests still wait for the longest. You have fixed the *departure policy* while keeping the *hostage policy*.
 
-That gap — better admission, same lockstep — is worth naming because it recurs all over systems engineering as a shape: a queue in front of a stage whose internal granularity is too coarse. The fix, when it finally came, was not another departure policy. It was dissolving the batch itself.
+That gap — better admission, same lockstep — is worth naming because it recurs all over systems engineering as a shape: a faster door onto a stage that still moves everyone at once. The fix, when it finally came, was not another departure policy. It was dissolving the batch itself.
 
 ## 5.4 The trick: replan every iteration
 
@@ -74,10 +74,6 @@ Static batch, 4 slots (t = engine iterations):
   slot C |██████░░░░░░░░░░░░░░░░░░░░░░░░░|
   slot D |██████████████████░░░░░░░░░░░░░░|
 
-  A finishes at t=4... but the batch runs until
-  t=32: A's answer is held ~28 idle steps; C and
-  D pad ~26 and ~14 wasted steps.
-
 Continuous batching, same arrivals:
 
   slot 1 |AAAA CCCC GGGG IIII KKKK MMMM OOOO ...|
@@ -89,7 +85,9 @@ Continuous batching, same arrivals:
   jobs flow through, no hostage-taking.
 ```
 
-One mechanical wrinkle had to be solved to make this work, and it is why Orca's paper is cited rather than just footnoted. Attention needs each sequence's *own* KV state — lengths differ, histories differ — so naively stacking ragged sequences into one tensor is awkward. Orca's answer was **selective batching**: operations that tolerate batching (the big linear layers, the weight streaming that chapter 3 showed is the expensive part) run batched across all riders, while attention runs per-sequence over each rider's own cache. You batch the part that pays (weights), and shape the part that differs (attention). Every modern engine — vLLM, TensorRT-LLM (which calls it **in-flight batching**, IFB), SGLang, and TGI (Text Generation Inference, Hugging Face's server) — ships a version of this loop (engine documentation, retrieved 2026-08-27).
+In the static half, A finishes at iteration 4, but the batch runs until iteration 32 — A's answer is held about 28 idle steps, and C and D pad about 26 and 14 wasted steps.
+
+One mechanical wrinkle had to be solved to make this work, and it is why Orca's paper is cited rather than just footnoted. Attention — the lookup step in which each new token consults every earlier token of its conversation, chapter 4's machinery — needs each sequence's *own* KV state: lengths differ, histories differ, so naively stacking ragged sequences into one tensor is awkward. Orca's answer was **selective batching**: operations that tolerate batching (the big linear layers, the weight traffic that chapter 3 showed is the expensive part) run batched across all riders, while attention runs per-sequence over each rider's own cache. You batch the part that pays (weights), and shape the part that differs (attention). Every modern engine — vLLM, TensorRT-LLM (which calls it **in-flight batching**, IFB), SGLang, and TGI (Text Generation Inference, Hugging Face's server) — ships a version of this loop (engine documentation, retrieved 2026-08-27).
 
 ### The two knobs
 
@@ -109,11 +107,11 @@ Now the bill for all that throughput, stated mechanically. Decode emits exactly 
 
 **tokens per second per request ≈ 1 ÷ iteration time**
 
-Your pace is not set by your prompt, your model, or your provider's marketing page. It is set by how long the *shared* iteration takes — and every rider added to the batch makes the iteration longer (more arithmetic, more KV cache reads per step). More riders also make it *cheaper* per token (each weight byte amortized over more seats — chapter 3's roofline), and that is precisely the trade: aggregate tokens per second up, per-request tokens per second gently down, until the engine saturates and both get ugly. The curve was measured on a real deployment:
+Your pace is not set by your prompt, your model, or your provider's marketing page. It is set by how long the *shared* iteration takes — the city bus again, or if you like, a carpool of strangers — and every rider added to the batch makes the iteration longer (more arithmetic, more KV cache reads per step). More riders also make it *cheaper* per token (each weight byte amortized over more seats — chapter 3's roofline), and that is precisely the trade: aggregate tokens per second up, per-request tokens per second gently down, until the engine saturates and both get ugly. The curve was measured on a real deployment:
 
 > **Dated snapshot (NVIDIA TensorRT-LLM tuning case study, Llama-3.3-70B on 4× H100 — the flagship GPU of chapter 3; docs fetched 2026-08-27).** Sweeping `max_batch_size` 64 → 512 → 2048: throughput 1,944 → 2,467 → 2,044 tokens/s, with average inter-token latency essentially flat (14.65 / 14.66 / 14.45 ms). Batch 512 was the sweet spot — ~20% more throughput than 2048 and ~27% more than 64 (derived: 2,466.79 ÷ 2,044.26 ≈ 1.21; 2,466.79 ÷ 1,944.26 ≈ 1.27) at no latency cost. The untuned default config measured 1,564 tokens/s at 31.3 ms average inter-token latency; after tuning batch size and token budget, 2,474 tokens/s at 14.7 ms — a 58.2% throughput gain and a 53.1% latency reduction. Defaults are a starting point, not a verdict.
 
-Three things live inside that box. First, the sweet spot is *interior* — batch 2048 underperformed batch 512 on throughput outright, because past saturation the extra riders cost more (scheduling, cache pressure) than they contribute. Second, "ITL" — inter-token latency, the clock chapter 2 defined as TPOT's twin, measured between streamed chunks — is what your client watches while all this happens: in this book's vocabulary the dashboard's ITL is your TPOT. Third: the untuned default had *twice* the per-token latency at *lower* throughput. The curve is real, it has a knee, and you find it by measurement, not by maxing knobs.
+Three things live inside that box. First, the sweet spot is *interior* — batch 2048 underperformed batch 512 on throughput outright, because past saturation the extra riders cost more (scheduling, cache pressure) than they contribute. Second, "ITL" — inter-token latency, the clock chapter 2 defined as TPOT's twin, measured between streamed chunks — is what your client watches while all this happens. In this book's vocabulary: **ITL = TPOT — same clock; the dashboard's name vs yours.** Third: the untuned default had *twice* the per-token latency at *lower* throughput. The curve is real, it has a knee, and you find it by measurement, not by maxing knobs.
 
 ### When batching helps your latency
 
@@ -127,17 +125,19 @@ The tradeoff framing can tip into a myth — "batching is why you're slow" — s
 
 Here is the mechanism behind every "the provider got slow at 6 pm" story, and it is older than GPUs. Your TTFT decomposes as **queue wait + prefill compute** — vLLM instruments exactly this split (`vllm:request_queue_time_seconds`, then prefill time, then first-token time measured from arrival so the wait is included; vLLM metrics design docs, retrieved 2026-08-27). The prefill term is your prompt's cost — linear in your tokens, and also linear in *batch size*, since a burst that inflates the prefill batch inflates every queued request's first-token time, not just its own (measured on Llama-2-7B on an NVIDIA A100, the previous-generation workhorse GPU; arXiv:2407.05347, 2024). The queue term is where the cliff lives.
 
-Classical queueing theory (the M/G/1 model — "random arrivals, general service times, one server") gives the mean wait as E[W] = λ·E[S²] ÷ (2·(1−ρ)), where ρ (utilization) is offered load divided by capacity. Two structural consequences, both worth memorizing as an operator:
+Classical queueing theory (the M/G/1 model — "random arrivals, general service times, one server") gives the mean wait as E[W] = λ·E[S²] ÷ (2·(1−ρ)), where λ is how fast requests arrive and ρ (utilization) is offered load divided by capacity. Read it in plain words: your wait grows with how fast requests arrive (λ); with the average of *squared* request lengths — a few very long jobs hurt more than many short ones that add up to the same total, and that is the E[S²] term; and it explodes as utilization approaches 100%, which is the ÷(1−ρ) underneath everything. Two structural consequences, both worth memorizing as an operator:
 
 **First, the 1/(1−ρ) cliff.** Latency is nearly flat at 50–70% utilization, then hits a wall: 0.8 → 0.95 utilization multiplies mean queue delay about 4× (derived: 0.2 ÷ 0.05), and the p99 tail diverges faster than the mean. The same arithmetic, tabulated (classical queueing math, not a measurement — but it is why the wall feels sudden):
 
-| Utilization ρ | Mean system time multiplier 1/(1−ρ), M/M/1 form |
+| Utilization ρ | Mean system-time multiplier 1/(1−ρ) — same math, simplified arrival assumptions |
 |---|---|
 | 50% | 2× service time |
 | 80% | 5× |
 | 90% | 10× |
 | 95% | 20× |
 | 99% | 100× |
+
+System time — what the multiplier multiplies — is your wait plus your own service; the higher ρ climbs, the more of that number is pure wait.
 
 Going from "comfortable" to "one more tenth of load" is the difference between 5× and 10×. Nothing degrades gracefully near ρ = 1; it falls off a cliff.
 
@@ -170,7 +170,7 @@ Find the peak of the *lower* curve — not the upper one — and that is your re
 
 You rarely own the scheduler — on a hosted provider, its knobs are the provider's dials, not yours. Your dials are on the client side, and they are real ones:
 
-**Client concurrency is your admission controller.** Every provider-plus-workload pair has a goodput knee, and your harness's parallelism setting decides which side of it you live on. Firing twenty parallel subagent calls at one deployment pushes the engine up the curve of section 5.5 even while aggregate throughput looks fine — your own traffic is the 6 pm crowd. The practice: sweep concurrency against a fixed workload, watch p99 TTFT and TPOT against explicit bounds, and set your in-flight cap at the measured plateau — the point past which throughput stops climbing but latency keeps degrading (Red Hat's vLLM tuning guidance, 2026-03-03, recommends exactly this). Then shed load *multiplicatively* when attainment drops, before the provider's queue sheds it for you with 429s (HTTP "too many requests" — chapter 15 owns the retry-and-backoff machinery).
+**Client concurrency is your admission controller.** Every provider-plus-workload pair has a goodput knee, and your harness's parallelism setting decides which side of it you live on. Firing twenty parallel subagent calls at one deployment pushes the engine up the curve of section 5.5 even while aggregate throughput looks fine — your own traffic is the 6 pm crowd. The practice: sweep concurrency against a fixed workload, watch p99 TTFT and TPOT against explicit bounds, and set your in-flight cap at the measured plateau — the point past which throughput stops climbing but latency keeps degrading (Red Hat's vLLM tuning guidance, 2026-03-03, recommends exactly this). Then cut your in-flight requests by half or more each time attainment drops, before the provider's queue sheds load for you with 429s (HTTP "too many requests" — chapter 15 owns the retry-and-backoff machinery).
 
 **Time out against the degraded tail, not the healthy median.** Your stream watchdogs should key off TPOT, not only total time, because an engine near saturation reports healthy TTFT while TPOT climbs — iterations lengthen before queues explode. Concretely: set streaming timeouts near `expected_output_tokens × p99 TPOT + margin`, and treat rising inter-chunk gaps as your shed-load signal, not as noise (the pattern from chapter 3's field note, now with the mechanism that explains it). For first tokens, abort when no chunk arrives within your measured p99 TTFT times a safety factor, plus one full backoff-with-jitter budget — a timeout below p99 converts provider queueing into your own error rate, and immediate retries re-arrive as the exact burst that deepened the queue (OpenAI rate-limit guidance, retrieved 2026-08-27; chapter 15 formalizes the backoff).
 

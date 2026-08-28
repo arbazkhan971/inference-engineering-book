@@ -4,7 +4,30 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's fourth fix pass: iteration 65 applied all 12 ch04 findings (4.5/5,
+wave's fifth fix pass: iteration 66 applied all 13 ch05 findings (4.3/5,
+1 [LOST] + 7 [CONFUSING] + 5 [POLISH]) — headlined by the [LOST] fix at
+the 5.5 queueing-formula wall, the chapter's climax mechanism: λ is now
+glossed beside ρ, and a plain-words reading follows the formula before
+any symbol is reused, so the "why 6 pm happens" payoff survives a cold
+reader. Also applied: the de-jargoned cold open ("product leg" → "one of
+our products"; concurrency glossed at its load-bearing first use), the
+chapter-3 dependencies glossed at point of use (arithmetic intensity;
+"weight streaming" — a term ch03 never coins, per grep — replaced by
+"reading the model's whole memory every step, the weight traffic chapter
+3 priced"), the book's only standalone "tensor" taught ("one uniform
+block of numbers (a *tensor*)"), attention glossed at its chapter-first
+use with the audit's pointer corrected to chapter 4 (ch02 never uses the
+word), the utilization table's unexplained "M/M/1 form" replaced and
+system time defined in a half-line, the ITL/TPOT naming whiplash given
+its bold mini-equation, and all five [POLISH] items (the door-onto-
+stage image adapted off the audit's coat check to avoid colliding with
+ch04's KV metaphor; the carpool bridge; "shed load multiplicatively" in
+plain words; the ASCII note moved below the fence; "promissory note" →
+"the promise chapter 3 left you — now due"). Three evidenced deviations
+logged in Appendix F.1; ripple greps clean. Ch05 now 5,192 words, inside
+the 5,500 concept cap.
+
+History: iteration 65 applied all 12 ch04 findings (4.5/5,
 zero [LOST]) — headlined by the audit's numeric-honesty fix ("dozens of
 times larger" became "tens of thousands" with the derived 131,072 ÷ 4 =
 32,768× shown), the KiB normalization of the OPT/MHA comparisons with
@@ -17,8 +40,7 @@ fifth row is the 1× MHA baseline). The pass was recovered from an
 uncommitted working tree left by an interrupted session (all 12 findings
 + both gaps already applied); this iteration verified every hunk,
 re-derived every number, and completed the three remaining fixes.
-
-History: iteration 64 applied all 20 ch03 findings (the wave's floor
+Iteration 64 applied all 20 ch03 findings (the wave's floor
 chapter at 3.75/5) — the two [LOST] openings (the jargon-stack
 intro now plain words with a deferral pointer into 3.2; FlashAttention now
 picture-first with a working-notes bridge and a softmax gloss), nine
