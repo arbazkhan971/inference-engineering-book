@@ -4,49 +4,70 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twelfth fix pass: iteration 73 completed the ch12 pass — all 12
-findings applied (4.4/5 — zero [LOST]; 6 [CONFUSING] + 6 [POLISH])
-plus both advisory worst-gap items. Headlined by the audit's single
-worst gap: the event/delta/chunk triple at the chapter's front door —
-three table rows that felt 90% identical — now disambiguated in one
-sentence after the Two-terms paragraph ("the *event* is the envelope,
-the *delta* is the slice inside it, and *chunk* is simply the common
-vendor name for an event that carries deltas (OpenAI's, most famously)
-— two things, three words, because providers named them separately";
-documented deviation: the audit's "simply OpenAI's name" became "the
-common vendor name (OpenAI's, most famously)" because the chapter's
-own Gemini sentence uses "chunks" two sections later, and the digest
-attests chunks for both wire formats). The parallel-calls sentence's
-self-contradictory "do not interleave … but … can mix" construction is
-rewritten digest-exactly ("Fragments belonging to the *same* call
-always arrive in order, never mixed with another call's fragments
-inside one slot; between one call's fragments and the next, a
-different call's fragments or plain text may appear — which is why you
-buffer per call slot, never in one global buffer"; documented
-deviation: the audit's "with nothing else in between" dropped — the
-digest attests same-call order and no cross-call interleaving within
-one index, but not that text cannot interrupt one call's fragment
-run). Pydantic and enum carry first-use glosses at their 12.2 sites;
-p99/p50 are glossed as spaced recalls at the two-clocks paragraph (the
-99th-percentile first-token time, the slow end of normal; the median —
-typical throughput); the cache-lifetime parenthetical now points at
-chapter 14 ("the two cache lifetimes chapter 14 prices"); the 12.5
-stop-reason state machine gained the first-stop-wins clause ("Finish
-chunks can arrive more than once — first one wins, the rest are
-ignored" — machinery Build-it previously introduced only at exercise
-time, now consistent with Appendix D's rule 3 and the companion's
-stop() dedup); the opening's double acronym expansion gained its
-everyday handle ("the paper form your code mails to the provider and
-gets stamped back"); the "ride along all chapter" grammar slip, the
-PCM gloss (uncompressed digital sound), and the middleware gloss
-(extra software layers sitting between client and engine) are fixed;
-the dated four-grammars box opens with its recap flag; and both
-worst-gap reference-wall flags are in (12.2's provider walk and 12.5's
-usage bullets each tell the reader they are not meant to memorize —
-the normalizer exists so they never have to). Ch12 now 5,678 words
-(raw wc; +227, all gloss/on-ramp/flag-bearing), 3.2% over the 5,500
-concept cap — logged rather than trimmed, consistent with the ch06
-(2.5%) / ch02 (2.9%) / ch04 (5.6%) pedagogy precedent. Prior pass kept
+wave's thirteenth fix pass: iteration 74 completed the ch13 pass — all
+9 actionable findings applied (4.69/5 — zero [LOST]; 7 [CONFUSING] +
+2 applied [POLISH]; the third [POLISH] is the audit's explicit
+keep-as-is on inline checkpoint answers, no change). Headlined by the
+audit's single worst gap: the triple-duty compile sentence in 13.2 —
+compile, intersect, and per-state lookup nested in one clause chain,
+the only place a beginner risks a full stall — now split into three
+plain sentences ("the engine first compiles the grammar over
+characters. Then it intersects that rule set with the tokenizer's
+entire vocabulary, using a token trie — a prefix tree over the
+vocabulary. The result is, for each rule-machine state, the exact set
+of legal token ids"). The audit's #2 gap — four name-dropped sampler
+knobs in a sentence whose point is "they still apply" — glossed in
+place ("the dials that control how adventurous each word choice is");
+documented deviation: the audit's "(chapter 2's tour)" pointer dropped
+— grep-verified that sampler-knob content exists nowhere outside ch13
+in the manuscript, and iteration 39's gate-2 fix removed exactly that
+false pointer (the lever table's "Not owned elsewhere — glossed in
+§13.2" row stays true). Section 13.5's academic armor — the audit's #3
+gap — carries its two parentheticals: pass@3 glossed ("allowed three
+attempts," completing the notation family chapter 2's pass@1
+definition opens) and TC⁰ inverted picture-first ("limited to circuits
+too shallow for some reasoning problems (the complexity class TC⁰),
+making certain correct outputs unreachable in principle"). Also
+applied: "context-free" given its plain gloss ("the kind whose rules
+can nest brackets to any depth, which is exactly why the machine
+needs a stack") with the pushdown push/pop mechanics kept;
+`additionalProperties: false` glossed ("no fields beyond the ones you
+declared"); the quoted CFG acronym keyed after the quote ("CFG is the
+bracket-nesting grammar kind from 13.2," folded into the citation
+parenthetical); the opening's unglossed "sampler" replaced by "the
+engine's word-choosing machinery" (sampler's first surviving use is
+now 13.1's self-defining vocabulary paragraph, with 13.2's full
+definition following); and the key-finding clause "behavioral, not a
+parsing artifact" bolded per the audit's consider-bolding note.
+Ripple greps clean: "an FSM carrying a stack" / "the complexity class
+TC⁰ —" / "reaches into the sampler" return zero manuscript hits;
+context-free, TC⁰, and additionalProperties appear in no other file
+(appendix A carries none of the three). Ch13 now 6,157 words (raw wc;
++52, all gloss-bearing), on a base already logged over the 5,500
+concept cap as content-bearing (iterations 17/39) — logged rather than
+trimmed, consistent with the pedagogy precedent. Prior pass kept as
+history: iteration 73 completed the ch12 pass — all 12 findings
+applied (4.4/5 — zero [LOST]) plus both advisory worst-gap items.
+Headlined by the event/delta/chunk disambiguation at the chapter's
+front door ("the *event* is the envelope, the *delta* is the slice
+inside it, and *chunk* is the common vendor name for an event that
+carries deltas — two things, three words"; the common-vendor-name
+widening of the audit's "simply OpenAI's name" is the documented
+deviation, because the chapter's own Gemini sentence and the digest
+use "chunks" for both wire formats) and the digest-exact rewrite of
+the parallel-calls contradiction (same-call fragments arrive in
+order, never mixed inside one slot; between calls, other fragments or
+text may appear — buffer per call slot, never globally; the audit's
+"with nothing else in between" dropped as unattested). Pydantic and
+enum glossed at 12.2; p99/p50 spaced recalls; the chapter-14
+cache-lifetime pointer; the first-stop-wins clause in the stop-reason
+state machine (consistent with Appendix D's rule 3 and the companion's
+stop() dedup); the PCM and middleware glosses; the recap flag on the
+dated four-grammars box; and both reference-wall flags (12.2's
+provider walk and 12.5's usage bullets each tell the reader they are
+not meant to memorize — the normalizer exists so they never have to).
+Ch12 now 5,678 words, 3.2% over the concept cap — logged, consistent
+with the pedagogy precedent. Prior pass kept
 as history: iteration 72 completed the ch11 pass — all 11 findings
 applied (4.2/5 — 1 [LOST] + 5 [CONFUSING] + 5 [POLISH]).
 Headlined by the audit's one [LOST]: the 11.2 tier-cliff money example,
