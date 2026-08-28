@@ -4,25 +4,46 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's seventh fix pass: iteration 68 applied all 6 ch07 findings (4.70/5,
+wave's eighth fix pass: iteration 69 applied all 12 ch08 findings (4.4/5 —
+1 [LOST] + 6 [CONFUSING] + 5 [POLISH]) — headlined by the audit's [LOST]:
+the correction rule, the chapter's one theorem, now carries its plain-words
+ladder immediately after the formula ("each model holds a ranked preference
+list over the next word — that list is the distribution. Subtract the
+drafter's preference for each word from the target's, throw away anything
+that drops below zero, rescale what remains so the list sums to one again,
+and draw the replacement from that corrected list"). The three borrowed
+load-bearing terms are glossed — logits at its true 8.2 first use ("a raw
+preference score for every possible next token", with 8.5's −∞ glossed as
+"a score so low the sampler can never draw them"), n-gram at 8.3 ("a run
+of n consecutive tokens; a 3-gram is three in a row"), and the EAGLE
+hidden state ("the model's private intermediate notes, computed before it
+commits to any word"; the vocab table's "hidden layers" → "early layers").
+Also applied: the roofline 295 given its one-clause scale with "balance
+point" re-coined to chapter 3's own "ridge point", the mode/greedy/argmax
+cluster glossed, tree attention glossed, E[progress] and 70B expanded,
+"8×H100" → "eight H100 chips", sub-token amortized cost unfolded, and GQA
+pointed at chapter 4's cache-shrinking designs (§4.5 is literally "Four
+ways to shrink the coat"; the audit's "cache-sharing" would have mispointed
+at chapter 6's prefix sharing). Provenance: the manuscript edits came from
+an interrupted session's committed partial (1547b62); this iteration
+verified every hunk against the audit and every cross-chapter reference,
+confirmed zero numeric drift, and ran full validation. Ch08 now 5,555
+words (+220, all gloss-bearing), 1.0% over the 5,500 concept cap — logged,
+consistent with the ch06/ch02/ch04 pedagogy precedent.
+
+History: iteration 68 applied all 6 ch07 findings (4.70/5,
 zero [LOST] — 3 [CONFUSING] + 3 [POLISH]) — headlined by the audit's
-worst-gap hardware-name cluster: "tensor-core-shaped" dropped in favor of
-chapter 3's own coinage ("built for the chip's specialized matrix-math
-units" — grep showed ch03's iteration-64 fix had removed "tensor cores"
-book-wide, making ch07 the term's only survivor), and the NVLink/InfiniBand
-brand sentence retaught as plain hops ("the fast chip-to-chip links within
-one machine (NVLink)" vs "the network links between machines"). The
-opener's "under tail-latency constraints" became "under strict
-worst-case-wait limits" (the term keeps its self-glossed 7.3 site and 7.5's
-proper use), "full of retrieved documents" became "full of attached
-documents" (RAG stays named where it is expanded), Checkpoint Q2's
-previously unnamed formula is now taught in 7.2 ("arithmetic intensity
-climbing toward ≈ 512, chapter 3's batch dial turned up by the prompt's own
-length"), and "forward pass" — used book-wide since ch01 but never defined
-— is glossed below the timeline fence rather than inside it (the audit's
-in-fence parenthetical breaks the 66-column reader-fit budget at the note's
-alignment indent). Ripple greps clean book-wide. Ch07 now 5,062 words
-(+73, all gloss/on-ramp-bearing), inside the 5,500 concept cap.
+worst-gap hardware-name cluster: "tensor-core-shaped" dropped for
+chapter 3's own coinage ("the chip's specialized matrix-math units" —
+grep showed ch03 had removed "tensor cores" book-wide, making ch07 the
+only surviving site) and the NVLink/InfiniBand brand sentence retaught as
+plain hops. Also applied: the "tail-latency constraints" opener softened
+to "strict worst-case-wait limits" (the term keeps its self-glossed 7.3
+site), "retrieved documents" → "attached documents", Checkpoint Q2's
+formula taught in 7.2, and "forward pass" — used book-wide since ch01
+but never defined — glossed below the timeline fence (the audit's in-fence
+parenthetical breaks the 66-column reader-fit budget). Ch07 now 5,062
+words, inside the cap.
 
 History: iteration 67 applied all 19 ch06 findings (4.4/5,
 zero [LOST] — 12 [CONFUSING] + 7 [POLISH]) — headlined by the audit's
