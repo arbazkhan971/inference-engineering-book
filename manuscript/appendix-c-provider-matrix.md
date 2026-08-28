@@ -8,7 +8,7 @@ Everything below was retrieved on **2026-08-27** — mostly from official provid
 
 ## C.2 Prices (USD per 1M tokens)
 
-Representative rows, not full catalogs; each provider's pricing page is the source of truth.
+Representative rows, not full catalogs; each provider's pricing page is the source of truth. Long-context cells show $input/$output once a request crosses the model's threshold — the Notes column says where each threshold sits.
 
 | OpenAI | Input | Output | Long-context | Notes |
 |---|---|---|---|---|
@@ -39,16 +39,18 @@ Claude 4.6+ ships the full 1M-token window at standard price — positioning, no
 
 | DeepSeek | Input (miss) | Input (hit) | Output | Notes |
 |---|---|---|---|---|
-| v4-flash | $0.22 off-peak / $0.44 peak | ≈2–3% of miss | $0.66 / $1.32 | Off-peak exactly half price |
+| v4-flash | $0.22 off-peak / $0.44 peak | ≈2–3% of miss | $0.66 / $1.32 | Off-peak exactly half price; peak is 01:00–04:00 and 06:00–10:00 UTC, Mon–Fri |
 | v4-pro | $0.66 / $1.32 | ≈3% of miss | $1.98 / $3.96 | Concurrency caps: 2,500 / 500 |
+
+Miss = first send of that text, billed at the fresh price; hit = a re-send the provider serves from its cached copy — C.3 owns those contracts.
 
 Two 2026-08-27 snapshots disagree slightly on DeepSeek hit prices ($0.0028 vs $0.007 per million on v4-flash); treat hit pricing as "~a tenth or better of the miss price" until your own invoice reconciles it.
 
-The reusable structure underneath every row (chapter 2 and 16's metering): **cost = (fresh×in + writes×write_mult×in + reads×read_mult×in + out×out) / 1M**, with output priced 3–8× input everywhere because decode is serial and bandwidth-bound while prefill is not (chapter 3). Fast/priority lanes multiply (OpenAI 1.7–2.5× by model; Gemini priority 1.8×); regional residency adds 10% on OpenAI models released 2026-03-05 or later.
+The reusable structure underneath every row (chapter 2 and 16's metering): **cost = (fresh×in + writes×write_mult×in + reads×read_mult×in + out×out) / 1M**, with output priced 3–8× input everywhere because decode is serial and bandwidth-bound while prefill is not (chapter 3). Fast/priority lanes multiply (OpenAI 1.7–2.5× by model; Gemini priority 1.8×); regional residency (the keep-your-data-in-one-region option) adds 10% on OpenAI models released 2026-03-05 or later.
 
 ## C.3 Prompt-cache semantics
 
-One mechanism — byte-exact KV-prefix reuse (chapter 6) — under four contracts (chapter 14):
+One mechanism — byte-exact KV-prefix reuse (chapter 6) — under four contracts (chapter 14); each Opt-in cell names the provider's configuration knob:
 
 | | Anthropic | OpenAI | Gemini | DeepSeek |
 |---|---|---|---|---|
@@ -57,21 +59,21 @@ One mechanism — byte-exact KV-prefix reuse (chapter 6) — under four contract
 | Write | 1.25× (5 m) / 2× (1 h) | 1.25× (5.6+, `cache_write_tokens`); none on older | — (implicit) | — |
 | Read | 0.1× | 0.1× (older: 25–50%) | 10% of input | ≈0.1× or better |
 | TTL | 5 m refreshed free on read; 1 h optional; clock from request start | ≥30 m (5.6+) | Implicit: undocumented; explicit: default 1 h, updatable | Persistent disk cache |
-| Traps | 4 breakpoints max; 20-block lookback; 1 h must precede 5 m | >~15 req/min can overflow-route to a miss; `prompt_cache_key` groups routing | "No cost-saving guarantee"; explicit storage billed $4.50/1M/hr Pro-class ($1.00 2.5 Flash, $0.50 3 Flash-tier) | Newest rows show ~2–3% hit share spread across snapshots |
+| Traps | 4 breakpoints max; 20-block lookback (breakpoints match only the last 20 content blocks — chapter 14); 1 h must precede 5 m | >~15 req/min: load balancing can route your request to a machine that lacks your cache — a surprise miss; `prompt_cache_key` groups routing | "No cost-saving guarantee"; explicit storage billed $4.50/1M/hr Pro-class ($1.00 2.5 Flash, $0.50 3 Flash-tier) | Newest rows show ~2–3% hit share spread across snapshots |
 
 Break-even arithmetic the docs state themselves: one read repays the 1.25× write; two repay the 2× (chapter 14's worksheet).
 
 ## C.4 Rate-limit meters
 
-The meters differ enough that one shared token counter mispredicts throttling on three of four providers (chapter 15):
+The meters differ enough that one shared token counter mispredicts throttling on three of four providers (chapter 15). Reading the table: **RPM** requests/minute · **TPM** tokens/minute · the **I/O prefix** means input/output tokens · **D** per day · **IPM** images/minute · **audio-min** audio minutes/minute. And Bedrock's "burndown": each output token counts against quota at a multiplied rate — up to 15 tokens' worth per output token, the multiplier set per model family; chapter 15 works the arithmetic.
 
 | | OpenAI | Anthropic | Gemini | Bedrock |
 |---|---|---|---|---|
 | Metrics | RPM, TPM, RPD, IPM, audio-min | RPM, ITPM, OTPM | RPM, input TPM, RPD | Per-model token quota |
 | Scope | Org + project (not per key); some families share pools (3.5M TPM documented) | Per model class; families share pools | Per project; resets midnight Pacific | Per model |
-| Reservation | `max(max_tokens, char-estimate)`; unsuccessful requests count | ITPM = input + writes; **cache reads exempt** (Haiku 3.5 the exception); OTPM on actual output | Input only | `input + cache-write + max_tokens` up front, re-credited; output × burndown (15× Claude 4.8; 10× Sonnet 5/Opus 5 and GPT-5.6 on Bedrock; 5× Claude ≤4.7; 1:1 most others); cache reads never counted |
+| Reservation | `max(max_tokens, char-estimate)` — the larger of your declared maximum and a character-count guess; unsuccessful requests count | ITPM = input + writes; **cache reads exempt** (Haiku 3.5 the exception); OTPM on actual output | Input only | `input + cache-write + max_tokens` up front, re-credited; output × burndown (15× Claude 4.8; 10× Sonnet 5/Opus 5 and GPT-5.6 on Bedrock; 5× Claude ≤4.7; 1:1 most others); cache reads never counted |
 | Enforcement | Tiered by lifetime spend | Token bucket, continuous refill ("60 RPM might be 1 rps") | Plus spend-based limits | Service Quotas |
-| Snapshot example | Tier 1: 500 RPM / 500K TPM (GPT-5.4/5.6 family) | Opus 5/Sonnet 5/Haiku 4.5: 1,000 RPM / 2M ITPM / 400K OTPM | Free 2.5 Pro ≈ 5 RPM / 100 RPD; paid ~150–300 RPM (third-party trackers — approximate) | Worked example in docs: 36,000 booked → 9,000 final |
+| Snapshot example | Tier 1: 500 RPM / 500K TPM (GPT-5.4/5.6 family) | Opus 5/Sonnet 5/Haiku 4.5: 1,000 RPM / 2M ITPM / 400K OTPM | Free 2.5 Pro ≈ 5 RPM / 100 RPD; paid ~150–300 RPM (third-party trackers — approximate) | Worked example in docs: 36,000 booked → 9,000 final (reserved up front → left after re-credit) |
 
 Spend caps: OpenAI enforces monthly limits (July 2026) with `insufficient_quota` 429s; Anthropic Start $500 / Build $1,000 / Scale $200,000 per month, with spend-cap 429s carrying **no** `Retry-After` — classify before retrying (chapter 15).
 
@@ -81,8 +83,8 @@ Chapter 13's ladder, as configuration:
 
 | Tier | Surface | Guarantee |
 |---|---|---|
-| Full schema | OpenAI `json_schema` + `strict: true` (Chat `response_format`; Responses `text.format`) | Constrained decoding: 100% schema adherence (vendor's 2024 eval; <40% for prompting). Limits: 5,000 properties, 10 nesting levels, 120K schema chars, 1,000 enums; unsupported keywords error; all fields `required` (optionals via `null` unions); key order = emission order (first-in-`required` is community folklore, hedged) |
-| Strict tool | Anthropic `strict: true` tools; `output_config.format` (ex-`structured-outputs-2025-11-13` beta) | Tool names and inputs validate; force extraction via `tool_choice: {type:"tool"}` |
+| Full schema | OpenAI `json_schema` + `strict: true` (Chat `response_format`; Responses `text.format`) | Constrained decoding: 100% schema adherence (vendor's 2024 eval; merely prompting for JSON stayed under 40% in the same eval). Limits: 5,000 properties, 10 nesting levels, 120K schema chars, 1,000 enums; unsupported keywords error; all fields `required` (optionals via `null` unions); key order = emission order (the belief that fields arrive in the order you list them in `required` is community folklore, not contract) |
+| Strict tool | Anthropic `strict: true` tools; `output_config.format` (ex-`structured-outputs-2025-11-13` beta) | Tool names and inputs validate; force extraction via `tool_choice: {type:"tool"}` (the model must answer by calling that tool) |
 | Schema subset | Gemini `responseMimeType` + `responseSchema` (OpenAPI 3.0 subset) | Enforced at generation, but unsupported keywords are **silently ignored** — a constraint you think you have, you may not |
 | Syntax only | DeepSeek `json_object` | Parses as JSON; shape is whatever the prompt example nudged; needs `"json"` in prompt, an example, and a sane `max_tokens` (else unending whitespace to the limit) |
 
@@ -94,9 +96,9 @@ Chapter 12's grammar map, one row each:
 
 | Surface | Transport | Termination | Tool-call keying |
 |---|---|---|---|
-| OpenAI Chat | SSE; `data:` JSON chunks | `data: [DONE]` sentinel; `finish_reason` per choice | `tool_calls[].index` → `id` |
+| OpenAI Chat | SSE (server-sent events); `data:` JSON chunks | `data: [DONE]` sentinel; `finish_reason` per choice (one per candidate reply) | `tool_calls[].index` → `id` |
 | OpenAI Responses | SSE; typed events (`response.output_text.delta`, `response.completed`) | `response.completed` | `item_id` |
-| Anthropic | SSE; strictly ordered event log (`message_start` → block lifecycle → `message_delta`); pings legal anywhere | `stop_reason` in `message_delta` | block index + `toolu_` id |
+| Anthropic | SSE; strictly ordered event log (`message_start` → block lifecycle → `message_delta`); pings (keep-alive events) legal anywhere | `stop_reason` in `message_delta` | block index + `toolu_` id |
 | Gemini | `streamGenerateContent?alt=sse` (the query param is the stream switch) | `finishReason` on the last chunk | `step.start` id; args arrive as objects |
 | Realtime/Live | WebSocket (OpenAI also WebRTC); Gemini Live raw PCM 16 kHz in / 24 kHz out, socket resets ~every 10 minutes | Session events | — |
 
@@ -109,7 +111,7 @@ Provider finish-reason vocabularies diverge enough to break schemas (one provide
 | Batch discount | 50% | 50% on all token usage | 50% |
 | Window | 24 h (only value) | ≤24 h, most finish <1 h | 24 h SLO |
 | Limits | 50,000 requests / 200 MB per file | 100,000 requests / 256 MB; results kept 29 days | — |
-| Sibling lanes | Flex: 50%, latency-tolerant sync; Fast: ~1.7–2.5× premium | Fast mode 2× (Opus 5/4.8 preview; barred from Batch) | Flex: 50%, 1–15 min target, sheddable; Priority: 1.8× |
+| Sibling lanes | Flex: 50%, latency-tolerant sync; Fast: ~1.7–2.5× premium | Fast mode 2× (Opus 5/4.8 preview; barred from Batch) | Flex: 50%, 1–15 min target, sheddable (dropped first under load); Priority: 1.8× |
 
 The heuristic that routes: if the harness would retry rather than time out, it can batch (chapter 16). Modifiers stack multiplicatively where allowed — a cached batch call can cost a small fraction of sticker; a fast, resident, uncached call can exceed 2–3× it.
 
@@ -123,7 +125,7 @@ The heuristic that routes: if the harness would retry rather than time out, it c
 | Llama 4 Scout | 10M (claim) | — | — |
 | Qwen API tiers | 1M | ~998K in / 65.5K out | — |
 
-Claimed is admission; effective is quality — RULER measured claimed-vs-effective gaps from 4× to beyond 100× (Yi-34B 200K claimed vs 16K effective; GPT-4-1106 128K vs 32K), and "lost in the middle" makes position a design variable (chapter 11). Size budgets from your own battery at min(quality, tier, KV), not the marketing number.
+Claimed is admission; effective is quality — RULER (the context-quality benchmark, chapter 11) measured claimed-vs-effective gaps from 4× to beyond 100× (Yi-34B 200K claimed vs 16K effective; GPT-4-1106 128K vs 32K), and "lost in the middle" makes position a design variable (chapter 11). Size budgets from your own battery — a test set you run yourself — at the smallest of three ceilings: the quality your tests show, the tier the provider prices, and the memory the KV cache allows (chapter 4); not the marketing number.
 
 ## C.9 Same weights, different engines
 
@@ -134,7 +136,7 @@ For open-weight models, the provider *is* a performance dial (chapters 9, 16, 18
 - gpt-oss-120b: ~3,000 tokens/s on Cerebras vs 500 on Groq — a 6× spread on identical weights.
 - Quantization is part of the spread: FP8 is near-lossless across the Llama-3.1 family (500K+ evaluations) and 18–23% faster and cheaper per token on B200/B300-class hardware; INT4 runs 2.7× faster than BF16 but lost ~8 points HumanEval in a single-H100 Qwen3-32B benchmark. Pin the variant; re-benchmark quarterly.
 
-And the own-vs-rent constants (chapter 18's crossover, re-dated here): H100 rental ≈ **$2.39–2.49/hr** (RunPod/Lambda, checked 2026-08-02, corroborated April 2026), marketplace A100 ≈ **$1.49–2.49/hr**, 4090-class from ~$1.49/hr; disaggregated per-token APIs from ~$0.02 to ~$2.85 per 1M (open-weight tiers, 2026); the mid-tier blended figure the crossover used, **$0.60/1M**. Leaderboard figures move with infrastructure changes — Artificial Analysis itself versions its index and could not be auto-extracted on 2026-08-27 (JavaScript-rendered), so treat provider rankings as snapshots of a snapshot.
+And the own-vs-rent constants behind chapter 18's crossover — its rent-versus-serve break-even, re-dated here: H100 rental ≈ **$2.39–2.49/hr** (RunPod/Lambda, checked 2026-08-02, corroborated April 2026), marketplace A100 ≈ **$1.49–2.49/hr**, 4090-class from ~$1.49/hr; disaggregated per-token APIs from ~$0.02 to ~$2.85 per 1M (open-weight tiers, 2026); the mid-tier blended figure that break-even used, **$0.60/1M**. Leaderboard figures move with infrastructure changes — Artificial Analysis itself versions its index, so treat provider rankings as a snapshot of a snapshot.
 
 ## C.10 Re-dating the matrix
 

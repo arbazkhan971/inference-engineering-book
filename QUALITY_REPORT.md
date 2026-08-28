@@ -4,7 +4,47 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twentieth fix pass: iteration 81 completed the appendix B
+wave's twenty-first fix pass: iteration 82 completed the appendix C
+pass — all 21 findings applied (3.5/5 — 3 [LOST] + 11 [CONFUSING] +
+7 [POLISH]; C.4 alone graded 2.5, the wave's co-floor surface, fixed
+by on-ramps not cuts per the standing instruction). Headlined by
+C.4's conversion from chapter-dependency to self-service: a meter
+legend above the table expands all six acronyms it prints (RPM
+requests/minute · TPM tokens/minute · the I/O prefix = input/output
+tokens · D per day · IPM images/minute · audio-min audio
+minutes/minute — every meaning verified against the quota digest;
+documented extension of the audit's four-acronym fix), and Bedrock's
+burndown now carries its plain sentence (each output token counts
+against quota at a multiplied rate — up to 15 tokens' worth per
+output token, the multiplier set per model family; chapter 15 works
+the arithmetic). The third LOST: C.5's insider folklore parenthetical
+expanded — "the belief that fields arrive in the order you list them
+in `required` is community folklore, not contract" (expansion chosen
+over the audit's cut option, on-ramps-not-cuts). The eleven
+CONFUSING fixes self-annotate the lookup conventions the audit said
+punish jump-in readers: C.2 (long-context cells = $in/$out past the
+threshold; DeepSeek miss/hit footnote pointing at C.3; off-peak's
+window added digest-verbatim — peak 01:00–04:00 and 06:00–10:00 UTC
+Mon–Fri; regional residency = the keep-your-data-in-one-region
+option); C.3 (Opt-in legend line; 20-block lookback = breakpoints
+match only the last 20 content blocks; overflow-route restated as a
+surprise miss under load balancing); C.4's code shapes glossed
+(max(max_tokens, char-estimate) = the larger of your declared
+maximum and a character-count guess; 36,000 booked → 9,000 final =
+reserved up front → left after re-credit); C.5 (<40% scoped to the
+same eval; tool_choice glossed); C.6 (SSE expanded, pings = keep-
+alive events, per-choice = one per candidate reply); C.7 (sheddable
+= dropped first under load); C.8's closing min() unfolded into three
+plain ceilings, matching ch11's own "minimum of the three ceilings"
+phrasing; C.9's crossover noun anchored as chapter 18's rent-versus-
+serve break-even. POLISH: RULER glossed; the C.9 authoring-process
+detail (auto-extraction/JavaScript-rendered) removed — "versions its
+index" carries the volatility point, C.1's banner the retrieval date.
+Ripples: overflow-route survives only at ch14/ch17 sites that already
+explain the failure in plain words (closed audits — logged for the
+record); all other removed phrases zero-hit; no mermaid in the file.
+Appendix C now 2,384 words (+239, all legend/gloss/on-ramp-bearing).
+Prior pass kept as history: iteration 81 completed the appendix B
 pass — all 20 findings applied (4.3/5 — 2 [LOST] + 10 [CONFUSING] +
 8 [POLISH]; the auditor hand-recomputed all 16 worked examples and
 found every one correct, so every fix is gloss/scaffold-level).
