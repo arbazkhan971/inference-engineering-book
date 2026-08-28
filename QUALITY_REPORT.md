@@ -4,7 +4,66 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's thirteenth fix pass: iteration 74 completed the ch13 pass — all
+wave's fourteenth fix pass: iteration 75 completed the ch14 pass — all
+14 findings applied (4.17/5 — 3 [LOST] + 6 [CONFUSING] + 5 [POLISH];
+the auditor independently re-derived the chapter's arithmetic — punch
+card, 525,000 loop, 354,200/90,450 totals, fanout 5.01M, all six
+chart points — and found it correct; the findings are teaching-only).
+Headlined by the audit's worst gap: the three meanings of "block" in
+one chapter — chapter 6's 16-token KV pages, Anthropic's content
+blocks in the 20-block lookback and the leapfrog rule, and the worked
+example's own turn blocks — now disambiguated at the lookback's first
+use ("blocks here are Anthropic's *content* blocks (a message or tool
+result), not chapter 6's 16-token pages"; content blocks are the
+book's own ch12 vocabulary, so the fix distinguishes two units the
+book itself taught rather than importing a new fact), with the worked
+example's block labeled ("every turn's 1,000-token history block") —
+a reader who internalized ch06 no longer computes 20 × 16 and lands
+confidently wrong. [LOST] #2: the leapfrog rule gained its missing
+why — "a checkpoint left more than 20 blocks behind can no longer see
+any cache entry near the tail, so its write premium buys nothing;
+leapfrogging keeps one checkpoint always inside the window the
+provider will actually match." [LOST] #3: the mechanism sentence —
+the chapter's only physics, three jargon terms in one breath —
+glossed inline (the hash as a fingerprint of the opening bytes that
+matches only exactly those tokens; resident as a stored copy still
+live; pinned as held by your request rather than left to the clock),
+the sentence verified digest-verbatim before glossing. The two
+un-derived arithmetic islands now derived on the page: the 30,000
+history-read total shows its triangular count ("re-read 0, 1, …, 24
+times as turns arrive — 300 block-reads × 1,000 tokens × 0.1 =
+30,000"; 0+1+…+24 = 300 re-derived before applying), and the ≈1.74
+1-hour crossover carries its two-line derivation (2.0 + 0.1·N <
+1.25·N once N > 2.0 ÷ 1.15 ≈ 1.74 — the same inequality ch17 runs
+at session scale; the audit's appendix-B-card option was rejected
+because the card carries only the 1.6 form). Also applied: Opus/
+Sonnet/Haiku introduced as Anthropic's large/mid/small tiers at the
+minimums row; hidden system tokens glossed ("tokens the provider
+injects on your behalf, tool schemas and the like" — digest-attested
+hidden system content incl. tools); the salt row's circular "cache
+key" replaced by "the identity the provider fingerprints your prefix
+into" with the appendix-A mirror rippled; the hit-rate picture
+re-flavored to reuse ("a form letter already on the printing plate" —
+the chapter's own engraver family, replacing the non-reuse quiz
+picture); "the miss price" → "the uncached (miss) price"; the
+serializer gloss ("the code that packs your request into bytes" —
+wider than the audit's tool-list wording, because the flagged
+sentence's serializer re-serializes history) and the tool-stub gloss
+(minimal placeholder definitions); the opening KV recap anchored to
+chapter 4's actual coinage ("the model's memory of having already
+read them, chapter 4's per-request notes" — the audit's "notebook"
+was never ch04's word, documented deviation); and the
+actuarial-insurance sentence restated in plain words (count the
+expiries you expect per idle hour against the 0.75× extra premium —
+that is the whole decision). Ripple greps clean: the quiz picture and
+"actuarial" are gone book-wide; "notebook" was never introduced (the
+deviation above); "cache key" survives only in ch17's own sites, whose
+pedagogy audit is queued (no front-running); the 20-block
+sites verified against ch06's 16-token definition. Ch14 now 5,658
+words (+238, all gloss/derivation/on-ramp-bearing), 2.9% over the
+5,500 concept cap — logged rather than trimmed, consistent with the
+ch02 (2.9%) / ch06 (2.5%) / ch04 (5.6%) pedagogy precedent. Prior
+pass kept as history: iteration 74 completed the ch13 pass — all
 9 actionable findings applied (4.69/5 — zero [LOST]; 7 [CONFUSING] +
 2 applied [POLISH]; the third [POLISH] is the audit's explicit
 keep-as-is on inline checkpoint answers, no change). Headlined by the
@@ -171,7 +230,7 @@ never haircut). Ch09 now 5,864 words (raw wc; +92 over its sealed 5,772 —
 glosses and splits, net of the dropped re-expansions), 6.6% over the 5,500
 concept cap on a base already 4.9% over and logged content-bearing — logged
 rather than trimmed, consistent with the ch04 (5.6% post-pass) pedagogy
-precedent. Prior pass kept as history: iteration 69 applied all 12 ch08
+precedent. History: iteration 69 applied all 12 ch08
 findings (4.4/5 — 1 [LOST] + 6 [CONFUSING] + 5 [POLISH]) — the audit's
 [LOST]: the correction rule, the chapter's one theorem, now carries its
 plain-words ladder immediately after the formula ("each model holds a

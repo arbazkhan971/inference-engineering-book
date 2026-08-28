@@ -336,7 +336,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Hit rate** — The share of input tokens served from cache. *(Ch. 14)*
 
-**Cache salt** — A value mixed into the cache key to keep tenants apart. *(Ch. 6, 14)*
+**Cache salt** — A value mixed into the identity the provider fingerprints your prefix into, to keep tenants apart. *(Ch. 6, 14)*
 
 **Rate limit / quota** — A ceiling on how much you may send, per time window. *(Ch. 15)*
 
