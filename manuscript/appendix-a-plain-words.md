@@ -316,9 +316,9 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Prompt prefix** — Everything from the request's first token up to some boundary. *(Ch. 14)*
 
-**Cache write** — The first request that computes and stores a prefix's state. *(Ch. 14)*
+**Cache write** — The first request that computes and stores a prefix's state; at the quota meter it counts as fresh input. *(Ch. 14, 15)*
 
-**Cache read (hit)** — A later request that reuses stored state instead of recomputing. *(Ch. 14)*
+**Cache read (hit)** — A later request that reuses stored state instead of recomputing; often uncounted at the quota meter. *(Ch. 14, 15)*
 
 **Cache miss / invalidation** — The first differing byte ends reuse for everything after it. *(Ch. 14)*
 
@@ -344,7 +344,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **ITPM / OTPM** — Input / output tokens per minute, metered separately. *(Ch. 15)*
 
-**Token bucket** — A credit tank that refills continuously; each request spends credits. *(Ch. 15)*
+**Token bucket** — A tank that refills continuously; each request drains it. *(Ch. 15)*
 
 **Burndown rate** — A multiplier a provider applies to one kind of token when counting quota. *(Ch. 15)*
 

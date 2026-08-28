@@ -4,7 +4,67 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's fourteenth fix pass: iteration 75 completed the ch14 pass — all
+wave's fifteenth fix pass: iteration 76 completed the ch15 pass —
+all 15 findings applied (4.36/5 — zero [LOST]; 7 [CONFUSING] +
+8 [POLISH]) plus the advisory worst-gap recaps. Headlined by the
+audit's worst gap — cache write/read, load-bearing in 15.2's quota
+box and all of 15.3's meter arithmetic, yet absent from the
+Words-before-machinery table — now carried as one row ("First send
+of a prompt prefix (counted as fresh input) vs re-send of one the
+provider already holds (often uncounted at the meter)" / "The first
+photocopy of a document vs the second"; documented deviation: the
+audit's "often free" became "often uncounted at the meter", because
+the chapter's own 15.3 text and chapter 14's nothing-is-free
+discipline both forbid "free" — reads still bill at 0.1×). The
+opening's bare 429 is glossed at first use ("the 429-class response
+(`too many requests`, section 15.4)"); 15.4's word collision — the
+fresh 529-"overloaded" picture against "deliberately overloaded in
+meaning" one paragraph later — resolved as "deliberately ambiguous
+in meaning"; the utilization notation split (fraction in 15.2,
+percent in 15.6) harmonized ("as utilization nears 100% (a fraction
+of one — chapter 5's ρ)", ch05's own notation grep-verified); the
+Anthropic 10M-effective claim now shows its division ("only a fifth
+of input is fresh at that hit rate, so the effective ceiling is
+2,000,000 ÷ 0.2" — digest-attested arithmetic); K-of-N glossed at
+its book-first use ("accept the first K of your N results — any 70
+of a 100-wide step, say" — documented deviation: the audit's "any
+700 of 1,000" re-anchored to the chapter's own N=100 step four
+sentences upstream); the `except` sentence de-codenamed ("both land
+in the same error handler (`except`, in most languages)", dropping
+"mid-fanout" — and the audit's premise that fanout is chapter 10's
+word is a reviewer false positive: grep shows ch10 never uses the
+term); plus the credential/key standardization (the API expansion
+moves to the equivalence's first use — "an API (application
+programming interface) key is just a credential" — then "five extra
+keys" and "The key is a name tag, not a bucket"), the quota box's
+burndown pointer, QPS tied to the table ("the same idea as RPM"),
+"wire requests" glossed ("actual HTTP calls that leave your
+machine"), the adaptive-throttle `+ 1` given its why ("only guards
+against dividing by zero on the first request"), "vertical
+asymptote" glossed ("the point where the curve goes straight up"),
+the character-count estimate named as a proxy ("the provider
+estimates your prompt's token count from its character count" —
+documented deviation: the audit's "cannot know your token count
+before reading it" is not digest-attested and states an impossibility
+the docs do not), and the token-bucket row's mixed metaphor cleaned
+("A tank that refills continuously; each request drains it").
+Worst-gap 2 (advisory) applied: four one-line italic recaps now
+close each of 15.3's provider paragraphs (OpenAI: reserve first, no
+forgiveness; Anthropic: split meters, reads bypass the input meter,
+burst-trap; Gemini: carry-in only, Pacific-midnight reset; Bedrock:
+multiplied output, up-front reservation, uncounted reads). Appendix
+A ripples (the glossary mirrors chapter tables by design): Token
+bucket re-worded to match the fixed row; Cache write / Cache read
+extended with the quota sense and re-tagged (Ch. 14, 15). Ripple
+greps clean: "overloaded in meaning" / "mid-fanout" / "credit tank"
+/ "K-of-N results" / "nears one" return zero manuscript hits, and
+the later K-of-N uses (lever table, Build-it, ch16, ch18, appendices
+B/D) all sit after the gloss site. Mermaid blocks byte-identical
+pre/post (md5-verified). Ch15 now 6,022 words (raw wc; +231, all
+gloss/on-ramp/recap-bearing), 9.5% over the 5,500 concept cap —
+logged rather than trimmed, consistent with the ch13 (12.0%) /
+ch09 (6.6%) logged-over precedent. Prior pass kept as history:
+iteration 75 completed the ch14 pass — all
 14 findings applied (4.17/5 — 3 [LOST] + 6 [CONFUSING] + 5 [POLISH];
 the auditor independently re-derived the chapter's arithmetic — punch
 card, 525,000 loop, 354,200/90,450 totals, fanout 5.01M, all six
@@ -199,7 +259,7 @@ jargon. The mermaid block is byte-identical (SKIP_FIGURES validation
 sound); the one added number re-derived (37 × 2 = 74). Ch10 now 5,616
 words (raw wc; +173, all gloss/on-ramp/row-bearing), 2.1% over the
 5,500 concept cap — logged rather than trimmed, consistent with the
-pedagogy precedent. Prior pass kept as history: iteration 70 applied
+pedagogy precedent. History: iteration 70 applied
 all 14 ch09 findings (4.2/5 — zero [LOST]; 6 [CONFUSING] +
 8 [POLISH]) — headlined by the affine-math
 paragraph (the audit's worst gap): the zero-point `z` now carries its
