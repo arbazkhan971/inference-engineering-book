@@ -4,7 +4,7 @@
 
 ## C.1 How to read this matrix
 
-Everything below was retrieved from official provider pages on **2026-08-27** and is a snapshot, not a fact about the universe. The chapters own the teaching (each table names its chapter); this appendix owns the lookup. The one discipline that matters: **re-date the matrix every pricing cycle** — quarterly at most, immediately after any provider announcement you act on — and never let a constant from this page survive into your config unaccompanied by its date.
+Everything below was retrieved on **2026-08-27** — mostly from official provider pages, with third-party or off-date sources labeled wherever they appear — and is a snapshot, not a fact about the universe. The chapters own the teaching (each table names its chapter); this appendix owns the lookup. The one discipline that matters: **re-date the matrix every pricing cycle** — quarterly at most, immediately after any provider announcement you act on — and never let a constant from this page survive into your config unaccompanied by its date.
 
 ## C.2 Prices (USD per 1M tokens)
 
@@ -12,13 +12,13 @@ Representative rows, not full catalogs; each provider's pricing page is the sour
 
 | OpenAI | Input | Output | Long-context | Notes |
 |---|---|---|---|---|
-| gpt-5.6-sol | $4.00 | $20.00 | $8.00/$30.00 | Promo price held through 2026-11-21 |
+| gpt-5.6-sol | $4.00 | $20.00 | $8.00/$30.00 | Promo price holds at least through 2026-11-21 |
 | gpt-5.6-terra | $2.00 | $12.00 | $4.00/$18.00 | |
 | gpt-5.6-luna | $0.20 | $1.20 | $0.40/$1.80 | |
 | gpt-5.5 | $5.00 | $30.00 | $10.00/$45.00 | "Long" = requests ≥272K tokens |
 | gpt-5.1 / gpt-5 | $1.25 | $10.00 | — | Cached input $0.125 (10%) |
 | gpt-5-mini / nano | $0.25 / $0.05 | $2.00 / $0.40 | — | |
-| Legacy: gpt-4.1 / 4o / 4o-mini | $2.00 / $2.50 / $0.15 | $8.00 / $10.00 / $0.60 | — | Older cached rates: 25% / 50% |
+| Legacy: gpt-4.1 / 4o / 4o-mini | $2.00 / $2.50 / $0.15 | $8.00 / $10.00 / $0.60 | — | Older cached rates: 25% (4.1), 50% (4o) |
 
 | Anthropic | Input | Output | Notes |
 |---|---|---|---|
@@ -32,7 +32,7 @@ Claude 4.6+ ships the full 1M-token window at standard price — positioning, no
 
 | Gemini | Input | Output | Cached input | Notes |
 |---|---|---|---|---|
-| 2.5 Pro | $1.25 | $10.00 | $0.125 | >200K prompts: $2.50/$15.00 |
+| 2.5 Pro | $1.25 | $10.00 | $0.125 | >200K prompts: $2.50/$15.00; cached $0.25 above 200K |
 | 2.5 Flash | $0.30 | $2.50 | $0.03 | Storage $1.00/1M/hr |
 | Flash-Lite | $0.10 | $0.40 | — | |
 | 3.x flagship tier | $2.00 | $12.00 | $0.20 | >200K: $4.00/$18.00; output price includes thinking tokens |
@@ -95,7 +95,7 @@ Chapter 12's grammar map, one row each:
 | Surface | Transport | Termination | Tool-call keying |
 |---|---|---|---|
 | OpenAI Chat | SSE; `data:` JSON chunks | `data: [DONE]` sentinel; `finish_reason` per choice | `tool_calls[].index` → `id` |
-| OpenAI Responses | SSE; typed events (`response.output_text.delta`, `response.completed`) | `response.completed` / `response.incomplete` | `item_id` |
+| OpenAI Responses | SSE; typed events (`response.output_text.delta`, `response.completed`) | `response.completed` | `item_id` |
 | Anthropic | SSE; strictly ordered event log (`message_start` → block lifecycle → `message_delta`); pings legal anywhere | `stop_reason` in `message_delta` | block index + `toolu_` id |
 | Gemini | `streamGenerateContent?alt=sse` (the query param is the stream switch) | `finishReason` on the last chunk | `step.start` id; args arrive as objects |
 | Realtime/Live | WebSocket (OpenAI also WebRTC); Gemini Live raw PCM 16 kHz in / 24 kHz out, socket resets ~every 10 minutes | Session events | — |

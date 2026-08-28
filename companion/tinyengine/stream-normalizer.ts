@@ -95,7 +95,7 @@ export class StreamNormalizer {
       const id = c.item_id ?? c.item?.id ?? c.call_id ?? "resp:?";
       const frag = c.delta ?? "";
       if (c.item?.name || frag) out.push(...this.tools.add(id, c.item?.name, frag));
-    } else if (c.type === "response.completed" || c.type === "response.incomplete") {
+    } else if (c.type === "response.completed") { // terminal contract per ch12's dated snapshot — unattested event names are not handled
       const u = c.response?.usage;
       if (u) out.push(this.usageEvt((u.input_tokens ?? 0) - (u.input_tokens_details?.cached_tokens ?? 0),
         u.input_tokens_details?.cached_tokens ?? 0, u.input_tokens_details?.cache_write_tokens ?? 0,
