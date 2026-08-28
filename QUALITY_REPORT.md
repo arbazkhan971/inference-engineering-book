@@ -4,32 +4,63 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's eighth fix pass: iteration 69 applied all 12 ch08 findings (4.4/5 —
-1 [LOST] + 6 [CONFUSING] + 5 [POLISH]) — headlined by the audit's [LOST]:
-the correction rule, the chapter's one theorem, now carries its plain-words
-ladder immediately after the formula ("each model holds a ranked preference
-list over the next word — that list is the distribution. Subtract the
-drafter's preference for each word from the target's, throw away anything
-that drops below zero, rescale what remains so the list sums to one again,
-and draw the replacement from that corrected list"). The three borrowed
-load-bearing terms are glossed — logits at its true 8.2 first use ("a raw
-preference score for every possible next token", with 8.5's −∞ glossed as
-"a score so low the sampler can never draw them"), n-gram at 8.3 ("a run
-of n consecutive tokens; a 3-gram is three in a row"), and the EAGLE
-hidden state ("the model's private intermediate notes, computed before it
-commits to any word"; the vocab table's "hidden layers" → "early layers").
-Also applied: the roofline 295 given its one-clause scale with "balance
-point" re-coined to chapter 3's own "ridge point", the mode/greedy/argmax
-cluster glossed, tree attention glossed, E[progress] and 70B expanded,
-"8×H100" → "eight H100 chips", sub-token amortized cost unfolded, and GQA
-pointed at chapter 4's cache-shrinking designs (§4.5 is literally "Four
-ways to shrink the coat"; the audit's "cache-sharing" would have mispointed
-at chapter 6's prefix sharing). Provenance: the manuscript edits came from
-an interrupted session's committed partial (1547b62); this iteration
-verified every hunk against the audit and every cross-chapter reference,
-confirmed zero numeric drift, and ran full validation. Ch08 now 5,555
-words (+220, all gloss-bearing), 1.0% over the 5,500 concept cap — logged,
-consistent with the ch06/ch02/ch04 pedagogy precedent.
+wave's ninth fix pass: iteration 70 applied all 14 ch09 findings (4.2/5 —
+zero [LOST]; 6 [CONFUSING] + 8 [POLISH]) — headlined by the affine-math
+paragraph (the audit's worst gap): the zero-point `z` now carries its
+"you may ignore it" parenthetical (a small offset so that zero lands on a
+grid point), and "15 levels" is corrected to "2^4 − 1 = 15 equal steps
+between 16 grid points" so the counting beginner's finger matches the
+formula. The 9.4 headline finding (the 4-bit reasoning cliff) rides three
+plain sentences instead of one triple-dash construction; the promissory
+opener is split and de-dashed; matmul → "the matrix multiply (the giant
+multiplication at the heart of every layer)"; the Hessian parenthesis is
+plain-first ("a mathematical map of how rounding errors ripple forward…";
+an approximate Hessian — the technical name for that error map); the e4m3/
+e5m2 parenthetical keeps the gate-2 bit attribution but gains a plain frame
+("the digits count exponent bits then mantissa bits, 4-and-3 or 5-and-2");
+"brain float 16" (the book's outlier — every other chapter says bfloat16)
+is dropped for the 9.1 table's own definition; the 0.7 haircut is re-coined
+as "chapter 3's 0.7 kernel-efficiency discount" at both sites; the lever
+table's Where column now uses the book's own convention (Chapter header,
+bare chapter numbers, "N (this chapter)") after the audit flagged the
+"this chapter, 3" vs "this chapter, 16" ambiguity — documented deviation:
+the audit's §9.3 reading contradicts the row text, which points at chapter
+3's floor and chapter 4's cache; MRCR leads plain ("a multi-round
+who-referred-to-what benchmark; the literature calls it co-reference
+resolution"), keeping the gate-2-corrected official term. One ripple beyond
+the audit: ch10's "haircut caveats" → "efficiency caveats" (the term's only
+surviving site after ch09's rename; ch03 itself says efficiency factor,
+never haircut). Ch09 now 5,864 words (raw wc; +92 over its sealed 5,772 —
+glosses and splits, net of the dropped re-expansions), 6.6% over the 5,500
+concept cap on a base already 4.9% over and logged content-bearing — logged
+rather than trimmed, consistent with the ch04 (5.6% post-pass) pedagogy
+precedent. Prior pass kept as history: iteration 69 applied all 12 ch08
+findings (4.4/5 — 1 [LOST] + 6 [CONFUSING] + 5 [POLISH]) — the audit's
+[LOST]: the correction rule, the chapter's one theorem, now carries its
+plain-words ladder immediately after the formula ("each model holds a
+ranked preference list over the next word — that list is the distribution.
+Subtract the drafter's preference for each word from the target's, throw
+away anything that drops below zero, rescale what remains so the list sums
+to one again, and draw the replacement from that corrected list"). The
+three borrowed load-bearing terms are glossed — logits at its true 8.2
+first use ("a raw preference score for every possible next token", with
+8.5's −∞ glossed as "a score so low the sampler can never draw them"),
+n-gram at 8.3 ("a run of n consecutive tokens; a 3-gram is three in a
+row"), and the EAGLE hidden state ("the model's private intermediate
+notes, computed before it commits to any word"; the vocab table's "hidden
+layers" → "early layers"). Also applied: the roofline 295 given its
+one-clause scale with "balance point" re-coined to chapter 3's own "ridge
+point", the mode/greedy/argmax cluster glossed, tree attention glossed,
+E[progress] and 70B expanded, "8×H100" → "eight H100 chips", sub-token
+amortized cost unfolded, and GQA pointed at chapter 4's cache-shrinking
+designs (§4.5 is literally "Four ways to shrink the coat"; the audit's
+"cache-sharing" would have mispointed at chapter 6's prefix sharing).
+Provenance: the manuscript edits came from an interrupted session's
+committed partial (1547b62); this iteration verified every hunk against
+the audit and every cross-chapter reference, confirmed zero numeric drift,
+and ran full validation. Ch08 now 5,555 words (+220, all gloss-bearing),
+1.0% over the 5,500 concept cap — logged, consistent with the
+ch06/ch02/ch04 pedagogy precedent.
 
 History: iteration 68 applied all 6 ch07 findings (4.70/5,
 zero [LOST] — 3 [CONFUSING] + 3 [POLISH]) — headlined by the audit's
