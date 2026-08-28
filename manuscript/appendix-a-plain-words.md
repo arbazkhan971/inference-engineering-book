@@ -66,7 +66,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Ridge point** — The intensity where those two ceilings meet; peak arithmetic divided by peak bytes per second. *(Ch. 3)*
 
-**GEMM / GEMV** — Big matrix multiply (many rows at once) versus matrix-times-one-vector (the batch-of-one case). *(Ch. 3)*
+**GEMM (general matrix-matrix multiply) / GEMV (general matrix-vector multiply)** — Big matrix multiply (many rows at once) versus matrix-times-one-vector (the batch-of-one case). *(Ch. 3)*
 
 **Batch size** — How many requests share one pass over the weights; the dial that moves decode along the roofline. *(Ch. 3, 5)*
 
@@ -130,7 +130,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Prefix** — The leading run of tokens a request starts with. *(Ch. 6)*
 
-**Prefix caching (engine-side)** — Reusing stored KV for a prefix seen before: a radix-tree lookup inside the serving engine. Distinct from the *provider-billed* prompt caching of chapter 14, though both exploit the same reuse. *(Ch. 6, 14)*
+**Prefix caching (engine-side)** — Reusing stored KV for a prefix seen before: an index lookup inside the serving engine (hash chain in vLLM, radix tree in SGLang). Distinct from the *provider-billed* prompt caching of chapter 14, though both exploit the same reuse. *(Ch. 6, 14)*
 
 **Radix tree** — A tree that stores shared prefixes once. *(Ch. 6)*
 
@@ -146,7 +146,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Interference** — Prefill and decode degrading each other by sharing one queue. *(Ch. 7)*
 
-**Chunk** — A fixed-size slice of a long prompt's prefill. *(Ch. 7)*
+**Chunk** — A fixed-size slice of a long prompt's prefill (not chapter 12's stream chunk — a different sense of the word). *(Ch. 7)*
 
 **Chunk budget** — Tokens of prefill allowed per engine iteration. *(Ch. 7)*
 
@@ -270,7 +270,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Delta** — An incremental fragment: a few characters or tokens, not the whole text. *(Ch. 12)*
 
-**Chunk** — One provider-encoded event carrying one or more deltas. *(Ch. 12)*
+**Chunk** — One provider-encoded event carrying one or more deltas (not chapter 7's prefill chunk — a different sense of the word). *(Ch. 12)*
 
 **Sentinel** — A literal end-of-stream marker, like `data: [DONE]`. *(Ch. 12)*
 
@@ -334,11 +334,11 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Hit rate** — The share of input tokens served from cache. *(Ch. 14)*
 
-**Cache salt** — A value mixed into the cache key to keep tenants apart. *(Ch. 14)*
+**Cache salt** — A value mixed into the cache key to keep tenants apart. *(Ch. 6, 14)*
 
 **Rate limit / quota** — A ceiling on how much you may send, per time window. *(Ch. 15)*
 
-**RPM / TPM / RPD** — Requests, tokens, or requests-per-day ceilings. *(Ch. 15)*
+**RPM / TPM / RPD** — Requests per minute, tokens per minute, or requests per day: the quota ceilings. *(Ch. 15)*
 
 **ITPM / OTPM** — Input / output tokens per minute, metered separately. *(Ch. 15)*
 
@@ -368,7 +368,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Complexity router** — A classifier that sends easy prompts to cheap models, hard ones to strong models. *(Ch. 16)*
 
-**Batch API** — Submit N requests as one job; half price, served within 24 hours. *(Ch. 16)*
+**Batch API** — Submit N requests as one job; half price at all three majors, served within 24 hours (mid-2026 snapshot). *(Ch. 16)*
 
 **Usage object** — The token accounting a provider attaches to each response; the meter's raw material. *(Ch. 12, 16)*
 
@@ -412,7 +412,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Session store** — The component that renders each turn's prompt from a byte-exact session archive. *(Ch. 18)*
 
-**GGUF** — The single-file model container llama.cpp reads: weights, tokenizer, metadata. *(Ch. 18)*
+**GGUF (GPT-Generated Unified Format)** — The single-file model container llama.cpp reads: weights, tokenizer, metadata. *(Ch. 18)*
 
 **Quant ladder** — The menu of numeric formats a GGUF can hold, from F16 to 1-bit experiments. *(Ch. 18)*
 
