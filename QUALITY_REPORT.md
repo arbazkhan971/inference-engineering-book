@@ -3,8 +3,16 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the gate-6
-clean-checkout-build P2 pass (iteration 61 of the writing driver) applied
+command where one exists. Last updated: 2026-08-28, after the pedagogy
+wave opened (beginner-simulation audits in review/ped/); this pass
+(iteration 62) applied all 12 ch01 findings — zero [LOST], 4 [CONFUSING]
+(Token defined in the 1.1 table, the KV-caching gloss de-jargoned,
+"Pareto frontier" replaced with the plain trade-off, throughput glossed
+at true first use) and 8 [POLISH] (HTTP 200 anchor, venue glosses,
+citation walls moved to Appendix E, forward pointer, Build-it on-ramp
+for the no-codebase reader, scope sentence broken into three beats,
+analogy bridges) — ch02+ remain queued in chapter order. Previously:
+the gate-6 clean-checkout-build P2 pass (iteration 61 of the writing driver) applied
 the three hygiene findings that iteration 60's seal had left unqueued
 (review/gate6-clean-build.md — cover-render mtime guard so a stranger's
 first build keeps a clean tree, stale README status table refreshed to the

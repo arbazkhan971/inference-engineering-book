@@ -26,7 +26,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **429 / 529** — The provider's two rejections: "you're over quota" versus "we're overloaded." *(Ch. 1, 15)*
 
-**Token** — The chunk of text the model reads or writes in one step. *(Ch. 2)*
+**Token** — The chunk of text the model reads or writes in one step. *(Ch. 1, 2)*
 
 **Tokenizer** — The table that converts your text into those chunks. *(Ch. 2)*
 
