@@ -4,8 +4,45 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's sixteenth fix pass: iteration 77 completed the ch16 pass —
-all 8 findings applied (4.41/5 — zero [LOST]; 6 [CONFUSING] + 2
+wave's seventeenth fix pass: iteration 78 completed the ch17 pass —
+all 13 findings applied (4.3/5 — zero [LOST]; 8 [CONFUSING] + 5
+[POLISH]). Headlined by the audit's single worst gap: the hash
+mechanics under the whole chapter — taught only through prices and
+consequences — now glossed at both flagged sites (the intro's "cache
+key" gains "the bytes themselves are what the provider files it
+under"; the 17.2 mechanics sentence gains "(computes a running
+fingerprint of the bytes — chapter 6's hash chain)"). The
+chapter-11 stat dump now leads with its measured quantity ("how much
+of the original conversation a compacted model can still answer
+questions about"; all four percentages verified against ch11's own
+statement before applying); the token-equivalents unit is glossed at
+its true first use, one paragraph before the audit's site (documented
+deviation: "30K-equivalent" in the warm-compaction paragraph precedes
+the 15K breakeven); "herd event" is glossed and anchored to chapter
+6's own "cache-herd events" coinage (the audit called it
+unanchored); "stubs" → "placeholder entries plus on-demand tool
+search", matching ch14's coinage; "blast radii" glossed in apposition
+without the audit's false attribution (documented deviation:
+grep-verified ch14 never uses the phrase — its coinage is "the render
+order is the invalidation order"); the 20-block lookback's "block"
+glossed ch14-consistently rather than the audit's "small, fixed span
+of tokens", which would have reintroduced exactly the three-meanings
+confusion iteration 75 eliminated ("a block is one message or tool
+result — chapter 14's content block, not chapter 6's 16-token
+pages"); the 17.4 ELI5 fusion flagged ("behaves like"); the
+darkroom-rehydration picture shipped to 17.4 as the 17.1 table
+promised; the picture-stops list completed with 17.6's accountant
+frame and its quality-blindness break; the 17.2 ELI5's "premium
+members" glossed inside the block; and the intro's unused garage
+dropped per the audit's own conditional (its condition fired when
+finding 1 touched the same sentence). Mermaid blocks byte-identical
+(md5-verified — SKIP_FIGURES validation sound). Ch17 now 6,928 words
+(raw wc; +150, all gloss/on-ramp/break-bearing), 6.6% over the 6,500
+Part IV cap on a base already logged 1.1% over (iteration 21, five
+trim passes) — logged rather than trimmed, consistent with the
+pedagogy precedent. Prior pass kept as history: iteration 77
+completed the ch16 pass — all
+8 findings applied (4.41/5 — zero [LOST]; 6 [CONFUSING] + 2
 [POLISH], every one a one-phrase fix). Headlined by the audit's #1
 gap: 16.6's inclusive-vs-exclusive teaching floor arrived field-first —
 it is now fronted by one bridge sentence ("Some providers fold the
@@ -224,8 +261,7 @@ dated four-grammars box; and both reference-wall flags (12.2's
 provider walk and 12.5's usage bullets each tell the reader they are
 not meant to memorize — the normalizer exists so they never have to).
 Ch12 now 5,678 words, 3.2% over the concept cap — logged, consistent
-with the pedagogy precedent. Prior pass kept
-as history: iteration 72 completed the ch11 pass — all 11 findings
+with the pedagogy precedent. History: iteration 72 completed the ch11 pass — all 11 findings
 applied (4.2/5 — 1 [LOST] + 5 [CONFUSING] + 5 [POLISH]).
 Headlined by the audit's one [LOST]: the 11.2 tier-cliff money example,
 the chapter's only spot where a careful beginner builds an actively
