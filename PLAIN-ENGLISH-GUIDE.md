@@ -29,7 +29,9 @@ it simply, you don't understand it. Every idea below gets four things — one
 plain sentence, an everyday picture, what really happens, and why you should
 care.
 
-Read the four parts in order. Each takes about ten minutes.
+Read the four parts in order. Each takes about ten minutes. One naming
+handshake before you walk in: the book calls this the engine room; this guide
+calls it a kitchen — same machine, friendlier door.
 
 ---
 
@@ -63,7 +65,7 @@ The first part of the book answers a question you've probably never asked: when 
 >
 > **The everyday picture:** The suggestion bar on your phone's keyboard. It offers the next word only after seeing everything you've typed so far — you cannot ask it for the fourth word without accepting the first three. An AI writing a reply is that suggestion machine with the "accept" key held down, running at machine speed.
 >
-> **What really happens:** Reading your question is fast, because everything you sent is already there and can be taken in all at once. Writing is different: the machine produces one piece, then uses it (plus everything before it) to choose the next, then the next — a strict relay race with one runner. So every reply's total time has a stubborn shape: a wait for the first piece, then a steady rhythm of one step per piece until the end. No amount of raw power lets the machine skip ahead, because the pieces don't exist yet to be skipped to.
+> **What really happens:** Reading your question is fast, because everything you sent is already there and can be taken in all at once. Writing is different: the machine produces one piece, then uses it (plus everything before it) to choose the next, then the next — a relay where the same runner must run every leg, in order. So every reply's total time has a stubborn shape: a wait for the first piece, then a steady rhythm of one step per piece until the end. No amount of raw power lets the machine skip ahead, because the pieces don't exist yet to be skipped to.
 >
 > **Why you care:** The two halves of the wait have different owners and different fixes. Short replies live or die on the first piece arriving quickly. Long replies live or die on the rhythm between pieces. If an app feels snappy but "types" slowly, that is a rhythm problem; if it hangs before saying anything, that is a first-piece problem — and no typing-speed upgrade fixes a first-piece wait.
 
@@ -85,7 +87,8 @@ The first part of the book answers a question you've probably never asked: when 
 >
 > **What really happens:** As your conversation grows, the machine writes a small note for each word-piece — what that piece means for everything that comes later. Those notes are the reason each new piece can be written without redoing all the past work; without them, every next word would get slower the longer you talked. The notes live in the fastest, most expensive memory in the building, because they are consulted for every single piece generated.
 >
-> **Why you care:** For a long conversation, these notes can grow to be as large as the brain itself — and they are kept *per conversation*, so a busy kitchen is juggling one growing notebook per guest. When a company caps how much you can send, this notebook — not the brain — is usually the reason. And it sets up the last idea of this part.
+> **Why you care:** For a long conversation, these notes can grow to be as large as the brain itself — and they are kept *per conversation*, so a busy kitchen is juggling one growing notebook per guest. When a company caps how much you can send, this notebook — not the brain — is usually the reason — and it sets up the
+last idea of this part.
 
 ## 6. Long conversations cost more: the seating chart
 
@@ -120,7 +123,7 @@ The AI's brain is only one part of what answers you. Around it is a kitchen: que
 
 > **The everyday picture:** Imagine a hotel that used to demand every guest book one unbroken row of rooms for their longest possible stay. A guest who might stay ten nights got ten rooms — and mostly left after two, leaving reserved-empty rooms no one could use. The hotel was half empty and still turning guests away. The new policy: any guest's nights can sit in any rooms, and the front desk keeps a ledger that says which room holds which night. Suddenly almost nothing is wasted.
 
-> **What really happens:** The kitchen's notebook — its running copy of your order so far — used to be kept the wasteful way, and on real measurements only about a quarter to a third of it held anything useful. Two fixes changed everything. First, the notebook now lives in same-sized scraps anywhere in memory, tracked by a ledger, so gaps can always be reused. Second — the beautiful part — when one hundred of your AI helpers all start their orders with the same instruction page, the kitchen writes that shared page once and everyone points at it, like every table sharing one plate of appetizers instead of ordering one hundred identical plates.
+> **What really happens:** The kitchen's notebook — its running copy of your order so far — used to be kept the wasteful way: in measurements the book's sources record, only about a quarter to a third of it held anything useful. Two fixes changed everything. First, the notebook now lives in same-sized scraps anywhere in memory, tracked by a ledger, so gaps can always be reused. Second — the beautiful part — when many requests start with the same instruction page (say, many copies of an assistant, or the helper swarms you'll meet in Part IV), the kitchen writes that shared page once and everyone points at it, like every table sharing one plate of appetizers instead of ordering one hundred identical plates.
 
 > **Why you care:** Re-asking the AI with the same opening words — the same instructions, the same documents — can be nearly free and much faster the second time, because the kitchen recognizes its own notes. Change one word at the start, though, and the notes no longer match, so you pay full price again. Where you put your changes matters as much as what you change.
 
@@ -142,7 +145,7 @@ The AI's brain is only one part of what answers you. Around it is a kitchen: que
 
 > **What really happens:** Producing a word-piece normally takes one full pass of the whole brain — that is the toll you cannot dodge, because each piece depends on the last. The trick is that checking several proposed pieces costs almost the same as producing one, since the expensive part is fetching the brain's knowledge, not glancing at a few guesses once it's fetched. A cheap guesser proposes a few pieces ahead, the real brain reviews them all at once, keeps the good ones, rewrites at the first mistake — and, remarkably, the final text is built so it comes out exactly as if the real brain had written every piece itself. Not a cheap imitation; the same words, faster.
 
-> **Why you care:** This is one of the few speed tricks that costs no quality at all — when it fits. It shines when the AI is rewording or continuing text that resembles what it was given, and it helps least when the answer must follow strict shapes, like exact formats, where the guesses keep getting thrown away. If you run your own kitchen, this flag alone can double the writing speed of a big brain on the same machine.
+> **Why you care:** This is one of the few speed tricks that costs no quality at all — when it fits. It shines when the AI is rewording or continuing text that resembles what it was given, and it helps least when the answer must follow strict shapes, like exact formats, where the guesses keep getting thrown away. If you run your own kitchen (more on home kitchens in Part IV), this one switch alone can double the writing speed of a big brain on the same machine.
 
 ## 5. Writing smaller
 
@@ -160,9 +163,9 @@ The AI's brain is only one part of what answers you. Around it is a kitchen: que
 
 > **The everyday picture:** A catering company wins a wedding. The recipe collection no longer fits in one kitchen, so it is split: every kitchen holds a slice of the recipes, every kitchen holds a slice of the guests, and runners carry half-finished dishes between kitchens so the wedding feels like it came from one stove. It works — but the runners stay busy, and the bigger the wedding, the more the running eats the gains.
 
-> **What really happens:** Two different things outgrow one kitchen. First, the largest brains are physically bigger than one chip can hold, so their knowledge is spread across many chips that must constantly hand pieces to each other — split the recipes, split the guests, or open identical branches — and the biggest modern brains go further, keeping a crowd of specialists where each word-piece consults only the few specialists it needs, which is why a giant brain can sometimes answer faster than a smaller all-rounder. Second, a very long conversation is its own wedding: before the AI says one word, everything you provided must be cross-checked against everything else, and that cross-checking grows painfully fast — doubling the pile far more than doubles the checking.
+> **What really happens:** Two different things outgrow one kitchen. First, the largest brains are physically bigger than one chip can hold, so their knowledge is spread across many chips that must constantly hand pieces to each other — split the recipes, split the guests, or open identical branches. The biggest modern brains go further, keeping a crowd of specialists where each word-piece consults only the few specialists it needs — which is why a giant brain can sometimes answer faster than a smaller all-rounder. Second, a very long conversation is its own wedding: before the AI says one word, everything you provided must be cross-checked against everything else, and that cross-checking grows painfully fast — doubling the pile far more than doubles the checking.
 
-> **Why you care:** Very long conversations are not priced like slightly longer short ones — companies charge extra for them, and some charge a jump-the-line fee the moment you cross a size boundary. The fix is housekeeping: keep unchanging instructions and documents at the front (so shared notes work, per idea two), and trim or summarize the middle rather than let everything pile up. A tidy long conversation is often several times cheaper than a messy one of the same usefulness.
+> **Why you care:** Very long conversations are not priced like slightly longer short ones — companies charge extra for them, and some raise the per-piece price the moment you cross a size boundary. The fix is housekeeping: keep unchanging instructions and documents at the front (so shared notes work, per idea two), and trim or summarize the middle rather than let everything pile up. A tidy long conversation is often several times cheaper than a messy one of the same usefulness.
 
 ---
 
@@ -175,7 +178,7 @@ The first two parts of this guide went inside the kitchen: the word-piece curren
 
 ## 1. Dishes arrive one by one — and the first plate takes longest
 
-> **In one sentence:** A good kitchen doesn't make you wait for the whole meal to be boxed before you see food — plates come out as they're ready, and almost all of your waiting happens before the very first plate.
+> **In one sentence:** A good kitchen doesn't make you wait for the whole meal to be boxed before you see food — plates come out as they're ready, and for short replies, almost all of your waiting happens before the very first plate; for long ones, the rhythm between plates quietly adds up.
 >
 > **The everyday picture:** A conveyor-belt sushi restaurant. You sit down, you order, and the moment the first plate is ready it slides out to you — then the next, then the next, at a steady rhythm. The alternative is a boxed takeaway: you stand at the counter, hungry, watching nothing, until the whole meal appears at once. Same food, same kitchen — completely different experience of waiting.
 >
@@ -221,7 +224,7 @@ The first two parts of this guide went inside the kitchen: the word-piece curren
 >
 > **What really happens:** Most work you send an AI is easy — sorting, labeling, short answers — and a cheap, quick AI does it just as well as the expensive flagship. The trick is knowing which is which *before* the order goes out, and it's a learned skill: teams that route easy asks to the cheap kitchen and hard ones to the strong one report cutting their bills roughly in half while barely losing any quality. There's also a standing discount nobody uses enough: the overnight lane. Anything that just needs to *eventually* arrive — a pile of reports due tomorrow morning, a nightly check — can ride the overnight delivery at half price, identical food, slower arrival.
 >
-> **Why you care:** The single most expensive habit is sending everything to the strongest, priciest kitchen "to be safe." Pick two kitchens — one cheap, one strong — and decide which orders need which. And put your repeatable, nobody's-waiting work on the overnight lane; refusing a standing half-price coupon is charity to the railway.
+> **Why you care:** The single most expensive habit is sending everything to the strongest, priciest kitchen "to be safe." Pick two kitchens — one cheap, one strong — and decide which orders need which. And put your repeatable, nobody's-waiting work on the overnight lane; refusing a standing half-price coupon is charity to the delivery service.
 
 ## 6. When your favorite kitchen closes
 
@@ -310,7 +313,7 @@ That is the whole book in plain words. The brain is brilliant; the kitchen decid
 
 1. Three workers stand behind every answer: the brain, the kitchen, and you.
 2. You are billed in the kitchen's own currency: word-pieces.
-3. Replies arrive one piece at a time — a relay race with one runner.
+3. Replies arrive one piece at a time — the same runner runs every leg of the relay.
 4. The pace is set by fetching, not thinking. More chefs don't widen the staircase.
 5. Every conversation uses a running copy of everything said so far — long talks cost real money.
 6. You share the kitchen with strangers. Grouping orders is how it stays affordable.

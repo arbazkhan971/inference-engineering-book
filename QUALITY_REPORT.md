@@ -3,42 +3,70 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twenty-fourth fix pass: iteration 85 completed the back-matter
-pass (zz-back-matter.md, graded 4.0/5, zero [LOST]; the audit's three
-worst gaps: an authority hook written at engineer density, 
-terminology-rule drift, and an unlabeled proof destination). Seven of
-nine findings applied — finding 8 keep-as-is per the audit (intentional
-"harness engineer" branding), finding 9 (an optional "read next"
-closer) skipped as a marketing addition, not a defect, per the audit's
-own framing: the authority-hook sentence de-jargoned for exactly the
-outsider most likely to read it ("GLM-5.3 model instances" glossed as
-"one AI model, running in a hundred-plus parallel copies" — documented
-deviation from the audit's "one hundred parallel copies" for numeric
-consistency with "well over one hundred"; "drafted chapter by chapter
-on a headless writing driver, against a six-gate editorial system" →
-"drafted chapter by chapter through an automated writing loop that ran
-on its own, under a six-checkpoint editorial system", "through" not
-the audit's "by" to avoid the chapter-by-chapter-by double-by); the
-book's own banned-term rule enforced on its own back cover — both
-reader-facing "digest" sites now "research notes" (the back matter
-had escaped the copyedit sweep's scan; grep-verified zero
-reader-facing "digest" remains outside Appendix E's method term and
-ch06/ch07's legitimate technical senses); "The repo — manuscript,
-research corpus, and build pipeline —" → "The project — the full
-manuscript, the research notes behind every number, and the scripts
-that assemble the book —", with the parenthetical's "all committed to
-the public repository" rippled to "all stored in the public project"
-(findings 4+6's principle applied to the file's other "committed");
-the ccrank.dev link glossed "— the public meter" so the
-200-billion-token claim's receipt is labeled; Copyright's "committed
-alongside the manuscript" → "archived alongside" and "the front
-matter's rule about numbers" → "the rule about numbers at the front of
-the book". zz now 426 words (+35, all gloss/plain-words-bearing); no
-figures (no mermaid — SKIP_FIGURES sound). Ledger repair in the same
-pass: Appendix F.1's pedagogy-row status cell had drifted stale at the
-front-matter iteration (the record was appended but the status cell
-still read "front/back matter queued") — now current.
+command where one exists. Last updated: 2026-08-28, after the pedagogy wave's twenty-fifth fix
+pass — iteration 86 completed the plain-English guide, the wave's final
+surface, and with it the entire pedagogy queue (all 25 surfaces:
+ch01–18, appendices A–D, front matter, back matter, plain guide).
+PLAIN-ENGLISH-GUIDE.md graded 4.87/5 — the wave's highest average —
+with 0 [LOST] · 3 [CONFUSING] · 7 [POLISH]; all 10 findings applied
+plus one napkin ripple: (C1) the helper economy's premature reveal
+fixed at Part II §2 ("when many requests start with the same
+instruction page (say, many copies of an assistant, or the helper
+swarms you'll meet in Part IV)" — documented deviation: parenthetical
+instead of the audit's em-dashes because the sentence already opens
+with two), with the home-kitchen forward pointer added at Part II §4;
+(C2) the waiting-arithmetic overclaim scoped in Part III §1's topic
+sentence ("for short replies, almost all of your waiting happens
+before the very first plate; for long ones, the rhythm between plates
+quietly adds up") — the audit's cheapest high-value fix, un-teaching a
+wrong rule for long replies in the one section dedicated to the
+two-waits rule; (C3) "jump-the-line fee" relabeled to the true
+mechanism ("some raise the per-piece price the moment you cross a size
+boundary", matching ch11's tiered pricing); (P1) the engine-room and
+kitchen metaphors shake hands in Start here ("the book calls this the
+engine room; this guide calls it a kitchen — same machine, friendlier
+door") — the guide's on-ramp purpose now survives the handoff to the
+book's title metaphor; (P2) "this flag alone" → "this one switch
+alone"; (P3) "a strict relay race with one runner" → "a relay where
+the same runner must run every leg, in order", with napkin rule 3
+rippled to match ("the same runner runs every leg of the relay") per
+the audit's own napkin-consistency check; (P4) the guide's only
+unsourced number attributed ("in measurements the book's sources
+record"); (P5) "charity to the railway" → "charity to the delivery
+service" (no railway exists in the overnight-delivery analogy; ch16's
+own ELI5 keeps its railway, where it is the established picture);
+(P6) Part II §6's three-strategies sentence split in two; (P7) Part
+I §5's dangling fragment merged. Guide now 8,466 words (+65, all
+gloss/handshake/scoping-bearing). Ripple greps clean: every removed
+phrase zero-hit in the guide; the two manuscript survivors (ch02's
+"relay race with one runner" heading, ch16's railway ELI5) belong to
+their own closed audits. Known residual, logged: the 12 translations
+in translations/ derive from the pre-pass English source and now sit
+10 small fixes behind it — a translation re-sync is flagged for a
+future pass, not front-run (the audit covers the English source
+only). With this pass the pedagogy wave is COMPLETE; the remaining
+driver queue before re-seal is the architect's fuzz round 2
+(fixtures/attack2/ + tests/attack2-gate6.ts, including the queued
+CacheLedger unknown-model caller-routing P1), then the final retail
+build + suites.
+Prior pass kept as history: iteration 85 completed the back-matter
+pass (zz-back-matter.md, graded 4.0/5, zero [LOST]) — 7 of 9 findings
+applied (finding 8 keep-as-is per the audit's intentional-branding
+call; finding 9 skipped as a marketing addition, not a defect): the
+authority-hook sentence de-jargoned for exactly the outsider most
+likely to read it ("GLM-5.3 model instances" → "one AI model, running
+in a hundred-plus parallel copies"; "headless writing driver, against
+a six-gate editorial system" → "an automated writing loop that ran on
+its own, under a six-checkpoint editorial system"); the book's banned
+reader-facing "digest" term enforced on its own back cover (both sites
+→ "research notes"; the file had escaped the copyedit sweep); "repo /
+corpus / committed" de-jargoned across the section and copyright
+notice ("the project — the full manuscript, the research notes behind
+every number, and the scripts that assemble the book —"; "archived
+alongside"); the ccrank.dev link labeled "— the public meter". zz now
+426 words (+35); no figures. Ledger repair in the same pass: Appendix
+F.1's pedagogy-row status cell had drifted stale at the front-matter
+iteration — caught and made current.
 Prior pass kept as history: iteration 84 completed the front-matter
 pass (00a-prologue + 00b-front-matter, audited together as one surface)
 — all 16 findings settled (4.25/5 — 1 [LOST] + 7 [CONFUSING] +
