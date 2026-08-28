@@ -4,7 +4,53 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twenty-first fix pass: iteration 82 completed the appendix C
+wave's twenty-second fix pass: iteration 83 completed the appendix D
+pass — all 16 findings applied (3.44/5 — 1 [LOST] + 7 [CONFUSING] +
+8 [POLISH]; every one a one-clause-to-one-sentence fix per the audit's
+own verdict, "floor-lowering, not promise-breaking"). Headlined by
+the audit's single [LOST]: D.3's accumulator rule — the appendix's
+one true wall, the only paragraph where the simulated reader fully
+detached — now opens on a plain-words floor before the mechanism
+("A tool call's arguments arrive chopped into pieces spread across
+many stream events; the accumulator's whole job is to glue the pieces
+back together in the right order and read the reassembled whole
+exactly once"), with the mega-sentence split at the Anthropic
+block-index clause. The editorial-machinery leaks the audit named
+unique to this appendix are de-fourth-walled ("the gate-6 adversarial
+pass" → "a late adversarial code review"; "the tester role's three
+nightly instruments" → "the three nightly operator instruments" —
+remaining gate vocabulary lives only in Appendix F's honest-gate-
+ledger rows, where gates are the subject), and the 200-word
+single-sentence parenthetical after the module table became four
+sentences with the guard catalog replaced by "the four boundary
+guards described in their sections below" (each guard verified
+explained in D.3/D.4/D.5 before the list was dropped). OTPM expanded
+at its only reader use ("output tokens per minute", spaced per the
+ch15/appendix-A convention, with TPM/RPM cheap-glossed beside it);
+the burst-trap parenthetical re-stated to match the test exactly (59
+admitted instantly; the next request — two more tokens, 61 in all —
+refused whole, not half: reservations are all-or-nothing — verified
+against tests/smoke.ts:230–232 before applying, the audit's stronger
+atomicity lesson); D.7's two compressed payoffs unpacked (siblings
+staggered "so the first child pays the full write premium and its
+siblings pay the tenth-price read"; stableStringify given its
+hash-map-literacy gloss — same data, different internal order →
+identical bytes → identical cache hits); the break-even formula's
+N/w/r glossed at point of use (chapter 14's notation); the identity
+gap's N glossed; /1e6 glossed; "fixture", "cron" (at its true first
+use, in the invoice paragraph), and "canary's purpose" → "the
+check's purpose"; the tracer table row's bare "the identity" → "the
+decode-time identity (chapter 2's e2e law)"; and D.1's type-name
+prose categorized ("dated, typed config rows"). No reviewer false
+positives; two documented deviations (the parenthetical split keeps
+"the ones an operator copies into production" beside the audit's
+guard-catalog removal, a colon closing the dash run; the
+stableStringify fix is two sentences keeping the chapter-14 named-
+cache-breaker tie the audit's literal text would have dropped).
+Mermaid block byte-identical (md5-verified — SKIP_FIGURES validation
+sound). Appendix D now 2,809 words (raw wc; +147, all gloss/on-ramp/
+split-bearing; appendices carry no band per linter policy).
+Prior pass kept as history: iteration 82 completed the appendix C
 pass — all 21 findings applied (3.5/5 — 3 [LOST] + 11 [CONFUSING] +
 7 [POLISH]; C.4 alone graded 2.5, the wave's co-floor surface, fixed
 by on-ramps not cuts per the standing instruction). Headlined by
