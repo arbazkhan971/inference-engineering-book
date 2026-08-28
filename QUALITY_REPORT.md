@@ -4,28 +4,45 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's fifth fix pass: iteration 66 applied all 13 ch05 findings (4.3/5,
+wave's sixth fix pass: iteration 67 applied all 19 ch06 findings (4.4/5,
+zero [LOST] — 12 [CONFUSING] + 7 [POLISH]) — headlined by the audit's
+worst-gap machinery cluster, now glossed at first use: the attention
+kernel ("the chip's read-the-notes routine"), goodput (glossed against
+chapter 5's own coinage), vLLM introduced as "the open-source serving
+engine this chapter keeps using as its example", the intro's chapter-4
+"KV desk" replaced by "the KV memory", and fragmentation glossed ahead
+of 6.2's definitions. The hash-chain formula's H and ∅ symbols got
+their plain-words caption line, and the 62-of-62.5 pricing leap now
+shows its division (1,000 ÷ 16 = 62.5 — 62 whole blocks hit, the
+half-block tail does not count). Also applied: Alpaca/ShareGPT
+introduced as two public workload collections, the mamba constraint
+glossed, the radix-tree triple-idea sentence split in three, "embed"
+glossed, the never-hired librarian replaced by the translator (the
+chapter's own prefix-caching ELI5 — repairs the dangling "her" two
+breaks later), the 1.6 GB sentence's citation stack split, OS expanded
+at its true book-wide first use, refcounts kept as a noun, the lever
+table's compaction glossed as session-summarizing, a no-code on-ramp
+in Build-it, and the barista/translator/print-shop connective line.
+One opportunistic ripple beyond the audit: the duplicate HBM expansion
+dropped (ch03 owns the letters book-wide). Two evidenced wording
+deviations logged in Appendix F.1; ripple greps clean. Ch06 now 5,637
+words (+226, all gloss/on-ramp-bearing), 2.5% over the 5,500 concept
+cap — logged, consistent with the ch02/ch04 pedagogy precedent.
+
+History: iteration 66 applied all 13 ch05 findings (4.3/5,
 1 [LOST] + 7 [CONFUSING] + 5 [POLISH]) — headlined by the [LOST] fix at
-the 5.5 queueing-formula wall, the chapter's climax mechanism: λ is now
-glossed beside ρ, and a plain-words reading follows the formula before
-any symbol is reused, so the "why 6 pm happens" payoff survives a cold
-reader. Also applied: the de-jargoned cold open ("product leg" → "one of
-our products"; concurrency glossed at its load-bearing first use), the
-chapter-3 dependencies glossed at point of use (arithmetic intensity;
-"weight streaming" — a term ch03 never coins, per grep — replaced by
-"reading the model's whole memory every step, the weight traffic chapter
-3 priced"), the book's only standalone "tensor" taught ("one uniform
-block of numbers (a *tensor*)"), attention glossed at its chapter-first
-use with the audit's pointer corrected to chapter 4 (ch02 never uses the
-word), the utilization table's unexplained "M/M/1 form" replaced and
-system time defined in a half-line, the ITL/TPOT naming whiplash given
-its bold mini-equation, and all five [POLISH] items (the door-onto-
-stage image adapted off the audit's coat check to avoid colliding with
-ch04's KV metaphor; the carpool bridge; "shed load multiplicatively" in
-plain words; the ASCII note moved below the fence; "promissory note" →
-"the promise chapter 3 left you — now due"). Three evidenced deviations
-logged in Appendix F.1; ripple greps clean. Ch05 now 5,192 words, inside
-the 5,500 concept cap.
+the 5.5 queueing-formula wall: λ glossed beside ρ, and a plain-words
+reading follows the formula before any symbol is reused. Also applied:
+the de-jargoned cold open, the chapter-3 dependencies glossed at point
+of use ("weight streaming" — a term ch03 never coins, per grep —
+replaced by "the weight traffic chapter 3 priced"), the book's only
+standalone "tensor" taught, attention glossed at its chapter-first use
+with the audit's pointer corrected to chapter 4, the utilization
+table's "M/M/1 form" replaced and system time defined, the ITL/TPOT
+mini-equation, and all five [POLISH] items (the door-onto-stage image
+adapted to avoid colliding with ch04's coat check). Three evidenced
+deviations logged in Appendix F.1; ripple greps clean. Ch05 now 5,192
+words, inside the 5,500 concept cap.
 
 History: iteration 65 applied all 12 ch04 findings (4.5/5,
 zero [LOST]) — headlined by the audit's numeric-honesty fix ("dozens of
