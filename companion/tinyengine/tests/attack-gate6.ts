@@ -3,6 +3,10 @@
 // quota arithmetic at the seams, poisoned meters, duplicate money rows.
 // Added by the Gate-6 reviewer; source files untouched. Run:
 //   node dist/tests/attack-gate6.js
+// P2 fix pass note: the A8 and D2 blocks originally asserted the *buggy* behavior
+// by construction (they can only pass a finding); after the fixes they assert the
+// fixed contracts like every other block. C1 still prints its finding by
+// construction — both branches report; its regression gate lives in smoke.ts.
 import assert from "node:assert/strict";
 import { exit } from "node:process";
 import { StreamNormalizer, type Event } from "../stream-normalizer.js";
@@ -79,12 +83,12 @@ const eventsOf = (n: StreamNormalizer, lines: string[]) => lines.flatMap((l) => 
     "a retried/regressed stream that repeats a finish chunk yields two stop_reason events; ch12's contract does not say who dedups. Fix: first stop wins, later ones dropped (or flagged).");
   else pass("A7", `duplicate finish_reason deduped (${stops.length})`);
 
-  // A8: anthropic input_json_delta before any content_block_start
+  // A8: anthropic input_json_delta before any content_block_start — an orphan with no
+  // block to belong to. Fixed: skipped entirely; nothing merges under a phantom id.
   const n8 = new StreamNormalizer("anthropic");
   const e8 = n8.ingest('data:{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\\"a\\":1}"}}');
-  assert.ok(e8.length === 1 && e8[0].type === "tool_call_delta" && (e8[0] as any).callId === "", "A8 empty-callId accumulation");
-  finding("A8", "P2", "anthropic delta before start accumulates under callId \"\"",
-    "lastToolId starts \"\"; an orphan input_json_delta (block start lost on a dropped event) silently merges into an empty-id call that later fails to parse or, worse, merges with a future orphan. Fix: ignore deltas with no prior block start (or flag incomplete stream).");
+  if (e8.length === 0) pass("A8", "orphan delta (no block start) skipped — nothing merged");
+  else finding("A8", "P2", "anthropic delta before start still accumulates under a phantom id", JSON.stringify(e8));
 
   // A9: anthropic INTERLEAVED tool blocks (index-keyed in the real protocol) misattributed
   const n9 = new StreamNormalizer("anthropic");
@@ -247,14 +251,12 @@ const eventsOf = (n: StreamNormalizer, lines: string[]) => lines.flatMap((l) => 
       "fixed = baseline.failing − failed without intersecting the task set; a retired task greets the operator as a victory every night. Fix: intersect baseline.failing with current task ids.");
   } else pass("D1", "retired tasks not reported fixed");
 
-  // D2: --floor abc silently disables the floor (CLI-level check mirrored here)
-  // (main() path: Number('abc') → NaN; passRate < NaN is false → no reason)
-  const r2 = scoreGolden([{ id: "t1" }], [{ task: "t1", ok: false }], { date: "d", floor: 0.9, failing: [] });
-  const nanFloor = r2.passRate < NaN; // false — the exact comparison main() performs
-  if (!nanFloor) {
-    finding("D2", "P2", "non-numeric --floor silently disables the floor gate",
-      "scoreGolden reasons include passRate<floor only; with floor=NaN the comparison is false, so 0% pass exits 0. An operator typo (--floor o.9) turns the canary off. Fix: Number.isFinite(floor) check with exit 2.");
-  }
+  // D2: non-numeric --floor must fail loudly. scoreGolden's guard makes a non-finite
+  // floor a reason (gate never green); the CLI exits 2 on a typo'd flag before scoring.
+  const r2n = scoreGolden([{ id: "t1" }], [{ task: "t1", ok: false }], { date: "d", floor: 0.9, failing: [] }, NaN);
+  if (r2n.ok || !r2n.reasons.some((s) => s.includes("finite")))
+    finding("D2", "P2", "non-finite floor still passes silently", JSON.stringify(r2n.reasons));
+  else pass("D2", "non-finite floor fails loudly (reason + not-ok)");
 
   // D3: duplicates — last row wins (documented behavior, verify it holds)
   const r3 = scoreGolden([{ id: "t1" }], [{ task: "t1", ok: false }, { task: "t1", ok: true }], { date: "d", floor: 1, failing: [] });

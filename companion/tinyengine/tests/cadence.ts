@@ -44,6 +44,15 @@ import { readJson, readJsonl, readCsv } from "../cadence-io.js";
   const b2 = makeBaseline("2026-08-27", tasks, rows, 0.9, "pinned/sonnet-4.6@fp8-host-a");
   assert.equal(b2.date, "2026-08-27");
   assert.deepEqual(b2.failing, ["ex-007", "ex-011"]);
+  // Gate-6 D1/D2 regressions: a task retired from the set is never reported "fixed",
+  // and a non-finite floor fails the gate loudly instead of silently disabling it.
+  const retired = scoreGolden([{ id: "ex-001" }], [{ task: "ex-001", ok: true }],
+    { date: "2026-08-01", floor: 0.5, failing: ["ex-001", "retired-task"] });
+  assert.deepEqual(retired.fixed, ["ex-001"], "only a task still in the set can be fixed");
+  const nanFloor = scoreGolden([{ id: "ex-001" }], [{ task: "ex-001", ok: false }],
+    { date: "d", floor: 0.9, failing: [] }, NaN);
+  assert.equal(nanFloor.ok, false, "a NaN floor never passes");
+  assert.ok(nanFloor.reasons.some((s) => s.includes("finite")), "the misconfiguration is the reason");
 }
 
 // ---- The cache-hit gate: ch. 14's metric, thin data not gated ------------------------

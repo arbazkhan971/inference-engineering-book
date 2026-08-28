@@ -47,10 +47,15 @@ export function scoreGolden(
   const scored = tasks.length - missing.length;
   const passRate = scored === 0 ? 0 : (scored - failed.size) / scored;
   const baseFailing = new Set(baseline.failing);
+  const taskIds = new Set(tasks.map((t) => t.id));
   const newFailures = [...failed].filter((id) => !baseFailing.has(id)).sort();
   const stillFailing = [...failed].filter((id) => baseFailing.has(id)).sort();
-  const fixed = [...baseFailing].filter((id) => !failed.has(id)).sort();
+  // Only a task still in the set can be "fixed" (gate-6 D1): a retired task greeting the
+  // operator as a victory every night is the canary lying in the other direction.
+  const fixed = [...baseFailing].filter((id) => !failed.has(id) && taskIds.has(id)).sort();
   const reasons: string[] = [];
+  if (!Number.isFinite(floor))
+    reasons.push(`floor is not a finite number (${floor}) — misconfigured gate, refusing to pass silently (gate-6 D2)`);
   if (missing.length > 0)
     reasons.push(`${missing.length} task(s) scored no row — the set did not run: ${missing.join(", ")}`);
   if (newFailures.length > 0)
@@ -82,7 +87,14 @@ export function main(): void {
   const tasks = readJson<GoldenTask[]>(tasksPath);
   const rows = readJsonl<GoldenRow>(resultsPath);
   const baseline = readJson<GoldenBaseline>(baselinePath);
-  const floor = flag("floor") !== undefined ? Number(flag("floor")) : baseline.floor;
+  // A typo'd --floor (o.9) must fail the invocation loudly (gate-6 D2): Number("o.9") is NaN,
+  // and a NaN floor silently disables the pass-rate comparison. Exit 2 = your invocation is wrong.
+  const floorRaw = flag("floor");
+  if (floorRaw !== undefined && !Number.isFinite(Number(floorRaw))) {
+    console.error(`--floor must be a finite number between 0 and 1 (got '${floorRaw}') — refusing to disable the floor gate by typo`);
+    exit(2);
+  }
+  const floor = floorRaw !== undefined ? Number(floorRaw) : baseline.floor;
   const r = scoreGolden(tasks, rows, baseline, floor);
   console.log(`golden set: ${r.scored}/${r.total} scored, ` +
     `pass rate ${(r.passRate * 100).toFixed(1)}% ` +

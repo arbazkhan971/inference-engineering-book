@@ -41,6 +41,7 @@ export class TokenBucket {             // Continuous refill — the provider's m
     this.tokens = capacity; this.last = now;
   }
   private fill(now: number): void {
+    if (now < this.last) return; // non-monotonic clock (NTP step, VM resume): ignore it, never drain the bucket (gate-6 B4)
     this.tokens = Math.min(this.capacity, this.tokens + (now - this.last) * this.refillPerSecond);
     this.last = now;
   }
@@ -70,11 +71,17 @@ export class QuotaLedger {
   }
   reserve(provider: string, req: { maxTokens: number; estimatedPromptTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number }, now?: number): boolean {
     const b = this.books.get(provider); if (!b) return true;
+    // Fields clamp at the door (gate-6 B3): a malformed negative estimate or cache-write
+    // must never cancel positive terms into a zero charge — that is a free ride past the meter.
+    const est = Math.max(0, req.estimatedPromptTokens);
+    const maxT = Math.max(0, req.maxTokens);
+    const cacheWrite = Math.max(0, req.cacheWriteTokens ?? 0);
+    const cacheRead = Math.min(Math.max(0, req.cacheReadTokens ?? 0), est); // reads ride inside the prompt
     let charge = 0;
-    if (provider === "openai") charge = Math.max(req.maxTokens, req.estimatedPromptTokens); // max(max_tokens, estimate)
-    else if (provider === "anthropic") charge = req.estimatedPromptTokens - (req.cacheReadTokens ?? 0); // reads bypass ITPM
-    else if (provider === "bedrock") charge = req.estimatedPromptTokens + (req.cacheWriteTokens ?? 0) + req.maxTokens; // input + cache-write + max_tokens, booked up front
-    else charge = req.estimatedPromptTokens;                                               // gemini: input TPM only
+    if (provider === "openai") charge = Math.max(maxT, est); // max(max_tokens, estimate)
+    else if (provider === "anthropic") charge = est - cacheRead; // reads bypass ITPM
+    else if (provider === "bedrock") charge = est + cacheWrite + maxT; // input + cache-write + max_tokens, booked up front
+    else charge = est;                                        // gemini: input TPM only
     // Atomic reservation (gate-6 B1): a TPM miss must leave RPM untouched, and an RPM miss must
     // return the TPM tokens — a leaked slot is a phantom 429 for a request that never went out.
     if (!b.tpm.tryAcquire(Math.max(0, charge), now)) return false; // TPM first: a miss burns nothing

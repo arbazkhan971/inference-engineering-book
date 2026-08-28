@@ -46,22 +46,38 @@ export class CacheLedger {
   // Feed one usage event (Chapter 12's normalizer emits them). Returns the four-term cost of the turn.
   // Unknown model: named error BEFORE any session mutation — the caller routes it (price 0? page?) —
   // never a raw TypeError after half the row is booked (gate-6 C1).
+  // The meter is the trust boundary (gate-6 C3): usage fields clamp non-negative (and non-finite
+  // to 0) here, with a note on the event — an upstream clamp bug becomes visible, never negative money.
   record(session: string, u: Usage, model: string, now = Date.now() / 1000): number {
     const p = this.prices[model];
     if (!p) throw new UnknownModelError(model);
+    const nn = (x: number) => (Number.isFinite(x) ? Math.max(0, x) : 0);
+    const c: Usage = { freshIn: nn(u.freshIn), cachedIn: nn(u.cachedIn), cacheWriteIn: nn(u.cacheWriteIn), out: nn(u.out) };
+    const clamped = (c.freshIn !== u.freshIn || c.cachedIn !== u.cachedIn
+      || c.cacheWriteIn !== u.cacheWriteIn || c.out !== u.out);
+    const note = clamped ? "usage clamped non-negative at the meter (upstream corruption?)" : undefined;
     const s = this.session(session, now);
-    s.fresh += u.freshIn; s.cached += u.cachedIn;
-    if (u.cacheWriteIn > 0) {
-      s.writes += u.cacheWriteIn; s.readsSinceWrite = 0;
-      this.events.push({ session, kind: "write", tokens: u.cacheWriteIn, costUsd: this.cost(u, model), at: now });
-    } else if (u.cachedIn > 0) {
+    s.fresh += c.freshIn; s.cached += c.cachedIn;
+    // A turn can both read cached bytes and write new ones (gate-6 C4): both events are
+    // logged. Costs split so a turn's events always sum to its full cost — read-only and
+    // write-only turns keep their single full-cost event; a dual turn splits it (read
+    // carries its own term, write carries the rest) — so a replay of the event stream
+    // never understates reads and never double-counts the turn.
+    const readTerm = c.cachedIn > 0 ? (c.cachedIn * (p.cacheReadMultiplier ?? 0) * p.in) / 1e6 : 0;
+    const full = this.cost(c, model);
+    if (c.cachedIn > 0) {
       s.readsSinceWrite++;
-      this.events.push({ session, kind: "read", tokens: u.cachedIn, costUsd: this.cost(u, model), at: now,
-        ttlRemainingSeconds: Math.max(0, s.ttlSeconds - (now - s.lastRequestStart)) });
-    } else {
-      this.events.push({ session, kind: "miss", tokens: u.freshIn, costUsd: this.cost(u, model), at: now });
+      this.events.push({ session, kind: "read", tokens: c.cachedIn, costUsd: c.cacheWriteIn > 0 ? readTerm : full, at: now,
+        ttlRemainingSeconds: Math.max(0, s.ttlSeconds - (now - s.lastRequestStart)),
+        note: c.cacheWriteIn > 0 ? "read + write in one turn" : note });
     }
-    return this.cost(u, model);
+    if (c.cacheWriteIn > 0) {
+      s.writes += c.cacheWriteIn; s.readsSinceWrite = 0; // the write owns the turn's tail: reads-after count from zero
+      this.events.push({ session, kind: "write", tokens: c.cacheWriteIn, costUsd: full - (c.cachedIn > 0 ? readTerm : 0), at: now, note });
+    }
+    if (c.cachedIn === 0 && c.cacheWriteIn === 0)
+      this.events.push({ session, kind: "miss", tokens: c.freshIn, costUsd: full, at: now, note });
+    return full;
   }
 
   cost(u: Usage, model: string): number {

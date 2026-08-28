@@ -3,9 +3,12 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the appendix-E and appendix-F
-technical-edit fix passes (iterations 49–54 of the writing driver, closing
-Gate 2 across chapters and appendices; copyedit was iteration 46), and
+command where one exists. Last updated: 2026-08-28, after the gate-6
+companion-attack P2 pass (iteration 60 of the writing driver) closed the
+last open queue and re-sealed the release candidate; full history below.
+Previously: the appendix-E and appendix-F technical-edit fix passes
+(iterations 49–54, closing Gate 2 across chapters and appendices;
+copyedit was iteration 46), and
 re-verified post-seal in iteration 55: first figures-on retail build from
 the exact final text (EPUB 6,282,581 bytes, 34/34 mermaid, 0 degraded),
 fresh strict tsc recompile + both companion suites green, `tools/verify.sh`
@@ -42,7 +45,25 @@ check — one already fixed, one no-fix by judgment; details in the
 Gate 2 row and Appendix F.1), validation green afterwards: lint OK
 114,506 words, reflow budget 0, 34/34 mermaid staged 0 degraded, EPUB
 6,284,622 bytes, validator passes, verify.sh ALL OFFLINE CHECKS PASSED
-with both companion suites green from the unchanged dist.
+with both companion suites green from the unchanged dist. Iteration 60 then
+applied the companion attack's ten P2s (the last open queue): stream-
+normalizer — first-stop-wins dedup on repeated finish chunks, Anthropic
+deltas keyed by block index with orphan deltas skipped, non-object tool
+arguments rejected via an object guard at the accumulator (JSON-text
+string args still parse leniently); scheduler/ledger — reservation fields
+clamped at the door, the token bucket ignores a backwards clock, usage
+clamps non-negative at the meter's edge with a noted event, read+write
+turns log both events with costs that sum to the turn; golden-set — a
+retired task is never reported fixed and a non-finite --floor fails the
+invocation (exit 2). All ten attacks now HELD at the fixed tree (the
+fourteen previously-held attacks still hold; C1's by-construction print
+is the documented exception whose gate lives in smoke), key repros wired
+into both suites, Appendix D/ch12/ch18/README updated to the shipped
+behavior (six modules now 728 lines vs the 720 estimate sum, both
+stated), strict tsc clean, suites green across repeated runs, and the
+full validation chain green — the gate-6 queue is closed and the
+release candidate re-seals with this pass. Remaining gate: final proof
+(Kindle Previewer) — human, at upload time.
 
 ## 1. Gate ledger
 
@@ -53,11 +74,15 @@ with both companion suites green from the unchanged dist.
 pass landed 2026-08-28 (iteration 59) under the same discipline — twelve
 of the sixteen outstanding P2s applied with recompute-and-ripple, two
 rejected as false positives with evidence, one already fixed by the
-companion pass, one no-fix by judgment — and the wave is closed; only the
-companion attack's ten P2s remain before re-seal |
+companion pass, one no-fix by judgment — and the wave is closed. The
+gate-6 companion attack (0 P0 / 7 P1 / 11 P2) is fully settled too:
+all 7 P1s applied 2026-08-28 (iteration 58) and all 10 surviving P2s
+applied 2026-08-28 (iteration 60) with repros wired into the suites
+and the attack file held as regression evidence — the gate-6 queue is
+closed (details in Appendix F.1's two gate-6 rows) |
 | Gate 3 — Copyedit | **PASS (2026-08-27, this pass)** | Book-wide style/terminology scan + fixes; see §3 below. Structural conventions verified uniform: 18/18 `## Checkpoint`, `## Where the picture stops`, `## X.1 Words before machinery`; 92× `> **ELI5:**`; 20× `> **Field note.**` book-wide — prologue + every chapter, ch01 carrying two |
 | Gate 4 — Visual/code proof | **PASS (machine-verified scope)** | 34/34 mermaid rendered, labels pixel-checked after the iteration-34 foreignObject fix; reflow: every reader-facing code line ≤66 cols, enforced at budget 0 inside `tools/build.sh` (`--check-mermaid` measures the 76 excluded mermaid-source lines). Human-eye typography/page-break sweep belongs to final proof |
-| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions, and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row and formula-agreement regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion P1s (7/7) applied 2026-08-28 with `tests/attack-gate6.ts` kept as regression evidence |
+| Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; two offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions (P1 set from iteration 58, P2 set from iteration 60), and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row, formula-agreement, retired-task and non-finite-floor regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion attack fully applied (7 P1s + 10 P2s, 2026-08-28) with `tests/attack-gate6.ts` kept as regression evidence — 10/10 P2 attacks HELD at the fixed tree, all 14 previously-held attacks still hold, C1 reports by construction on any throw (documented; its gate lives in smoke's `assert.throws(UnknownModelError)`) |
 | Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 27 files (prologue through back matter). Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
 
 ## 2. Numbers discipline

@@ -59,6 +59,36 @@ const stopOf = (es: Event[]) => { const e = es.find((e) => e.type === "stop_reas
   assert.ok(usageOf(ok).incomplete !== true);    // clean usage carries no flag
 }
 {
+  // Gate-6 A7/A8/A9/A10 regressions: first stop wins; anthropic deltas key by block index
+  // (interleaved blocks attribute correctly, orphans skip); non-object args never survive.
+  const n = new StreamNormalizer("openai-chat");
+  n.ingest(`data: ${JSON.stringify({ choices: [{ finish_reason: "stop" }] })}`);
+  const dup = n.ingest(`data: ${JSON.stringify({ choices: [{ finish_reason: "stop" }] })}`);
+  assert.equal(dup.filter((e) => e.type === "stop_reason").length, 0, "a repeated finish chunk never re-fires the stop");
+  const n9 = new StreamNormalizer("anthropic");
+  const ev = (o: unknown) => `data: ${JSON.stringify(o)}`;
+  n9.ingest(ev({ type: "content_block_start", index: 0, content_block: { type: "tool_use", id: "toolu_A", name: "a" } }));
+  n9.ingest(ev({ type: "content_block_start", index: 1, content_block: { type: "tool_use", id: "toolu_B", name: "b" } }));
+  n9.ingest(ev({ type: "content_block_delta", index: 0, delta: { type: "input_json_delta", partial_json: '{"x":' } }));
+  n9.ingest(ev({ type: "content_block_delta", index: 1, delta: { type: "input_json_delta", partial_json: '{"y":' } }));
+  n9.ingest(ev({ type: "content_block_delta", index: 0, delta: { type: "input_json_delta", partial_json: "1}" } }));
+  n9.ingest(ev({ type: "content_block_delta", index: 1, delta: { type: "input_json_delta", partial_json: "2}" } }));
+  const fin9 = n9.finish().filter((e) => e.type === "tool_call") as Extract<Event, { type: "tool_call" }>[];
+  assert.deepEqual(fin9.find((c) => c.callId === "toolu_A")?.args, { x: 1 }, "interleaved block A");
+  assert.deepEqual(fin9.find((c) => c.callId === "toolu_B")?.args, { y: 2 }, "interleaved block B");
+  const n8 = new StreamNormalizer("anthropic");
+  assert.deepEqual(n8.ingest(ev({ type: "content_block_delta", index: 7, delta: { type: "input_json_delta", partial_json: "{\"a\":1}" } })), [],
+    "orphan delta (no block start) merges into nothing");
+  const g = new StreamNormalizer("gemini");
+  g.ingest(ev({ candidates: [{ content: { parts: [{ functionCall: { name: "f", args: "not-an-object" } }] } }] }));
+  const rej = g.finish();
+  assert.ok(!rej.some((e) => e.type === "tool_call"), "string args never become a tool_call");
+  assert.ok(rej.some((e) => e.type === "incomplete_call" && e.callId === "step:f"), "rejected with a marker");
+  const g2 = new StreamNormalizer("gemini");
+  g2.ingest(ev({ candidates: [{ content: { parts: [{ functionCall: { name: "f", args: '{"city":"sf"}' } }] } }] }));
+  assert.deepEqual(toolOf(g2.finish(), "step:f").args, { city: "sf" }, "JSON-text string args parse leniently");
+}
+{
   // Portland, in three fragments, split mid-escape-sequence (ch. 12's worked example).
   // Target args JSON: {"greeting": "They call it \"Portland\""} — the fragments are not individually parseable.
   const n = new StreamNormalizer("openai-chat");
@@ -140,6 +170,25 @@ const PRICES = {
   assert.ok(Math.abs(led.hitRate("s") - 0.5) < 1e-9); // cached ÷ (cached + fresh); writes excluded
 }
 {
+  // Gate-6 C3/C4 regressions: the meter is the trust boundary — usage clamps non-negative
+  // with a visible note; a read+write turn logs BOTH events whose costs sum to the turn.
+  const led = new CacheLedger(PRICES);
+  const cost = led.record("s", { freshIn: -5_000, cachedIn: 0, cacheWriteIn: 0, out: 0 }, "sonnet-4.6");
+  assert.equal(cost, 0, "negative usage prices to zero, never negative money");
+  assert.ok(led.events.some((e) => e.kind === "miss" && /clamped/.test(e.note ?? "")), "clamp is noted, not silent");
+  const led2 = new CacheLedger(PRICES);
+  const turn = led2.record("s", { freshIn: 0, cachedIn: 2_000, cacheWriteIn: 4_000, out: 0 }, "sonnet-4.6", 0);
+  const read = led2.events.find((e) => e.kind === "read");
+  const write = led2.events.find((e) => e.kind === "write");
+  assert.ok(read && write, "a read+write turn logs both events");
+  assert.ok(/read \+ write/.test(read.note ?? ""), "the read names the dual turn");
+  assert.ok(Math.abs(read.costUsd - (2_000 * 0.1 * 3) / 1e6) < 1e-12, "read event carries its own term");
+  assert.ok(Math.abs(read.costUsd + write.costUsd - turn) < 1e-12, "event costs sum to the turn");
+  const readOnly = led2.record("s", { freshIn: 0, cachedIn: 1_000, cacheWriteIn: 0, out: 0 }, "sonnet-4.6", 1);
+  const single = led2.events.filter((e) => e.kind === "read").at(-1)!;
+  assert.ok(Math.abs(single.costUsd - readOnly) < 1e-12, "a read-only turn keeps its single full-cost event");
+}
+{
   // TTL expiry is a ledger event; keep-alive respects the rate budget.
   let budget = 0;
   const led = new CacheLedger(PRICES, { tryAcquire: () => (budget > 0 ? (budget--, true) : false) });
@@ -205,6 +254,17 @@ const PRICES = {
   overrun.reconcile("bedrock", { input: 3_000, cacheWrite: 1_000, maxTokens: 32_000 },
     { input: 3_000, cacheWrite: 1_000, output: 32_000, burndown: 10 }, 1); // final 324k — 288k debited
   assert.equal(overrun.reserve("bedrock", { maxTokens: 900_000, estimatedPromptTokens: 0 }, 1), false); // the overrun was charged
+  // Gate-6 B3 regression: reservation fields clamp at the door — negative terms cannot
+  // cancel positive ones into a zero charge (the free ride past the meter).
+  const clamp = new QuotaLedger();
+  clamp.configure({ provider: "bedrock", tpm: 10, rpm: 10 }, 0);
+  assert.equal(clamp.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 5_000, cacheWriteTokens: -5_000 }, 0), false,
+    "a negative cache-write cannot zero the charge");
+  // Gate-6 B4 regression: a backwards clock (NTP step, VM resume) never drains the bucket.
+  const clock = new TokenBucket(10, 10, 100);
+  clock.tryAcquire(5, 100);                    // 5 tokens left
+  clock.credit(0, 50);                        // clock steps back 50 s — ignored
+  assert.equal(clock.tryAcquire(5, 60), true, "the surviving 5 tokens survive the step-back too");
 }
 {
   const p = new RetryPolicy(3, 0.1);

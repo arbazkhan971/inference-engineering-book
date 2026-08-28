@@ -31,7 +31,7 @@ Old friends ride along, unpurchased again: the **four-bucket usage events** and 
 
 > **ELI5:** A ship's bridge does not talk to the engines directly. The captain rings a telegraph — "ahead half" — and the engine room decides which engine, which throttle, whether the port one is cooling down, and what the fuel log should record. The bridge never learns the details; it learns the *answer*, plus a receipt. Your agent loop is the bridge. tinyengine is the engine room: one telegraph cable in, one answer and one itemized receipt out, and between them, six duty officers who each watch exactly one gauge.
 
-Here is the whole companion in one sentence: **tinyengine is roughly seven hundred lines of TypeScript — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — that sit between your agent loop and every model endpoint it calls.** Each part was designed in the chapter that needed it, at the size that chapter estimated (the shipped companion, itemized in Appendix D, lands a little under the sum):
+Here is the whole companion in one sentence: **tinyengine is roughly seven hundred lines of TypeScript — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — that sit between your agent loop and every model endpoint it calls.** Each part was designed in the chapter that needed it, at the size that chapter estimated (the shipped companion, itemized in Appendix D, lands within a rounding of the sum — the robustness guards added after the adversarial pass pushed a few modules a hair over their tildes):
 
 | Instrument | Built in | Lines | Watches one gauge |
 |---|---|---|---|
