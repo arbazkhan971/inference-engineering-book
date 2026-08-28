@@ -4,8 +4,48 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's tenth fix pass: iteration 71 completed the ch10 pass — all 21
-findings applied (4.3/5 — zero [LOST]; 9 [CONFUSING] + 12 [POLISH]),
+wave's eleventh fix pass: iteration 72 completed the ch11 pass — all 11
+findings applied (4.2/5 — 1 [LOST] + 5 [CONFUSING] + 5 [POLISH]).
+Headlined by the audit's one [LOST]: the 11.2 tier-cliff money example,
+the chapter's only spot where a careful beginner builds an actively
+wrong model — the ambiguous "100K more usable room" clause is replaced
+by the reconciling arithmetic ("The big request carries 1.5× the tokens
+*and* pays double per token — 1.5 × 2 = 3× the bill") and the closer now
+reads "You pay double per token for the fog," so the doubled rate and
+the tripled bill no longer collide. The 11.2 quadratic decomposition
+gained its missing middle rung (one inserted sentence: "Under the hood,
+every model has two moving parts: a page-by-page part … and a
+cross-referencing part …" — so N² and 2·W land on the ladder instead of
+dropping from the ceiling; documented deviation: the audit's "library
+part" became "page-by-page part," since "library" collides with the
+`long-context-attention` library named two paragraphs later).
+DeepSpeed-Ulysses — the chapter's only picture-less mechanism — got its
+picture: the 11.3 ELI5 is extended with the question-type family of
+clerks ("each clerk answers one category of question — all the dates,
+say — for the whole file"), with attention heads mapped to question
+categories at the term's true first use (the Ring bullet, one sentence
+before the Ulysses bullet the audit pointed at) and the Ulysses bullet
+anchored "The other family from the ELI5." The 11.1 table's Pass-KV row
+is de-jargoned ("Which cargo circulates…"; "tensor" now carries a
+chapter-5 recall gloss at its true 11.3 prose home); Ring Attention's
+query block is glossed at the mechanics site ("the questions the
+current tokens are asking"); the 11.5 layer-one arithmetic names its
+baseline ("30K fresh versus the old 15K-equivalent read"); the formula
+constant c carries chapter 3's ignore-it gloss ("a per-model constant
+you never need to number"); the MagicDec sentence splits rule-first,
+evidence-second; "contract-layer view" → "what it looks like from the
+API's point of view"; "the trap composes with caching" → "stacks"
+(same-idiom ripple: 11.6's "Compose with" → "Combine with"; other
+chapters' compose sites belong to their closed or queued audits); the
+KVSL row's binder is self-evident ("The whole binder: the file plus
+every note taken since"). Appendix A ripple: the Pass-KV entry is
+re-worded to match the fixed table row — the "tensor" leak had survived
+in the glossary. All touched arithmetic re-derived before applying
+(300/199 ≈ 1.5; $4/$2 = 2; $1.20/$0.40 = 3; 30K vs 15K = 2×; 30K × 1.25
+= 2.5×; 30K × 0.1 = 3K, 5× cheaper). Ch11 now 5,319 words (raw wc;
++169, all gloss/on-ramp/picture-bearing), inside the 5,500 concept cap.
+Prior pass kept as history: iteration 71 completed the ch10 pass — all
+21 findings applied (4.3/5 — zero [LOST]; 9 [CONFUSING] + 12 [POLISH]),
 recovered from an interrupted session's uncommitted working tree and
 verified hunk-by-hunk against the audit. Headlined by the audit's worst
 gap — four undefined load-bearing terms, each now glossed at first use:

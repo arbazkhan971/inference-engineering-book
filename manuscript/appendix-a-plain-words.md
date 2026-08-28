@@ -250,7 +250,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Ring Attention** — KV blocks circulate chip to chip so every query sees all of them. *(Ch. 11)*
 
-**Pass-KV / pass-Q** — Which tensor circulates in context parallelism: cached keys and values, or the new queries. *(Ch. 11)*
+**Pass-KV / pass-Q** — Which cargo circulates in context parallelism: the stored notes (keys and values), or the new questions (queries). *(Ch. 11)*
 
 **Lost in the middle** — Facts mid-context are retrieved worse than facts at the ends. *(Ch. 11)*
 
