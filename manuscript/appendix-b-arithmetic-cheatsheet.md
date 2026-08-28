@@ -2,11 +2,11 @@
 
 > **Appendices — the reference shelf.** Every formula the book taught, collected with its smallest worked example. The formulas outlive the prices; re-date the constants, keep the arithmetic.
 
-This is the operator's card deck. Each card carries four things: the formula, what its symbols mean, the smallest worked example from the chapter that owns it, and — the part most cheat-sheets omit — *when it lies*. Worked examples reuse numbers already sourced and dated in their chapters (August 2026 retrievals); Appendix C carries the full provider snapshot, Appendix E the sources. Provider prices and multipliers below live in the one dated box at the end, not in the cards' spines.
+This is the operator's card deck. Each card carries four things: the formula, what its symbols mean, the smallest worked example from the chapter that owns it, and — the part most cheat-sheets omit — *when it lies*. Worked examples reuse numbers already sourced and dated in their chapters (August 2026 retrievals); Appendix C carries the full provider snapshot, Appendix E the sources. Provider prices and multipliers are defined once in the dated box at the end; the cards quote the multipliers and derive their dollars from it.
 
 ## B.1 How long will it take?
 
-**The decode-time inequality.**
+**The decode-time identity.**
 
 > e2e ≈ TTFT + (N − 1) × mean ITL, and equivalently TPOT = (e2e − TTFT) / (N − 1)
 
@@ -37,7 +37,7 @@ Entering is quadratic; generating is linear in what you're holding. A 1M-token p
 
 > KV/token = 2 × layers × KV heads × head dim × bytes per number
 
-Parameter count appears nowhere; the note-taking architecture (GQA, MLA, sliding window) sets the bill. Worked: Qwen3 8B ≈ **144 KiB per token** in BF16 → one 128K-token prompt parks ≈ **18 GB** before its first output token exists (Ch. 4). FP8 KV halves it exactly — Llama 3.1 8B drops 128 → 64 KiB per token, doubling concurrent sessions on the same card (Ch. 9). *When it lies:* nowhere, on the bytes; but bytes-per-number changes with the quant menu, so pin the card per served variant. *(Ch. 4, 9)*
+Parameter count appears nowhere; the note-taking architecture — GQA (grouped-query attention), MLA (multi-head latent attention), sliding window — sets the bill. Worked: Qwen3 8B ≈ **144 KiB per token** in BF16 → one 128K-token prompt parks ≈ **18 GB** before its first output token exists (Ch. 4). FP8 KV halves it exactly — Llama 3.1 8B drops 128 → 64 KiB per token, doubling concurrent sessions on the same card (Ch. 9). *When it lies:* nowhere, on the bytes; but bytes-per-number changes with the quant menu, so pin the card per served variant. *(Ch. 4, 9)*
 
 **Sessions per accelerator.**
 
@@ -80,7 +80,7 @@ Normalize *before* multiplying: OpenAI and Gemini report inclusive totals (cache
 
 **The cache loop, in base-input units.**
 
-> N requests sharing a written prefix cost w + N·r, versus N uncached
+> the first request writes, the rest read: w + (N − 1)·r, versus N uncached
 > break-even reuses: N ≥ (w − 1) / (1 − r)
 
 Worked at the box multipliers (w = 1.25, r = 0.1): N ≥ 0.28 — one reuse pays the premium; the 1-hour write (w = 2) needs N ≥ 1.11, two uses total. In dollars: a $3/M model, a 100K-token stable prefix, ten turns → write $0.375 + nine reads $0.270 = **$0.645** versus $3.00 uncached, ≈ **79% saved** (Ch. 14). The only losing case is enrolling and never returning: a flat 25% surcharge. *When it lies:* the formula assumes the prefix *stays* byte-exact — one changed byte converts reads back to full price (the cliff below). *(Ch. 14)*
@@ -95,7 +95,7 @@ A 200K-token session that idles past the 5-minute window pays $1.25 instead of $
 **The compaction breakeven.**
 
 > before: each turn re-reads the prefix (r × prefix per turn)
-> after: one full-price re-prefill, then r × (prefix′ + per-turn growth)
+> after: one full-price re-prefill, then r × prefix′ per turn (3K here)
 > worked: 30K + 3K·t = 15K·t → t = 2.5 turns
 
 Compacting a 150K prefix to a 30K summary is ahead from the third turn after the rewrite — and the stakes shrink as the session grows (Ch. 17). *When it lies:* it prices cache units, not quality — what the summary *drops* is chapter 11's lost-in-compaction cliff, unbudgeted here. *(Ch. 11, 17)*
@@ -124,7 +124,7 @@ At the same rates, each re-sent failed request costs ≈ $0.006; a 5% failure ra
 
 **The requests-per-second ceiling.**
 
-> rps ≈ TPM ÷ 60 ÷ average tokens per request
+> rps ≈ TPM (tokens per minute) ÷ 60 ÷ average tokens per request
 
 Worked: 900,000 TPM at ~500 tokens per call → ~30 rps; pace at 70–80% (~21–24 rps) and large fanouts finish *sooner* than at 100%, because the difference is spent in 429s (too-many-requests rejections), backoff sleeps, and retry amplification. *When it lies:* meters differ — some providers count output-only, some apply burndown multipliers, some count unsuccessful requests; build the per-provider ledger from its own docs. *(Ch. 15)*
 
@@ -164,7 +164,7 @@ Reject some of *your own* calls locally when recent success is poor, so a strugg
 
 > E[progress] = (1 − α^(γ+1)) / (1 − α), α = per-token acceptance, γ = draft length
 
-The geometric sum: the guaranteed first token, plus α's chance of a second, and so on. Worked: α = 0.8, γ = 4 → ≈ **3.36 tokens per verify pass**; net speedup = E[progress] ÷ overhead ratio (a 20% overhead → ≈ 2.8×). *When it lies:* the multiplier must beat the overhead ratio, acceptance falls with temperature (roughly 15–25% speedup loss from temperature 0 → 1 in EAGLE-3's own table), and structured output or cold prefixes can gut α. Calling a hosted API: no header says "speculated" — budget on un-speculated numbers and treat speculation as upside. *(Ch. 8)*
+The geometric sum: the guaranteed first token, plus α's chance of a second, and so on. Worked: α = 0.8, γ = 4 → ≈ **3.36 tokens per verify pass**; net speedup = E[progress] ÷ overhead ratio (a 20% overhead → ≈ 2.8×). *When it lies:* the multiplier must beat the overhead ratio, acceptance falls with temperature (roughly 15–25% speedup loss from temperature 0 → 1 on three of EAGLE-3's four models; the 70B lost only ~4%), and structured output or cold prefixes can gut α. Calling a hosted API: no header says "speculated" — budget on un-speculated numbers and treat speculation as upside. *(Ch. 8)*
 
 ## B.7 When does owning beat renting?
 
@@ -173,7 +173,7 @@ The geometric sum: the guaranteed first token, plus α's chance of a second, and
 > tokens to tie = GPU-month cost ÷ blended price per token
 > utilization to tie = tokens to tie ÷ (sustained rate × hours in the month)
 
-Worked from 2026 rental and per-token rates: an A100 at ~$1.49/hr ≈ $1,073/month ties a $0.60-per-million blended API at ≈ 1,790M tokens — about **35% of every hour** at a sustained ~2,000 tokens/s aggregate. Ten million tokens a month is a $6 problem; renting a GPU for it is buying the restaurant for one dinner. *When it lies:* both ends move — rentals fall, API prices drop — so recompute quarterly, not once; and utilization is the whole game: an engine idling two-thirds of the time is a taxi bought at taxi prices. *(Ch. 18)*
+Worked from 2026 rental and per-token rates: an A100 at ~$1.49/hr ≈ $1,073/month ties a $0.60-per-million blended API at ≈ 1,790M tokens — about **35% of every hour** at a sustained ~2,000 tokens/s aggregate (H100-class; optimistic for an A100 — a slower card pushes the share higher). Ten million tokens a month is a $6 problem; renting a GPU for it is buying the restaurant for one dinner. *When it lies:* both ends move — rentals fall, API prices drop — so recompute quarterly, not once; and utilization is the whole game: an engine idling two-thirds of the time is a taxi bought at taxi prices. *(Ch. 18)*
 
 ---
 
