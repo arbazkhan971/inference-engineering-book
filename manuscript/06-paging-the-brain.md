@@ -84,7 +84,7 @@ Both block tables point at slots 17 and 42 for their shared prefix — those byt
 
 Now the honest ledger, because every trick in this book pays for itself somewhere:
 
-- **The kernel tax is real.** The paged attention kernel is 20–26% slower per call than FasterTransformer's fused kernel — the ledger lookup is work, every attention pass, forever (arXiv:2309.06180, 2023).
+- **The kernel tax is real.** The paged attention kernel is 20–26% slower per call than FasterTransformer's fused kernel on the paper's 2023 measurements — the ledger lookup is work, every attention pass, for as long as the gather runs through the block table (arXiv:2309.06180; the range belongs to that comparison, not to all time).
 - **The capacity win dwarfs it.** Waste near zero means more concurrent requests fit in the same HBM — a bigger batch on chapter 5's dial, which chapter 3's roofline pays for with throughput. Net effect, measured: 2–4× higher throughput than FasterTransformer and Orca at equal latency, and in one overload experiment, up to 22× higher request rate before failure (the paper authors' own comparisons, 2023 — not a modern head-to-head). The kernel got *slower* and the engine got *faster*, because memory, not math, was the binding constraint.
 - **Block size is a real dial.** Too small and every request drags a long block table through every attention call — more bookkeeping, more indirection. Too large and the last partially-filled block wastes more, and (next section) shared prefixes must match in coarser chunks. The paper's sweep found 16–128 tokens near-optimal on ShareGPT and 16–32 on Alpaca; vLLM ships 16, and requires multiples of 8 for mamba-style caches (sweep: arXiv:2309.06180; shipped default and mamba constraint: vLLM docs, 2026-08-27).
 
@@ -175,7 +175,7 @@ The chapter's levers, and where this book hands them off:
 
 The hotel and the ledger carried the chapter; bill them honestly.
 
-**The ledger is not free to consult.** In a hotel, looking up a room number costs nothing. Here, every attention pass in every decode step walks the block table — the 20–26% kernel tax, paid forever. The analogy hides its own largest cost.
+**The ledger is not free to consult.** In a hotel, looking up a room number costs nothing. Here, every attention pass in every decode step walks the block table — the 20–26% kernel tax (the 2023 paper's measurements), paid for as long as the gather runs through the block table. The analogy hides its own largest cost.
 
 **Strangers share rooms, silently.** Hotels don't seat two guests in one room because their itineraries *happen* to match. The block pool does exactly that — reference counts and copy-on-write make sharing invisible until divergence. It is the feature, and no hotel guest would stand for it.
 

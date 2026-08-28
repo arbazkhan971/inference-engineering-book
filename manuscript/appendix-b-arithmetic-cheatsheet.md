@@ -37,7 +37,7 @@ Entering is quadratic; generating is linear in what you're holding. A 1M-token p
 
 > KV/token = 2 × layers × KV heads × head dim × bytes per number
 
-Parameter count appears nowhere; the note-taking architecture — GQA (grouped-query attention), MLA (multi-head latent attention), sliding window — sets the bill. Worked: Qwen3 8B ≈ **144 KiB per token** in BF16 → one 128K-token prompt parks ≈ **18 GB** before its first output token exists (Ch. 4). FP8 KV halves it exactly — Llama 3.1 8B drops 128 → 64 KiB per token, doubling concurrent sessions on the same card (Ch. 9). *When it lies:* nowhere, on the bytes; but bytes-per-number changes with the quant menu, so pin the card per served variant. *(Ch. 4, 9)*
+Parameter count appears nowhere; the note-taking architecture — GQA (grouped-query attention), MLA (multi-head latent attention), sliding window — sets the bill. Worked: Qwen3 8B ≈ **144 KiB per token** in BF16 → one 128K-token prompt parks ≈ **18 GiB** before its first output token exists (Ch. 4). FP8 KV halves it exactly — Llama 3.1 8B drops 128 → 64 KiB per token, doubling concurrent sessions on the same card (Ch. 9). *When it lies:* nowhere, on the bytes; but bytes-per-number changes with the quant menu, so pin the card per served variant. *(Ch. 4, 9)*
 
 **Sessions per accelerator.**
 
@@ -80,10 +80,10 @@ Normalize *before* multiplying: OpenAI and Gemini report inclusive totals (cache
 
 **The cache loop, in base-input units.**
 
-> the first request writes, the rest read: w + (N − 1)·r, versus N uncached
+> the first request writes, the N re-reads read: w + N·r, versus N + 1 uncached (N = reuses)
 > break-even reuses: N ≥ (w − 1) / (1 − r)
 
-Worked at the box multipliers (w = 1.25, r = 0.1): N ≥ 0.28 — one reuse pays the premium; the 1-hour write (w = 2) needs N ≥ 1.11, two uses total. In dollars: a $3/M model, a 100K-token stable prefix, ten turns → write $0.375 + nine reads $0.270 = **$0.645** versus $3.00 uncached, ≈ **79% saved** (Ch. 14). The only losing case is enrolling and never returning: a flat 25% surcharge. *When it lies:* the formula assumes the prefix *stays* byte-exact — one changed byte converts reads back to full price (the cliff below). *(Ch. 14)*
+Worked at the box multipliers (w = 1.25, r = 0.1): N ≥ 0.28 — one reuse pays the premium; the 1-hour write (w = 2) needs N ≥ 1.11 — two cache reads, three requests total. In dollars: a $3/M model, a 100K-token stable prefix, ten turns → write $0.375 + nine reads $0.270 = **$0.645** versus $3.00 uncached, ≈ **79% saved** (Ch. 14). The only losing case is enrolling and never returning: a flat 25% surcharge. *When it lies:* the formula assumes the prefix *stays* byte-exact — one changed byte converts reads back to full price (the cliff below). *(Ch. 14)*
 
 **The expiry penalty.**
 

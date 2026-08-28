@@ -55,7 +55,8 @@ cadence suite replays the nightly instruments over `fixtures/` — the golden
 set's per-task drift diff, the hit-rate floor with thin-data exemption, and
 invoice reconciliation against all four drift suspects.
 
-`env.d.ts` holds minimal type shims for the two `node:` modules used, so the
+`env.d.ts` holds minimal type shims for the four `node:` modules used
+(crypto, assert/strict, fs, process), so the
 project type-checks with a bare `tsc`. Delete it if you install `@types/node`.
 
 ## What it is not
