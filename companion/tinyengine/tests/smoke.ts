@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { traceCall } from "../tracer.js";
 import { StreamNormalizer, type Event } from "../stream-normalizer.js";
-import { CacheLedger } from "../cache-ledger.js";
+import { CacheLedger, UnknownModelError } from "../cache-ledger.js";
 import { classify, backoffDelayMs, TokenBucket, QuotaLedger, RetryPolicy, kOfN } from "../rate-scheduler.js";
 import { Router, type RouteRule } from "../router.js";
 import { SessionStore, classifyIdle, ttlRequestFor } from "../session-store.js";
@@ -43,6 +43,20 @@ const stopOf = (es: Event[]) => { const e = es.find((e) => e.type === "stop_reas
   assert.equal(u.reasoning, 12);
   assert.equal(u.freshIn + u.cachedIn, 1000); // the identity: fresh + cached = reported prompt tokens
   assert.ok(u.cachedIn <= 1000);             // cache reads can never exceed input
+}
+{
+  // Gate-6 A1/A2 regressions: payloads that parse to a non-object never kill the loop, and
+  // non-numeric usage fields never become NaN — they coerce to 0 and flag the event.
+  const n = new StreamNormalizer("openai-chat");
+  assert.deepEqual(n.ingest("data: null"), []);    // null payload: skipped like a meta line
+  assert.deepEqual(n.ingest("data: [1,2]"), []);   // an array is not a chat chunk
+  assert.deepEqual(n.ingest('data: "busy"'), []);  // a bare string neither
+  const u = usageOf(n.ingest('data: {"usage":"unavailable","choices":[]}'));
+  assert.equal(u.freshIn, 0);                    // NaN refused at the door
+  assert.equal(u.cachedIn, 0);
+  assert.equal(u.incomplete, true);              // visible, not silent (ch. 16 suspect #1)
+  const ok = n.ingest(`data: ${JSON.stringify({ usage: { prompt_tokens: 5, completion_tokens: 1 } })}`);
+  assert.ok(usageOf(ok).incomplete !== true);    // clean usage carries no flag
 }
 {
   // Portland, in three fragments, split mid-escape-sequence (ch. 12's worked example).
@@ -117,6 +131,15 @@ const PRICES = {
   assert.equal(led.breakEvenReads("opus-5-1h"), 2); // 2× write pays back after two (docs' own arithmetic)
 }
 {
+  // Gate-6 C1/C2b regressions: an unknown model is a named error before any state mutates,
+  // and the ledger's hitRate is the book's formula — the same number cache-hit-gate prints.
+  const led = new CacheLedger(PRICES);
+  assert.throws(() => led.record("s", { freshIn: 1, cachedIn: 0, cacheWriteIn: 0, out: 0 }, "renamed-alias"),
+    (e: unknown) => e instanceof UnknownModelError && e.model === "renamed-alias");
+  led.record("s", { freshIn: 1_000, cachedIn: 1_000, cacheWriteIn: 4_000, out: 0 }, "sonnet-4.6");
+  assert.ok(Math.abs(led.hitRate("s") - 0.5) < 1e-9); // cached ÷ (cached + fresh); writes excluded
+}
+{
   // TTL expiry is a ledger event; keep-alive respects the rate budget.
   let budget = 0;
   const led = new CacheLedger(PRICES, { tryAcquire: () => (budget > 0 ? (budget--, true) : false) });
@@ -169,6 +192,19 @@ const PRICES = {
   ledger.reconcile("bedrock", { input: 2000, cacheWrite: 500, maxTokens: 16000 }, { input: 2000, cacheWrite: 500, output: 800, burndown: 10 }, 0);
   assert.equal(ledger.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 8000 }, 0), true);   // the re-credited 8,000
   assert.equal(ledger.reserve("bedrock", { maxTokens: 0, estimatedPromptTokens: 1 }, 0), false);    // ...and nothing more
+  // Gate-6 B1 regression: reservations are atomic — a TPM miss never burns the RPM slot.
+  const atomic = new QuotaLedger();
+  atomic.configure({ provider: "anthropic", rpm: 2, tpm: 100 }, 1000);
+  assert.equal(atomic.reserve("anthropic", { maxTokens: 0, estimatedPromptTokens: 100 }, 1000), true);
+  assert.equal(atomic.reserve("anthropic", { maxTokens: 0, estimatedPromptTokens: 1 }, 1000), false); // TPM full
+  assert.equal(atomic.reserve("anthropic", { maxTokens: 0, estimatedPromptTokens: 0 }, 1000), true);  // RPM slot survived the miss
+  // Gate-6 B2 regression: an overrun (output × burndown > booked) is debited, not forgiven.
+  const overrun = new QuotaLedger();
+  overrun.configure({ provider: "bedrock", tpm: 1_000_000, rpm: 1000 }, 0);
+  assert.equal(overrun.reserve("bedrock", { maxTokens: 32_000, estimatedPromptTokens: 3_000, cacheWriteTokens: 1_000 }, 0), true); // books 36k
+  overrun.reconcile("bedrock", { input: 3_000, cacheWrite: 1_000, maxTokens: 32_000 },
+    { input: 3_000, cacheWrite: 1_000, output: 32_000, burndown: 10 }, 1); // final 324k — 288k debited
+  assert.equal(overrun.reserve("bedrock", { maxTokens: 900_000, estimatedPromptTokens: 0 }, 1), false); // the overrun was charged
 }
 {
   const p = new RetryPolicy(3, 0.1);

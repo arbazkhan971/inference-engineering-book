@@ -6,7 +6,7 @@ export type Event =
   | { type: "text_delta"; text: string; ts: number; ttftSeconds?: number }
   | { type: "tool_call_delta"; callId: string; name?: string; fragment: string; ts: number }
   | { type: "tool_call"; callId: string; name: string; args: object; ts: number }   // assembled once, at finish
-  | { type: "usage"; freshIn: number; cachedIn: number; cacheWriteIn: number; out: number; reasoning: number; ts: number }
+  | { type: "usage"; freshIn: number; cachedIn: number; cacheWriteIn: number; out: number; reasoning: number; ts: number; incomplete?: true }
   | { type: "stop_reason"; value: StopReason; raw?: string; ts: number }
   | { type: "incomplete_call"; callId: string; reason: string; ts: number };
 
@@ -52,6 +52,9 @@ export class StreamNormalizer {
     if (payload === "" || payload === "[DONE]") return []; // sentinel: not JSON, not an error
     let chunk: any;
     try { chunk = JSON.parse(payload); } catch { return []; }
+    // Parsed but not an object (null, array, bare string/number): skip like an unparseable
+    // line — one bad keep-alive payload must never kill the stream loop (gate-6 A1).
+    if (typeof chunk !== "object" || chunk === null || Array.isArray(chunk)) return [];
     const ts = Date.now() / 1000;
     return this.provider === "openai-chat" ? this.chat(chunk, ts)
       : this.provider === "openai-responses" ? this.responses(chunk, ts)
@@ -124,8 +127,7 @@ export class StreamNormalizer {
       else if (d.type === "partial_json") out.push(...this.tools.add(this.lastToolId, undefined, d.partial_json ?? ""));
     } else if (c.type === "message_delta") {
       const u = c.usage ?? {};
-      if (u.output_tokens !== undefined) out.push({ type: "usage", freshIn: 0, cachedIn: 0, cacheWriteIn: 0,
-        out: u.output_tokens, reasoning: 0, ts });
+      if (u.output_tokens !== undefined) out.push(this.usageEvt(0, 0, 0, u.output_tokens, 0, ts));
       if (c.delta?.stop_reason) out.push({ type: "stop_reason", value: FINISH[c.delta.stop_reason] ?? "unknown", raw: c.delta.stop_reason, ts });
     }
     return out;
@@ -147,7 +149,14 @@ export class StreamNormalizer {
     return out;
   }
 
+  // The single usage constructor. A wrapper that renames or stringifies fields yields
+  // undefined arithmetic → NaN; NaN poisons every sum downstream forever. Non-numeric
+  // fields coerce to 0 and the event is flagged `incomplete` — visible, not silent (gate-6 A2).
   private usageEvt(freshIn: number, cachedIn: number, cacheWriteIn: number, out: number, reasoning: number, ts: number): Event {
-    return { type: "usage", freshIn: Math.max(0, freshIn), cachedIn, cacheWriteIn, out, reasoning, ts };
+    const num = (x: number) => Number.isFinite(x) ? x : 0;
+    const incomplete = [freshIn, cachedIn, cacheWriteIn, out, reasoning].some((x) => !Number.isFinite(x));
+    const e: Event = { type: "usage", freshIn: Math.max(0, num(freshIn)), cachedIn: num(cachedIn),
+      cacheWriteIn: num(cacheWriteIn), out: num(out), reasoning: num(reasoning), ts };
+    return incomplete ? { ...e, incomplete: true } : e;
   }
 }

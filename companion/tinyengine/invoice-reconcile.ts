@@ -11,7 +11,9 @@
 //                         estimate used a heuristic
 // Provider billing wins ties (chapter 1's rule): the gap is reported signed
 // as invoice − meter, never silently trusted to either side. A gap that
-// grows across days is field drift announcing itself.
+// grows across days is field drift announcing itself. Duplicate rows —
+// retries/partial exports on the invoice side, a cron overlap writing the
+// meter twice — are summed before comparison; money is never dropped.
 //
 //   node dist/invoice-reconcile.js --meter fixtures/meter-day.jsonl \
 //     --invoice fixtures/invoice-day.csv --tolerance 0.02
@@ -55,8 +57,21 @@ export function invoiceFromCsv(rows: Record<string, string>[]): InvoiceRow[] {
 export function reconcile(
   meter: MeterRow[], invoice: InvoiceRow[], tolerance: number,
 ): ReconcileReport {
-  const meterBy = new Map(meter.map((m) => [m.model, m]));
-  const invoiceBy = new Map(invoice.map((i) => [i.model, i]));
+  // Duplicate rows SUM on both sides, never last-win (gate-6 E1/E2): provider CSV exports
+  // carry retry/partial duplicates, and a cron overlap writes the meter JSONL twice. A
+  // last-wins map made $5.00 of real spend invisible — and flipped the gap's sign.
+  const meterBy = new Map<string, MeterRow>();
+  for (const m of meter) {
+    const a = meterBy.get(m.model);
+    if (a) { a.freshIn += m.freshIn; a.cacheWriteIn += m.cacheWriteIn; a.cachedIn += m.cachedIn; a.out += m.out; a.costUsd += m.costUsd; }
+    else meterBy.set(m.model, { ...m });
+  }
+  const invoiceBy = new Map<string, InvoiceRow>();
+  for (const i of invoice) {
+    const a = invoiceBy.get(i.model);
+    if (a) { a.inputTokens += i.inputTokens; a.outputTokens += i.outputTokens; a.cachedTokens += i.cachedTokens; a.amountUsd += i.amountUsd; }
+    else invoiceBy.set(i.model, { ...i });
+  }
   const onlyMeter = [...meterBy.keys()]
     .filter((m) => !invoiceBy.has(m)).sort();
   const onlyInvoice = [...invoiceBy.keys()]

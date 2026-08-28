@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { scoreGolden, makeBaseline, type GoldenTask, type GoldenRow, type GoldenBaseline } from "../golden-set.js";
 import { gateHits, type UsageRow } from "../cache-hit-gate.js";
 import { reconcile, invoiceFromCsv, type MeterRow, type InvoiceRow } from "../invoice-reconcile.js";
+import { CacheLedger } from "../cache-ledger.js";
 import { readJson, readJsonl, readCsv } from "../cadence-io.js";
 
 // ---- The golden set: per-task drift the pass rate would average away -----------------
@@ -69,6 +70,11 @@ import { readJson, readJsonl, readCsv } from "../cadence-io.js";
   // A thin model below floor stays ungated — noise is not signal.
   const thinOnly = gateHits(rows.filter((x) => x.model === "haiku-4.5"), 0.6, 20);
   assert.equal(thinOnly.ok, true);
+  // One formula, one place (gate-6 C2b): the ledger's hitRate over the same rows is the
+  // gate's number — a dashboard and a gate must never disagree on the same day.
+  const led = new CacheLedger({ "sonnet-4.6": { date: "2026-08-27", in: 3, out: 15, cacheWriteMultiplier: 1.25, cacheReadMultiplier: 0.1 } });
+  for (const x of rows.filter((r) => r.model === "sonnet-4.6")) led.record("day", x, "sonnet-4.6", 0);
+  assert.ok(Math.abs(led.hitRate("day") - sonnet!.hitRate) < 1e-9, "ledger and gate agree");
 }
 
 // ---- Invoice reconciliation: daily, drift is a schema change -------------------------
@@ -98,6 +104,18 @@ import { readJson, readJsonl, readCsv } from "../cadence-io.js";
   assert.equal(stale.ok, false);
   const hk = stale.lines.find((l) => l.model === "haiku-4.5");
   assert.ok(hk && !hk.withinTolerance && hk.suspect !== undefined);
+  // Gate-6 E1/E2 regressions: duplicate rows SUM on both sides — a last-wins map dropped
+  // $4.50 of real spend and flipped the gap's sign; money is never silently discarded.
+  const dupInvoice = reconcile(meter,
+    invoice.concat([{ model: "sonnet-4.6", inputTokens: 900, outputTokens: 900, cachedTokens: 0, amountUsd: 4.5 }]), 0.02);
+  const dup = dupInvoice.lines.find((l) => l.model === "sonnet-4.6");
+  assert.ok(dup && Math.abs(dup.invoiceUsd - (1.3486 + 4.5)) < 1e-9, "invoice duplicates summed");
+  assert.ok(dup && dup.gapUsd > 4 && !dup.withinTolerance, "invoice-only money flags as drift");
+  const dupMeter = reconcile(
+    meter.concat([{ model: "gpt-5.6-sol", freshIn: 1, cacheWriteIn: 0, cachedIn: 0, out: 1, costUsd: 2.5 }]), invoice, 0.02);
+  const dm = dupMeter.lines.find((l) => l.model === "gpt-5.6-sol");
+  assert.ok(dm && Math.abs(dm.meterUsd - (0.4633 + 2.5)) < 1e-9, "meter duplicates summed");
+  assert.equal(dupMeter.ok, false);
 }
 
 console.log("tinyengine: cadence tests green");

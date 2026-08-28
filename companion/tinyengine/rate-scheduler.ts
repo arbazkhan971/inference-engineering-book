@@ -46,6 +46,7 @@ export class TokenBucket {             // Continuous refill — the provider's m
   }
   tryAcquire(n = 1, now = Date.now() / 1000): boolean { this.fill(now); if (this.tokens >= n) { this.tokens -= n; return true; } return false; }
   credit(n: number, now = Date.now() / 1000): void { this.fill(now); this.tokens = Math.min(this.capacity, this.tokens + n); }
+  debit(n: number, now = Date.now() / 1000): void { this.fill(now); this.tokens -= n; } // overrun charge: may go negative — admission freezes until refill covers it
 }
 
 // Little's Law sizing: in-flight ≈ throughput × latency. Excess waits in a visible local queue, never on the wire.
@@ -69,20 +70,28 @@ export class QuotaLedger {
   }
   reserve(provider: string, req: { maxTokens: number; estimatedPromptTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number }, now?: number): boolean {
     const b = this.books.get(provider); if (!b) return true;
-    if (!b.rpm.tryAcquire(1, now)) return false;
     let charge = 0;
     if (provider === "openai") charge = Math.max(req.maxTokens, req.estimatedPromptTokens); // max(max_tokens, estimate)
     else if (provider === "anthropic") charge = req.estimatedPromptTokens - (req.cacheReadTokens ?? 0); // reads bypass ITPM
     else if (provider === "bedrock") charge = req.estimatedPromptTokens + (req.cacheWriteTokens ?? 0) + req.maxTokens; // input + cache-write + max_tokens, booked up front
     else charge = req.estimatedPromptTokens;                                               // gemini: input TPM only
-    return b.tpm.tryAcquire(Math.max(0, charge), now);
+    // Atomic reservation (gate-6 B1): a TPM miss must leave RPM untouched, and an RPM miss must
+    // return the TPM tokens — a leaked slot is a phantom 429 for a request that never went out.
+    if (!b.tpm.tryAcquire(Math.max(0, charge), now)) return false; // TPM first: a miss burns nothing
+    if (!b.rpm.tryAcquire(1, now)) { b.tpm.credit(Math.max(0, charge), now); return false; }
+    return true;
   }
-  // Bedrock books input + cache-write + max_tokens up front, then re-credits the unused reservation at completion
-  // (final charge = input + writes + output × burndown; cache reads never counted — ch. 15's worked example).
+  // Bedrock books input + cache-write + max_tokens up front, then reconciles at completion
+  // (final charge = input + writes + output × burndown; cache reads never counted — ch. 15's
+  // worked example). Under-runs re-credit the unused reservation; OVER-runs debit the
+  // difference (gate-6 B2) — output × burndown can outrun max_tokens, and a ledger that only
+  // credits lets a fleet of overrunners sail past TPM with the bucket green.
   reconcile(provider: string, booked: { input: number; cacheWrite?: number; maxTokens: number }, actual: { input: number; cacheWrite?: number; output: number; burndown?: number }, now?: number): void {
     const b = this.books.get(provider); if (!b || provider !== "bedrock") return;
+    const bookedTotal = booked.input + (booked.cacheWrite ?? 0) + booked.maxTokens;
     const finalCharge = actual.input + (actual.cacheWrite ?? 0) + actual.output * (actual.burndown ?? 1);
-    b.tpm.credit(Math.max(0, booked.input + (booked.cacheWrite ?? 0) + booked.maxTokens - finalCharge), now);
+    const delta = finalCharge - bookedTotal;
+    if (delta > 0) b.tpm.debit(delta, now); else b.tpm.credit(-delta, now);
   }
 }
 

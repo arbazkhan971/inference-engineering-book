@@ -11,6 +11,12 @@ export interface Usage { freshIn: number; cachedIn: number; cacheWriteIn: number
 
 export interface RateBudgetGate { tryAcquire(n: number): boolean }   // Chapter 15's interface (injected)
 
+// A model missing from the price map is ch. 16's named suspect ("a bucket the meter does not
+// know: new model, renamed alias") — route it, don't let it kill the meter loop mid-stream (gate-6 C1).
+export class UnknownModelError extends Error {
+  constructor(public model: string) { super(`unknown model in the price map: ${model}`); this.name = "UnknownModelError"; }
+}
+
 export interface CacheEvent {
   session: string; kind: "write" | "read" | "miss" | "ttl_expired" | "deploy" | "keep_alive";
   tokens: number; costUsd: number; ttlRemainingSeconds?: number; note?: string; at: number;
@@ -38,8 +44,12 @@ export class CacheLedger {
   }
 
   // Feed one usage event (Chapter 12's normalizer emits them). Returns the four-term cost of the turn.
+  // Unknown model: named error BEFORE any session mutation — the caller routes it (price 0? page?) —
+  // never a raw TypeError after half the row is booked (gate-6 C1).
   record(session: string, u: Usage, model: string, now = Date.now() / 1000): number {
-    const p = this.prices[model], s = this.session(session, now);
+    const p = this.prices[model];
+    if (!p) throw new UnknownModelError(model);
+    const s = this.session(session, now);
     s.fresh += u.freshIn; s.cached += u.cachedIn;
     if (u.cacheWriteIn > 0) {
       s.writes += u.cacheWriteIn; s.readsSinceWrite = 0;
@@ -55,21 +65,27 @@ export class CacheLedger {
   }
 
   cost(u: Usage, model: string): number {
-    const p = this.prices[model], M = 1e6;
+    const p = this.prices[model];
+    if (!p) throw new UnknownModelError(model);
+    const M = 1e6;
     const w = p.cacheWriteMultiplier ?? 0, r = p.cacheReadMultiplier ?? 0;
     return (u.freshIn * p.in + u.cacheWriteIn * w * p.in + u.cachedIn * r * p.in + u.out * p.out) / M;
   }
 
+  // The book's formula, one place (ch. 14): cached ÷ (cached + fresh). Writes are priced as
+  // re-admissions but excluded from the rate — cache-hit-gate computes the same ratio, and a
+  // dashboard and a gate must never disagree on the same rows (gate-6 C2/C2b).
   hitRate(session: string): number {
     const s = this.sessions.get(session);
     if (!s) return 0;
-    const total = s.fresh + s.cached + s.writes;
+    const total = s.fresh + s.cached;
     return total === 0 ? 0 : s.cached / total;
   }
 
   // Break-even read count after a write: N ≥ (w−1)/(1−r) → 1 read at 1.25/0.1, 2 at 2/0.1.
   breakEvenReads(model: string): number {
     const p = this.prices[model];
+    if (!p) throw new UnknownModelError(model);
     return Math.ceil(((p.cacheWriteMultiplier ?? 1) - 1) / (1 - (p.cacheReadMultiplier ?? 0)));
   }
 
