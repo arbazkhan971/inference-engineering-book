@@ -4,8 +4,41 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's ninth fix pass: iteration 70 applied all 14 ch09 findings (4.2/5 —
-zero [LOST]; 6 [CONFUSING] + 8 [POLISH]) — headlined by the affine-math
+wave's tenth fix pass: iteration 71 completed the ch10 pass — all 21
+findings applied (4.3/5 — zero [LOST]; 9 [CONFUSING] + 12 [POLISH]),
+recovered from an interrupted session's uncommitted working tree and
+verified hunk-by-hunk against the audit. Headlined by the audit's worst
+gap — four undefined load-bearing terms, each now glossed at first use:
+collectives ("synchronized data swaps between chips") in 10.2, hidden
+state ("the token's working copy so far") at its true first use in the
+10.2 EP bullet (covering 10.3–10.5's reuses), rank ("the supercomputing
+word for one chip's slot in the group") in 10.3's CP sentence, and —
+the audit's single worst — the residual connection inside the
+silent-drop payoff sentence ("continues past that layer unchanged,
+carried by the transformer's always-open side path — arriving without
+that expert's contribution"). The missing 74 GB derivation is shown
+(37B active × 2 bytes ≈ 74 GB, derived) — the identical pattern the
+chapter already used for 1,342 GB, and the exact arithmetic Checkpoint
+Q2 examines. The 10.2 product formula gained its worked example ("The
+choices multiply: 2-way TP × 4 pipeline stages × 2 copies = 16 chips");
+10.3's expert operation names carry "(names you can skip; the point is
+two synchronized swaps per layer)"; the 10.1 table leads plain on TP
+and Grouped GEMM and gained its missing EP row after CP; "shard" and
+"dense" are glossed at their first uses; the router is "a tiny learned
+scorer"; DeepEP's streaming multiprocessors are glossed before their
+later use; the production paragraph is marked "(depth layer — skim on
+first read)"; "ontology" → "taxonomy of skills"; the nested mermaid got
+its reading instruction ("boxes inside boxes as chips inside groups
+inside copies"). Appendix A ripples: TP and Grouped GEMM entries
+re-worded to match the fixed table and a new EP entry added — the
+glossary's old Grouped GEMM text carried the audit's "landed tokens"
+jargon. The mermaid block is byte-identical (SKIP_FIGURES validation
+sound); the one added number re-derived (37 × 2 = 74). Ch10 now 5,616
+words (raw wc; +173, all gloss/on-ramp/row-bearing), 2.1% over the
+5,500 concept cap — logged rather than trimmed, consistent with the
+pedagogy precedent. Prior pass kept as history: iteration 70 applied
+all 14 ch09 findings (4.2/5 — zero [LOST]; 6 [CONFUSING] +
+8 [POLISH]) — headlined by the affine-math
 paragraph (the audit's worst gap): the zero-point `z` now carries its
 "you may ignore it" parenthetical (a small offset so that zero lands on a
 grid point), and "15 levels" is corrected to "2^4 − 1 = 15 equal steps

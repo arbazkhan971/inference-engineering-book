@@ -214,7 +214,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Sharding / parallelism** — Spreading one model's work across many chips. *(Ch. 10)*
 
-**TP (tensor parallelism)** — Split each layer's weight matrices into slices, one slice per chip. *(Ch. 10)*
+**TP (tensor parallelism)** — Split each layer's learned numbers (its weight matrices) into slices, one slice per chip. *(Ch. 10)*
 
 **PP (pipeline parallelism)** — Split the layers into consecutive stages, one stage per chip group. *(Ch. 10)*
 
@@ -225,6 +225,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **DP (data parallelism)** — Copy the whole sharded model; each copy serves a different slice of traffic. *(Ch. 10)*
 
 **CP (context parallelism)** — Split one long sequence across chips; introduced as a sharding axis here, owned as a long-context product in chapter 11. *(Ch. 10, 11)*
+
+**EP (expert parallelism)** — Spread the model's many experts across chips; each token travels to its experts. *(Ch. 10)*
 
 **MoE (mixture-of-experts)** — Many expert sub-networks; each token uses a few. *(Ch. 10)*
 
@@ -238,7 +240,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Capacity factor / token drop** — Per-expert seating limit; overflow tokens silently skip the expert. *(Ch. 10)*
 
-**Grouped GEMM** — One batched matrix multiply per expert over all its landed tokens. *(Ch. 10)*
+**Grouped GEMM** — One combined math job per expert, covering every token sent to it. *(Ch. 10)*
 
 **ISL (input sequence length)** — Token count of what you send in. *(Ch. 11)*
 
