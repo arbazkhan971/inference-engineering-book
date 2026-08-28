@@ -25,17 +25,17 @@ One warning before the wrenches come out. Nothing in this chapter is new machine
 | Utilization | The fraction of time your own engine is actually serving | The delivery van's time on the road vs. parked |
 | Crossover point | The workload size where owning beats renting | The mileage at which buying the van beats calling taxis |
 
-Old friends ride along, unpurchased again: the **four-bucket usage events** and **client-side TTFT** (time to first token) from chapter 12, the **CacheLedger** multipliers from chapter 14, the **quota ledger** and **wave pacer** from chapter 15, the **breaker state machine** and **cost attribution** from chapter 16, and the **five-layer prompt contract** from chapter 17. Chapter 9 owns the quantization menu as served by fleets; this chapter visits the same mathematics dressed for one machine.
+Old friends ride along without re-introduction: the **four-bucket usage events** and **client-side TTFT** (time to first token) from chapter 12, the **CacheLedger** multipliers from chapter 14, the **quota ledger** and **wave pacer** from chapter 15, the **breaker state machine** and **cost attribution** from chapter 16, and the **five-layer prompt contract** from chapter 17. Chapter 9 owns the quantization menu as served by fleets; this chapter visits the same mathematics dressed for one machine.
 
 ## 18.2 The assembly: six instruments, one request path
 
 > **ELI5:** A ship's bridge does not talk to the engines directly. The captain rings a telegraph — "ahead half" — and the engine room decides which engine, which throttle, whether the port one is cooling down, and what the fuel log should record. The bridge never learns the details; it learns the *answer*, plus a receipt. Your agent loop is the bridge. tinyengine is the engine room: one telegraph cable in, one answer and one itemized receipt out, and between them, six duty officers who each watch exactly one gauge.
 
-Here is the whole companion in one sentence: **tinyengine is roughly seven hundred lines of TypeScript — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — that sit between your agent loop and every model endpoint it calls.** Each part was designed in the chapter that needed it, at the size that chapter estimated (the shipped companion, itemized in Appendix D, lands within a rounding of the sum — the robustness guards added after the adversarial pass pushed a few modules a hair over their tildes):
+Here is the whole companion in one sentence: **tinyengine is roughly seven hundred lines of TypeScript — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — that sit between your agent loop and every model endpoint it calls.** Each part was designed in the chapter that needed it, at the size that chapter estimated (the shipped companion, itemized in Appendix D, lands within a rounding of the sum — hardening guards added during the companion's attack testing pushed a few modules slightly over their estimates):
 
 | Instrument | Built in | Lines | Watches one gauge |
 |---|---|---|---|
-| Call tracer | Chapter 1 | ~10 | TTFT, inter-token latency, the identity e2e (end-to-end) ≈ TTFT + (N−1) × ITL |
+| Call tracer | Chapter 1 | ~10 | TTFT, inter-token latency (ITL), the identity e2e (end-to-end) ≈ TTFT + (N−1) × ITL, where N is the reply's token count |
 | StreamNormalizer | Chapter 12 | ~150 | One event grammar: `text_delta`, `tool_call_delta`, `usage`, `stop_reason` |
 | CacheLedger | Chapter 14 | ~130 | Hit rate, write amortization, TTL (time to live) clocks, four-term cost |
 | RateScheduler | Chapter 15 | ~120 | Quota ledgers, token bucket, retry caps, wave pacing |
@@ -62,7 +62,16 @@ graph LR
     I -.->|renders next turn| B
 ```
 
-Read it as the chapter numbers taught it. The agent hands over an intent — "complete this turn, guarantee tier strict, lane interactive." The **prompt assembler** (the session store's renderer) lays the turn out in the five-layer order chapter 17 froze: tools, system, static context, transcript, volatile tail — with breakpoints placed where chapter 14 put them. The **RateScheduler** checks the request against the per-provider quota ledger chapter 15 built — OpenAI's `max_tokens` reservation, Anthropic's split meters and cache-read exemption, Bedrock's burndown — and if a fanout is running, the wave pacer spaces it. The **router** picks the endpoint from chapter 16's table: weights, guarantee tier, session pinning, breaker states. The endpoint — hosted or, as section 18.4 will argue, your own — streams back in whatever grammar it speaks. The **normalizer** flattens it to the four streaming events plus their two finish-time markers; the **tracer** stamps them; the **CacheLedger** — the assembly's money meter — prices them into four exclusive buckets, attributes the spend, and updates the session's cache arithmetic; the **SessionStore** appends the turn and renders the next one. The loop closes.
+Read it as the chapter numbers taught it, numbered in the diagram's order:
+
+1. The agent hands over an intent — "complete this turn, guarantee tier strict, lane interactive."
+2. The **prompt assembler** (the session store's renderer) lays the turn out in the five-layer order chapter 17 froze: tools, system, static context, transcript, volatile tail — with breakpoints placed where chapter 14 put them.
+3. The **RateScheduler** checks the request against the per-provider quota ledger chapter 15 built — OpenAI's `max_tokens` reservation, Anthropic's split meters and cache-read exemption, Bedrock's burndown — and if a fanout is running, the wave pacer spaces it.
+4. The **router** picks the endpoint from chapter 16's table: weights, guarantee tier, session pinning, breaker states.
+5. The endpoint — hosted or, as section 18.4 will argue, your own — streams back in whatever grammar it speaks, and the **normalizer** flattens it to the four streaming events plus their two finish-time markers; the **tracer** stamps them.
+6. The **CacheLedger** — the assembly's money meter — prices them into four exclusive buckets, attributes the spend, and updates the session's cache arithmetic; the **SessionStore** appends the turn and renders the next one.
+
+The loop closes.
 
 Three properties make the assembly more than the sum of its parts:
 
@@ -80,7 +89,7 @@ What the assembly is *not* matters just as much. It is not a framework you insta
 
 The local stack has three names that mean three different things — plus one latecomer. **llama.cpp** is the runtime: a C/C++ inference engine that runs transformer models on CPUs (central processing units), GPUs (graphics processing units), Apple Silicon, phones. **GGUF** — GPT-Generated Unified Format, the container llama.cpp reads — is a single file holding weights, tokenizer, and metadata, so a model ships as one artifact. **Ollama** is the packaging: model management and an OpenAI-compatible local endpoint on top. And **MLX** — Apple's machine-learning framework — is the Apple-native alternative runtime, tuned for unified memory; as of the Ollama team's announcement, Ollama on Apple Silicon is built on MLX in preview, precisely, they say, to exploit that architecture (Ollama blog, retrieved 2026-08-27).
 
-The dial local inference turns first is the **quant ladder** — chapter 9's mathematics, packaged for one machine. A GGUF can hold each tensor in a defined rung of formats (llama.cpp GGUF docs, retrieved 2026-08-27): full floats (F32, F16, BF16), legacy quants (Q4_0 through Q8_0), K-Quants (Q2_K through Q8_K) that mix block sizes to claw back accuracy, I-Quants (IQ1_S through IQ4_NL) that push importance sampling to the lowest bit-widths, and experimental formats (TQ1_0, TQ2_0, MXFP4). The modern default for most users is **Q4_K_M** — applied with a one-line `llama-quantize` call — because it sits near the knee of the size/quality curve. The llama.cpp project's own tables put numbers on the trade (tools/quantize/quantize.cpp, retrieved 2026-08-27):
+The dial local inference turns first is the **quant ladder** — chapter 9's mathematics, packaged for one machine. A GGUF can hold each tensor in a defined rung of formats — you do not need the names, only the shape of the menu (llama.cpp GGUF docs, retrieved 2026-08-27): full floats (F32, F16, BF16), legacy quants (Q4_0 through Q8_0), K-Quants (Q2_K through Q8_K) that mix block sizes to claw back accuracy, I-Quants (IQ1_S through IQ4_NL) that spend extra effort deciding which weights matter most, to reach the lowest bit-widths, and experimental formats (TQ1_0, TQ2_0, MXFP4). The modern default for most users is **Q4_K_M** — applied with a one-line `llama-quantize` call — because it sits near the knee of the size/quality curve. The llama.cpp project's own tables put numbers on the trade — size in gigabytes against perplexity, how surprised the model is by held-out text, where lower is better (chapter 9's full treatment; tools/quantize/quantize.cpp, retrieved 2026-08-27):
 
 > **GGUF per-format snapshot — Llama-3-8B (llama.cpp quantizer tables, retrieved 2026-08-27)**
 > - Q4_0: ≈ 4.34 GB, +0.4685 perplexity over F16
@@ -115,7 +124,7 @@ Should you run your own engine — a local machine, or a rented GPU running an o
 
 Now the worked crossover, assumptions stated the way the sources state them:
 
-**A small workload never buys an engine.** Ten million tokens a month at a blended $0.60 per 1M (typical mid-tier open-weight model via a per-token API, 2026) is **$6/month**. A dedicated H100 running 24/7 costs 720 hours × $2.49 ≈ **$1,793/month**. Renting the GPU for a $6 problem is buying the restaurant because you wanted one dinner.
+**A small workload never buys an engine.** Ten million tokens a month at a blended $0.60 per 1M (typical mid-tier open-weight model via a per-token API, 2026) is **$6/month**. A dedicated H100 running 24/7 costs 720 hours × $2.49 ≈ **$1,793/month**. Renting the GPU for a $6 problem is buying the delivery van for one trip to the store.
 
 **A busy workload gets close, then argues about utilization.** At one billion tokens a month (a genuinely busy multi-agent deployment), the API bill is 1,000 × $0.60 = **$600/month**; a marketplace A100 at ~$1.49/hr × 720 ≈ **$1,073/month** is still more expensive — *before* you staff it. Run the breakeven the other way (derived): $1,073 ÷ $0.60/1M ≈ 1,790M tokens a month just to tie the API; at a community-typical sustained ~2,000 tokens/s aggregate for a 70B-class model (an H100-class throughput figure — a marketplace A100 sustains less, which raises the breakeven share; throughput varies with batch size), that is ~895,000 seconds of serving — about **35% of every hour of every day**. The crossover lands where your utilization does: an engine that idles two-thirds of the time is a taxi you bought at taxi prices.
 
@@ -133,7 +142,7 @@ And the honest costs, both sides:
 
 **Owning makes you the provider.** Your pager, not theirs. Engine operations become your job: capacity, deploys, quant re-evaluations (chapter 9's quarterly ritual), goodput management (chapter 5 — your own overloaded GPU queues exactly like a provider's), preemption behavior under memory pressure (chapter 4). You gain the right to break the engine yourself.
 
-**No SLA but physics.** Hosted providers sell uptime and someone else's on-call. Your local endpoint sells neither — but it also cannot have a region-wide 529, and chapter 15's entire retry taxonomy collapses to "wait for the GPU."
+**No service-level agreement (SLA) but physics.** Hosted providers sell uptime and someone else's on-call. Your local endpoint sells neither — but it also cannot have a region-wide 529, and chapter 15's entire retry taxonomy collapses to "wait for the GPU."
 
 The harness decision, stated as policy rather than vibes: **route by sensitivity and volume, computed from dated arithmetic.** Pin PII-bearing and offline-capable tasks to the local lane; send bursty interactive traffic to hosted APIs; send the batch lane wherever the crossover says, which you recompute from current rental and per-token rates plus your measured utilization, on a calendar, not on a hunch. The routing table from chapter 16 already has the columns for this — `lane: local`, a sensitivity tag, a price refreshed with a date. tinyengine's router treats "local engine vs hosted API" as exactly what it is: the first routing decision, not a different religion.
 
@@ -148,7 +157,7 @@ Here is the checklist the whole book has been writing, compressed to what you ca
 **Contract lines (router):**
 1. Every model referenced by *alias*, never by literal ID (chapter 16) — and every alias resolved by a pinned deployment with a version and a date.
 2. Quarterly re-benchmark on the golden set: your pinned model's quality today is a measurement, not a memory (chapters 1, 9).
-3. Breaker drill: inject a 429 storm and a slow-but-200 brownout in staging; verify trips, fallbacks, and the all-open bypass *log loudly* rather than dead-end (chapter 16 — and alert on cost-per-completed-task, because breakers cannot see dimming lights).
+3. Breaker drill: inject a 429 storm (over-quota rejections) and a slow-but-200 brownout in staging; verify trips, fallbacks, and the all-open bypass (every breaker tripped) *log loudly* rather than dead-end (chapter 16 — and alert on cost-per-completed-task, because breakers cannot see dimming lights).
 
 **Cache lines (session store and ledger):**
 4. Byte-exactness in CI (continuous integration): store, render, hash; resume, render, hash; assert equality. Golden-file render across library versions (chapter 17).
@@ -158,14 +167,14 @@ Here is the checklist the whole book has been writing, compressed to what you ca
 **Limit lines (scheduler):**
 7. Quota ledger per provider matches the documented meters — re-verified against the provider's own pages on the checklist date (chapter 15); rate sheets are dated config.
 8. Retry budget enforced: injected failures show local rejection — chapter 15's ~10% fleet rule — not a zombie loop (chapter 15; chapter 10's mixture-of-experts peak rule keeps multiplicative budgets small for the same reason).
-9. Fanout paced: a 1,000-request test wave leaves with jittered spacing, K-of-N contract attached (chapter 15).
+9. Fanout paced: a 1,000-request test wave leaves with jittered spacing, K-of-N contract attached — succeed if K of N complete (chapter 15).
 
 **Money lines (ledger):**
 10. Four-bucket usage identity holds per provider on live traffic (chapter 12's invariants), and daily invoice reconciliation runs — metered spend vs. billed spend, drift taxonomy from chapter 16 attached to any gap.
 11. Price table carries a load date; a repricing shows up as a config diff event, not a bill surprise (chapters 14, 16).
 
 **Latency and quality lines (tracer and evals):**
-12. p50/p95 TTFT and ITL (inter-token latency) alerting per endpoint — client-side, from the tracer, because no hosted provider surfaces distributions (chapter 12); goodput alerts on SLO (service-level objective) violations, not raw throughput (chapter 5).
+12. p50/p95 (median and 95th-percentile) TTFT and ITL (inter-token latency) alerting per endpoint — client-side, from the tracer, because no hosted provider surfaces distributions (chapter 12); goodput alerts on SLO (service-level objective) violations, not raw throughput (chapter 5).
 13. The golden set runs nightly on every live route, including the local lane (chapters 9, 16): a silent variant swap or quant regression is caught by *quality*, the only dial that can see it.
 
 Run the whole list before every launch; run lines 5, 10, 12, and 13 nightly; run lines 1, 2, 7, and 11 quarterly. That cadence — ship, night, quarter — is the book's loop in three speeds.
@@ -176,7 +185,7 @@ Run the whole list before every launch; run lines 5, 10, 12, and 13 nightly; run
 
 Volume I ended by teaching you to stop wasting the model. This volume's single claim, restated one last time, is that the engine room is *knowable* — and that knowing it is your job, because nobody else in the building holds your contract.
 
-**You own the contract, not the engine.** The three layers from chapter 1 still stand: the model is rented from a catalog, the engine is the provider's craft, and the waste term — what the harness squanders in unstable prefixes, unbatched fanouts, retry storms, and unbudgeted context — is entirely yours. The durable equation closes the book as it opened it: agent economics = what the model knows × what the engine extracts × what the harness wastes. Sixteen of these eighteen chapters were about the third term.
+**You own the contract, not the engine.** The three layers from chapter 1 still stand: the model is rented from a catalog, the engine is the provider's craft, and the waste term — what the harness squanders in unstable prefixes, unbatched fanouts, retry storms, and unbudgeted context — is entirely yours. The durable equation closes the book as it opened it: agent economics = what the model knows × what the engine extracts × what the harness wastes. Most of these eighteen chapters live where the third term is decided.
 
 **Every dial has a price.** There is no free latency, no free quality, no free context. Batch and you trade neighbors' TPOT (time per output token) for throughput; quantize and you trade points on a benchmark for bandwidth; cache and you trade prompt flexibility for a tenth-price read; speculate and you trade verifier compute for maybe-tokens; own the engine and you trade a per-token bill for a utilization commitment. "Latency, cost, quality — pick two" was the spine because it is not a slogan; it is the accounting identity of this whole machine, and you can now do the arithmetic on a napkin.
 

@@ -4,7 +4,43 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's seventeenth fix pass: iteration 78 completed the ch17 pass —
+wave's eighteenth fix pass: iteration 79 completed the ch18 pass —
+all 11 findings applied (4.44/5 — zero [LOST]; 5 [CONFUSING] + 6
+[POLISH]), closing the chapter half of the pedagogy queue (ch01–18
+all applied; appendices, front/back matter, and the plain guide
+remain). Headlined by the audit's single worst gap: the one metric
+that prices the local ladder — perplexity, load-bearing in the GGUF
+snapshot box — was unintelligible on the page; it is now glossed at
+the intro sentence above the box ("size in gigabytes against
+perplexity, how surprised the model is by held-out text, where lower
+is better" with the chapter-9 pointer, verified true before
+applying; documented deviation: the audit's "confusion score"
+replaced by chapter 9's own table definition per book-coinage
+precedence). The assembly walkthrough — the chapter's composition
+lesson delivered as one ~100-word recall test — is re-broken into
+six numbered steps at the diagram's node boundaries (same prose,
+keyed "numbered in the diagram's order"). The build-log process leak
+is out of the durable spine ("after the adversarial pass … over
+their tildes" became "hardening guards added during the companion's
+attack testing … slightly over their estimates"; the manufacturing
+record stays in appendix D's itemization, whose queued audit owns
+it). Also applied: "unpurchased again" → "without re-introduction"
+(residual logged: ch17's identical phrase belongs to ch17's closed
+audit, unedited per the iteration-72 cross-chapter precedent);
+"importance sampling" de-jargoned (book-only site, grep-verified);
+the book's single unexpanded SLA expanded; 18.4's restaurant→van
+frame switch repaired; the tracer row's ITL linked and N bound; the
+ship checklist given its four standalone micro-glosses ("429 storm
+(over-quota rejections)", "p50/p95 (median and 95th-percentile)",
+"K-of-N … succeed if K of N complete", "all-open bypass (every
+breaker tripped)"); the "Sixteen of these eighteen chapters"
+countability wobble softened; and the quant-ladder name cascade
+given its signpost ("you do not need the names, only the shape of
+the menu"). Mermaid block byte-untouched (zero mermaid lines in the
+diff — SKIP_FIGURES validation sound). Ch18 now 5,893 words (raw
+wc; +81, all gloss/signpost/numbering-bearing), inside the 6,500
+Part IV cap. Prior pass kept as history: iteration 78 completed the
+ch17 pass —
 all 13 findings applied (4.3/5 — zero [LOST]; 8 [CONFUSING] + 5
 [POLISH]). Headlined by the audit's single worst gap: the hash
 mechanics under the whole chapter — taught only through prices and
@@ -40,7 +76,7 @@ finding 1 touched the same sentence). Mermaid blocks byte-identical
 (raw wc; +150, all gloss/on-ramp/break-bearing), 6.6% over the 6,500
 Part IV cap on a base already logged 1.1% over (iteration 21, five
 trim passes) — logged rather than trimmed, consistent with the
-pedagogy precedent. Prior pass kept as history: iteration 77
+pedagogy precedent. Older history: iteration 77
 completed the ch16 pass — all
 8 findings applied (4.41/5 — zero [LOST]; 6 [CONFUSING] + 2
 [POLISH], every one a one-phrase fix). Headlined by the audit's #1
