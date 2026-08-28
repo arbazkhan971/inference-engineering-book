@@ -2,9 +2,11 @@
 
 > **Appendices — the reference shelf.** The chapters taught each term where it earns its keep; this shelf holds them all in one place, still in plain words.
 
-How to use this glossary: terms are grouped the way the book introduced them — the layer beneath the prompt, the engine's interior, the API contract, and the harness that meets the engine. Each entry names the chapter that owns the term's full treatment, so this works as a reverse index too. Acronyms are expanded in the entry itself. When two chapters use one word differently (they do: "gateway," "prefix cache"), the entries say so plainly.
+How to use this glossary: terms are grouped the way the book introduced them — the layer beneath the prompt, the engine's interior, the API contract, and the harness that meets the engine. Each entry names the chapter that owns the term's full treatment, so this works as a reverse index too. Within each section, entries sit under the chapter title that coined them. Acronyms are expanded in the entry itself. A handful of entries lean on chapter pictures; when one does, the chapter named beside it is the shortcut. When two chapters use one word differently (they do: "gateway," "prefix cache"), the entries say so plainly.
 
 ## A.1 The layer beneath the prompt (chapters 1–4)
+
+### What inference engineering is
 
 **Inference** — Running a trained model to produce output, token by token. *(Ch. 1)*
 
@@ -26,13 +28,15 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **429 / 529** — The provider's two rejections: "you're over quota" versus "we're overloaded." *(Ch. 1, 15)*
 
+### The shape of a token
+
 **Token** — The chunk of text the model reads or writes in one step. *(Ch. 1, 2)*
 
 **Tokenizer** — The table that converts your text into those chunks. *(Ch. 2)*
 
 **Vocabulary** — The learned list of legal chunks, tens to hundreds of thousands of entries. *(Ch. 2)*
 
-**BPE (byte-pair encoding)** — The recipe that builds a vocabulary by merging frequent byte pairs. *(Ch. 2)*
+**BPE (byte-pair encoding)** — The recipe that builds a vocabulary by merging frequent pairs of text characters (a *byte* is one of the raw digital characters a computer stores). *(Ch. 2)*
 
 **Pre-tokenizer** — The pattern pass that decides chunk boundaries before merging. *(Ch. 2)*
 
@@ -48,7 +52,9 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **End-to-end latency** — Wall clock from send to last token. *(Ch. 2)*
 
-**Decode-time inequality** — e2e ≈ TTFT + N × TPOT: the whole latency budget in one line. *(Ch. 2)*
+**Decode-time inequality** — e2e ≈ TTFT + N × TPOT (e2e = end-to-end time; N = the reply's token count): the whole latency budget in one line. *(Ch. 2)*
+
+### The arithmetic of waiting
 
 **FLOP / FLOPS** — One arithmetic operation / operations per second. *(Ch. 3)*
 
@@ -58,19 +64,23 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Memory bandwidth** — Bytes per second the chip can fetch. *(Ch. 3)*
 
+**GPU (graphics processing unit)** — The specialist chip AI runs on: thousands of tiny calculators working in parallel. *(Ch. 1, 3)*
+
 **HBM (high-bandwidth memory)** — The GPU's pantry: GB-scale, TB/s-speed. *(Ch. 3)*
 
-**Arithmetic intensity** — Arithmetic operations per byte moved; the ratio that decides which bound binds. *(Ch. 3)*
+**Arithmetic intensity** — Arithmetic operations per byte moved; the ratio that decides which bottleneck is yours — the thinking or the fetching. *(Ch. 3)*
 
 **Roofline** — The chart of "how fast can this kernel go": a rising bandwidth line meeting a flat compute ceiling. *(Ch. 3)*
 
-**Ridge point** — The intensity where those two ceilings meet; peak arithmetic divided by peak bytes per second. *(Ch. 3)*
+**Ridge point** — The intensity where those two ceilings meet; peak arithmetic divided by peak bytes per second — the tipping point where fetching stops being the limit and thinking becomes it. *(Ch. 3)*
 
-**GEMM (general matrix-matrix multiply) / GEMV (general matrix-vector multiply)** — Big matrix multiply (many rows at once) versus matrix-times-one-vector (the batch-of-one case). *(Ch. 3)*
+**GEMM (general matrix-matrix multiply) / GEMV (general matrix-vector multiply)** — Big matrix multiply (many tokens' rows at once) versus matrix-times-one-vector (the single-request case); a *matrix* is a grid of numbers, a *vector* one column of them. *(Ch. 3)*
 
 **Batch size** — How many requests share one pass over the weights; the dial that moves decode along the roofline. *(Ch. 3, 5)*
 
 **Memory hierarchy** — Registers → SRAM → HBM → RAM → disk, each tier slower but bigger. *(Ch. 3)*
+
+### The memory that is not the model
 
 **KV (key–value) cache** — The per-conversation memory of every token seen so far; the memory that is not the model. *(Ch. 1, 4)*
 
@@ -96,6 +106,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 ## A.2 Inside the engine (chapters 5–11)
 
+### Batches: the engine's trick
+
 **Iteration** — One engine step: one decode token for every running request. *(Ch. 5)*
 
 **Scheduler** — The code that decides who is in the batch each iteration. *(Ch. 5)*
@@ -112,7 +124,11 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **EOS (end of sequence)** — The model's "I'm done" token. *(Ch. 5)*
 
+**Throughput** — Total completions per second, however late they arrive; the number goodput exists to correct. *(Ch. 1, 5)*
+
 **Goodput** — Completions per second that actually met your latency bounds; served *on time*, not just served. *(Ch. 5)*
+
+### Paging the brain
 
 **Block (page)** — The fixed-size chunk the KV cache is cut into — 16 tokens by default in vLLM. *(Ch. 6)*
 
@@ -142,6 +158,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Block size** — Tokens per block; the dial that sizes all of the above. *(Ch. 6)*
 
+### Prefill, decode, and the great divorce
+
 **Prefill bubble** — The stall every running decode suffers while a long prefill occupies the batch. *(Ch. 7)*
 
 **Interference** — Prefill and decode degrading each other by sharing one queue. *(Ch. 7)*
@@ -161,6 +179,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **KV transfer** — Shipping a finished prompt's cache from the prefill pool to the decode pool. *(Ch. 7)*
 
 **Early rejection** — Admission control that refuses requests predicted to miss their SLO (service level objective). *(Ch. 7)*
+
+### Guessing at the speed of light
 
 **Speculative decoding** — Guess several tokens cheaply, have the real model check them in one pass. *(Ch. 8)*
 
@@ -183,6 +203,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **Prompt lookup (n-gram)** — A drafter that copies phrases found in the prompt itself. *(Ch. 8)*
 
 **Self-speculation** — The model (or its own hidden layers) drafting for itself. *(Ch. 8)*
+
+### Smaller numbers, faster engines
 
 **Quantization** — Store each number with fewer bits than it was trained with. *(Ch. 9)*
 
@@ -211,6 +233,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **Perplexity** — How surprised a model is by held-out text; lower is better. *(Ch. 9)*
 
 **Variant / tier** — Same model name, different serving recipe underneath. *(Ch. 9)*
+
+### One model, many chips
 
 **Sharding / parallelism** — Spreading one model's work across many chips. *(Ch. 10)*
 
@@ -242,6 +266,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Grouped GEMM** — One combined math job per expert, covering every token sent to it. *(Ch. 10)*
 
+### Long context is a memory product
+
 **ISL (input sequence length)** — Token count of what you send in. *(Ch. 11)*
 
 **KVSL (KV-cache sequence length)** — Token count of everything the model has seen so far this request: your prompt plus every generated token. *(Ch. 11)*
@@ -263,6 +289,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **Append-only layout** — History grows by additions, never rewrites. *(Ch. 11, 17)*
 
 ## A.3 The API contract (chapters 12–16)
+
+### The streaming contract
 
 **Streaming** — The server sends output as it is produced, on a connection held open. *(Ch. 12)*
 
@@ -288,6 +316,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Tool-call accumulator** — The buffer that reassembles fragmented tool arguments into one JSON (JavaScript Object Notation) object. *(Ch. 12)*
 
+### Structured output is not a prompt trick
+
 **Structured output** — Output whose *shape* is guaranteed to match a declared schema. *(Ch. 13)*
 
 **Schema (JSON Schema)** — A machine-readable description of allowed shapes: fields, types, nesting. *(Ch. 13)*
@@ -296,7 +326,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Constrained / guided decoding** — Engine-side enforcement of a grammar during generation. *(Ch. 13)*
 
-**Logit mask** — Setting forbidden tokens' scores to −∞ before the draw. *(Ch. 13)*
+**Logit mask** — Setting forbidden tokens' raw preference scores (their *logits* — the score a model gives a vocabulary token at one decoding step) to negative infinity before the next token is chosen. *(Ch. 13)*
 
 **FSM (finite-state machine)** — The rule computer for simple grammars; remembers only its current state. *(Ch. 13)*
 
@@ -304,7 +334,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Compilation** — Turning your schema into mask tables once, before serving. *(Ch. 13)*
 
-**Token trie** — A prefix tree over the vocabulary mapping grammar rules to legal token ids. *(Ch. 13)*
+**Token trie** — A prefix tree (a lookup tree branching once per word piece) mapping grammar rules to the vocabulary's internal numbering (*token ids*). *(Ch. 13)*
 
 **JSON mode** — Provider mode guaranteeing parseable JSON, any shape. *(Ch. 13)*
 
@@ -313,6 +343,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 **Guarantee tier** — How strong a given provider's structured-output promise actually is. *(Ch. 13, 16)*
 
 **Chain of thought (CoT)** — The model's visible reasoning tokens before an answer; what tight schemas can suppress. *(Ch. 13)*
+
+### The cache that pays your bill
 
 **Prompt prefix** — Everything from the request's first token up to some boundary. *(Ch. 14)*
 
@@ -336,7 +368,9 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Hit rate** — The share of input tokens served from cache. *(Ch. 14)*
 
-**Cache salt** — A value mixed into the identity the provider fingerprints your prefix into, to keep tenants apart. *(Ch. 6, 14)*
+**Cache salt** — A value mixed into the identity the provider fingerprints your prefix into, to keep different customers' cached entries apart. *(Ch. 6, 14)*
+
+### Rate limits are physics
 
 **Rate limit / quota** — A ceiling on how much you may send, per time window. *(Ch. 15)*
 
@@ -358,6 +392,8 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Adaptive throttling** — Rejecting some calls locally, based on recent successes. *(Ch. 15)*
 
+### Routing, fallbacks, and the money meter
+
 **Deployment** — One concrete servable copy of a model at one provider. *(Ch. 16)*
 
 **Alias** — A stable name your code calls, mapped to one or more real deployments. *(Ch. 16)*
@@ -370,7 +406,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Complexity router** — A classifier that sends easy prompts to cheap models, hard ones to strong models. *(Ch. 16)*
 
-**Batch API** — Submit N requests as one job; half price at all three majors, served within 24 hours (mid-2026 snapshot). *(Ch. 16)*
+**Batch API** — Submit N requests as one job; half price at the three largest providers, served within 24 hours (mid-2026 snapshot). *(Ch. 16)*
 
 **Usage object** — The token accounting a provider attaches to each response; the meter's raw material. *(Ch. 12, 16)*
 

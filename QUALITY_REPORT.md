@@ -4,11 +4,39 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's eighteenth fix pass: iteration 79 completed the ch18 pass —
-all 11 findings applied (4.44/5 — zero [LOST]; 5 [CONFUSING] + 6
+wave's nineteenth fix pass: iteration 80 completed the appendix A
+pass — all 13 findings applied (4.0/5 — 2 [LOST] + 5 [CONFUSING] +
+6 [POLISH]), opening the reference-surface half of the queue
+(appendices B–D, front/back matter, and the plain guide remain).
+Headlined by the audit's worst gap — undefined primitives below the
+glossary's own floor — every flagged entry now defines its words:
+BPE's byte gloss mirrors chapter 2's own coinage; the Logit mask
+entry carries chapter 13's logits definition and writes negative
+infinity instead of −∞; GEMM/GEMV gains the matrix/vector gloss over
+chapter 3's tokens'-rows antecedent; the token trie keeps chapter
+13's prefix-tree coinage, glossed. The arithmetic-intensity cluster
+has its everyday picture back ("which bottleneck is yours — the
+thinking or the fetching"; ridge point's tipping-point append); the
+decode-time inequality's symbols are expanded at point of use (e2e =
+end-to-end time; N = the reply's token count); GPU and Throughput
+entries are added (the glossary's acronyms-expanded-in-entry promise
+now kept for its two most-used terms); and 16 unnumbered H3
+mini-heads group every entry under the chapter title that coined it
+(4/7/5 across A.1–A.3; A.4 untouched per the audit's own 4.5
+grading), with the intro stating the shortcut contract. Documented
+deviations: the byte/logits/GEMM/trie glosses mirror the book's
+existing coinages over the audit's ad-hoc phrasings (book-coinage
+precedence); the mini-heads are chapter titles rather than the
+audit's illustrative names — the reverse-index promise made physical
+— and A.2 carries seven rather than three-or-four because it spans
+seven chapters. Residual logged: chapter 14's own cache-salt table
+row keeps "tenants" (closed audit; its picture column carries the
+meaning — the iteration-72 no-front-running precedent). Appendix A
+now 3,816 words (+258, all gloss/entry/mini-head-bearing). Prior
+pass kept as history: iteration 79 completed the ch18 pass — all 11
+findings applied (4.44/5 — zero [LOST]; 5 [CONFUSING] + 6
 [POLISH]), closing the chapter half of the pedagogy queue (ch01–18
-all applied; appendices, front/back matter, and the plain guide
-remain). Headlined by the audit's single worst gap: the one metric
+all applied). Headlined by the audit's single worst gap: the one metric
 that prices the local ladder — perplexity, load-bearing in the GGUF
 snapshot box — was unintelligible on the page; it is now glossed at
 the intro sentence above the box ("size in gigabytes against
