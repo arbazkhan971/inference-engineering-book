@@ -4,13 +4,21 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's second fix pass: iteration 63 applied all 19 ch02 findings — the
-one [LOST] (the BPE mechanism now has its plain-words bridge sentence
-before the formal one) plus 8 [CONFUSING] (bytes glossed, token bucket
-glossed, cache vocabulary given referents at all three sites, "mutual
-information" and "affine" de-jargoned, "call site" de-jargoned ×2,
-BERT/SentencePiece compressed phrasing unpacked) and 10 [POLISH] —
-with ch03+ remaining queued in chapter order. Iteration 62 applied all
+wave's third fix pass: iteration 64 applied all 20 ch03 findings (the
+wave's floor chapter at 3.75/5) — the two [LOST] openings (the jargon-stack
+intro now plain words with a deferral pointer into 3.2; FlashAttention now
+picture-first with a working-notes bridge and a softmax gloss), nine
+[CONFUSING] (the 3.1 table grown to seventeen rows with Weights/Parameter/
+Kernel/TTFT/TPOT — the vocabulary the chapter's divisions actually use —
+plus divisions shown, symbols glossed, the box restructured into
+structure-vs-rates layers), and nine [POLISH]; the 13B roofline example
+was also honestly re-anchored to chapter 2's actual 8B floor while being
+de-e-notated. Appendix A reverse-index pointers rippled (Weights, TTFT,
+TPOT now include chapter 3).
+
+History: iteration 63 applied all 19 ch02 findings — the one [LOST] (the
+BPE plain-words bridge before the formal merge sentence), 8 [CONFUSING]
+(glosses and cache-vocabulary referents), and 10 [POLISH]. Iteration 62 applied all
 12 ch01 findings — zero [LOST], 4 [CONFUSING]
 (Token defined in the 1.1 table, the KV-caching gloss de-jargoned,
 "Pareto frontier" replaced with the plain trade-off, throughput glossed

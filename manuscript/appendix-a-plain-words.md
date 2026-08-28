@@ -8,7 +8,7 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Inference** — Running a trained model to produce output, token by token. *(Ch. 1)*
 
-**Weights** — The trained model artifact itself: billions of fixed numbers, shared by every user. *(Ch. 1, 4)*
+**Weights** — The trained model artifact itself: billions of fixed numbers, shared by every user. *(Ch. 1, 3, 4)*
 
 **Serving** — Everything between your HTTP request and the model's math. *(Ch. 1)*
 
@@ -40,11 +40,11 @@ How to use this glossary: terms are grouped the way the book introduced them —
 
 **Decode step** — One pass of the model that emits exactly one token. *(Ch. 2)*
 
-**TTFT (time to first token)** — How long until output starts. *(Ch. 1, 2)*
+**TTFT (time to first token)** — How long until output starts. *(Ch. 1–3)*
 
 **ITL (inter-token latency)** — One gap between two streamed tokens. *(Ch. 2)*
 
-**TPOT (time per output token)** — The average gap for a whole reply. *(Ch. 2)*
+**TPOT (time per output token)** — The average gap for a whole reply. *(Ch. 2, 3)*
 
 **End-to-end latency** — Wall clock from send to last token. *(Ch. 2)*
 
