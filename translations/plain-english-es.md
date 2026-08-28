@@ -33,7 +33,10 @@ de forma sencilla, no lo entiendes. Cada idea de abajo recibe cuatro cosas —
 una frase sencilla, una imagen cotidiana, lo que ocurre en realidad y por qué
 te importa.
 
-Lee las cuatro partes en orden. Cada una lleva unos diez minutos.
+Lee las cuatro partes en orden. Cada una lleva unos diez minutos. Un
+acuerdo sobre los nombres antes de entrar: el libro llama a esto la
+sala de máquinas; esta guía lo llama cocina — la misma máquina, con una
+puerta más amable.
 
 ---
 
@@ -126,7 +129,8 @@ largas.
 > que enviaste ya está ahí y puede tomarse de una sola vez. Escribir es otra
 > cosa: la máquina produce una pieza, luego la usa (junto con todo lo
 > anterior) para elegir la siguiente, y luego la siguiente — una carrera de
-> relevos estricta con un solo corredor. Así que el tiempo total de cada
+> relevos donde el mismo corredor debe correr todos los tramos, en orden.
+> Así que el tiempo total de cada
 > respuesta tiene una forma tozuda: una espera hasta la primera pieza y
 > después un ritmo constante de un paso por pieza hasta el final. Ningún
 > poder bruto permite a la máquina saltar hacia delante, porque todavía no
@@ -197,8 +201,8 @@ largas.
 > llegar a ser tan grandes como el propio cerebro — y se guardan *por
 > conversación*, así que una cocina ocupada hace malabares con un cuaderno
 > creciente por cada invitado. Cuando una empresa limita cuánto puedes
-> enviar, este cuaderno — y no el cerebro — suele ser la razón. Y prepara la
-> última idea de esta parte.
+> enviar, este cuaderno — y no el cerebro — suele ser la razón — y prepara
+> la última idea de esta parte.
 
 ## 6. Las conversaciones largas cuestan más: el plano de asientos
 
@@ -295,14 +299,16 @@ imagen cotidiana, lo que ocurre en realidad y por qué te importa.
 
 > **Lo que ocurre en realidad:** El cuaderno de la cocina — su copia viva de
 > tu pedido hasta ahora — se guardaba antes de forma despilfarradora, y en
-> mediciones reales solo entre un cuarto y un tercio contenía algo útil. Dos
-> arreglos lo cambiaron todo. Primero, el cuaderno ahora vive en recortes del
+> las mediciones que registran las fuentes del libro solo entre un cuarto y
+> un tercio contenía algo útil. Dos arreglos lo cambiaron todo. Primero, el
+> cuaderno ahora vive en recortes del
 > mismo tamaño en cualquier punto de la memoria, rastreados por un registro,
 > de modo que los huecos siempre pueden reutilizarse. Segundo — la parte
-> bonita — cuando cien de tus ayudantes de IA empiezan todos sus pedidos con
-> la misma página de instrucciones, la cocina escribe esa página compartida
-> una sola vez y todos apuntan a ella, como si todas las mesas compartieran
-> un plato de entrantes en vez de pedir cien platos idénticos.
+> bonita — cuando muchas peticiones empiezan con la misma página de
+> instrucciones (por ejemplo, muchas copias de un asistente, o los enjambres
+> de ayudantes que conocerás en la Parte IV), la cocina escribe esa página
+> compartida una sola vez y todos apuntan a ella, como si todas las mesas
+> compartieran un plato de entrantes en vez de pedir cien platos idénticos.
 
 > **Por qué te importa:** Volver a preguntar a la IA con las mismas palabras
 > de apertura — las mismas instrucciones, los mismos documentos — puede ser
@@ -373,9 +379,10 @@ imagen cotidiana, lo que ocurre en realidad y por qué te importa.
 > cuesta nada de calidad — cuando encaja. Brilla cuando la IA reformula o
 > continúa texto parecido al que se le dio, y ayuda menos cuando la
 > respuesta debe seguir formas estrictas, como formatos exactos, donde las
-> conjeturas se descartan una y otra vez. Si diriges tu propia cocina, esta
-> sola opción puede duplicar la velocidad de escritura de un cerebro grande
-> en la misma máquina.
+> conjeturas se descartan una y otra vez. Si diriges tu propia cocina (más
+> sobre cocinas caseras en la Parte IV), este solo interruptor puede
+> duplicar la velocidad de escritura de un cerebro grande en la misma
+> máquina.
 
 ## 5. Escribir más pequeño
 
@@ -431,9 +438,9 @@ imagen cotidiana, lo que ocurre en realidad y por qué te importa.
 > Primero, los cerebros más grandes son físicamente mayores de lo que un
 > chip puede contener, así que su conocimiento se reparte entre muchos chips
 > que deben pasarse piezas constantemente — reparte las recetas, reparte a
-> los invitados, o abre sucursales idénticas — y los cerebros modernos más
+> los invitados, o abre sucursales idénticas. Los cerebros modernos más
 > grandes van más lejos: mantienen una multitud de especialistas donde cada
-> pieza de palabra consulta solo a los pocos especialistas que necesita, y
+> pieza de palabra consulta solo a los pocos especialistas que necesita — y
 > por eso un cerebro gigante puede a veces responder más rápido que uno
 > menor todoterreno. Segundo, una conversación muy larga es su propia boda:
 > antes de que la IA diga una palabra, todo lo que proporcionaste debe
@@ -442,7 +449,7 @@ imagen cotidiana, lo que ocurre en realidad y por qué te importa.
 
 > **Por qué te importa:** Las conversaciones muy largas no se cobran como
 > cortas un poco más largas — las empresas cobran extra por ellas, y algunas
-> cobran un recargo de pasar-la-cola en cuanto cruzas un umbral de tamaño.
+> suben el precio por pieza en cuanto cruzas un umbral de tamaño.
 > La solución es mantenimiento: mantiene las instrucciones y documentos que
 > no cambian al principio (para que funcionen las notas compartidas de la
 > idea dos) y recorta o resume el medio en vez de dejar que todo se amontone.
@@ -476,8 +483,9 @@ donde la mayoría de la gente pierde más dinero sin darse cuenta nunca.
 ## 1. Los platos llegan de uno en uno — y el primero es el que más tarda
 
 > **En una frase:** Una buena cocina no te hace esperar a que toda la comida
-> esté encajada para ver comida — los platos salen según están listos, y
-> casi toda tu espera ocurre antes del primer plato.
+> esté encajada para ver comida — los platos salen según están listos, y en
+> las respuestas cortas casi toda tu espera ocurre antes del primer plato;
+> en las largas, el ritmo entre platos va sumando en silencio.
 >
 > **La imagen cotidiana:** Un restaurante de sushi de cinta transportadora.
 > Te sientas, pides, y en cuanto el primer plato está listo se desliza hasta
@@ -636,7 +644,7 @@ donde la mayoría de la gente pierde más dinero sin darse cuenta nunca.
 > cocina más fuerte y más cara «por si acaso». Elige dos cocinas — una
 > barata, una fuerte — y decide qué pedidos necesitan cuál. Y pon tu trabajo
 > repetible, al que nadie espera, en el carril nocturno; rechazar un cupón
-> permanente de mitad de precio es caridad al ferrocarril.
+> permanente de mitad de precio es caridad al servicio de reparto.
 
 ## 6. Cuando tu cocina favorita cierra
 
@@ -895,7 +903,7 @@ empezarse hoy.
 
 1. Tres trabajadores respaldan cada respuesta: el cerebro, la cocina y tú.
 2. Te cobran en la moneda propia de la cocina: piezas de palabra.
-3. Las respuestas llegan de una pieza en una pieza — una carrera de relevos con un solo corredor.
+3. Las respuestas llegan de una pieza en una pieza — el mismo corredor corre todos los tramos del relevo.
 4. El ritmo lo marcan las idas a buscar, no el pensamiento. Más chefs no ensanchan la escalera.
 5. Cada conversación usa una copia viva de todo lo dicho hasta ahora — las charlas largas cuestan dinero real.
 6. Compartes la cocina con desconocidos. Agrupar pedidos es como se mantiene asequible.

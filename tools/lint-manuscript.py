@@ -116,6 +116,31 @@ if appendix_letters != sorted(set(appendix_letters)):
 if len(numbered) >= EXPECTED_CHAPTERS and total_words < 40_000:
     errors.append(f"complete manuscript unexpectedly short: {total_words:,} words")
 
+# pipe-table integrity: every row must carry no more UNESCAPED pipes than its
+# header declares. A raw `|` inside a cell (e.g. quoted table prose in a
+# ledger row) silently splits the row; pandoc discards the overflow columns,
+# so the EPUB ships a truncated cell with no warning. Found in the F.1 ledger
+# (fuzz-round-2 and pedagogy rows, iteration 89); this guard makes it
+# impossible to reintroduce.
+table_header_pipes = None
+for path in files:
+    for lineno, ln in enumerate(
+        path.read_text(encoding="utf-8").split("\n"), start=1
+    ):
+        s = ln.strip()
+        if s.startswith("|") and s.endswith("|"):
+            unescaped = len(re.findall(r"(?<!\\)\|", ln))
+            if table_header_pipes is None:
+                table_header_pipes = unescaped
+            elif unescaped > table_header_pipes:
+                errors.append(
+                    f"{path.name}:{lineno}: table row has {unescaped} unescaped "
+                    f"pipes vs header {table_header_pipes} — escape in-cell pipes "
+                    f"as \\| or the cell is silently truncated in the EPUB"
+                )
+        elif not s:
+            table_header_pipes = None
+
 if errors:
     print("MANUSCRIPT VALIDATION FAILED")
     for error in errors:

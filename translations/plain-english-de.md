@@ -33,7 +33,10 @@ Was du nicht einfach erklären kannst, hast du nicht verstanden. Jede Idee
 unten bekommt vier Dinge — einen schlichten Satz, ein Alltagsbild, was
 wirklich passiert, und warum es dich betrifft.
 
-Lies die vier Teile der Reihe nach. Jeder dauert etwa zehn Minuten.
+Lies die vier Teile der Reihe nach. Jeder dauert etwa zehn Minuten. Eine
+kleine Namensabsprache, bevor du eintrittst: Das Buch nennt das hier den
+Maschinenraum; dieser Guide nennt es eine Küche — dieselbe Maschine, nur
+eine freundlichere Tür.
 
 ---
 
@@ -67,7 +70,7 @@ Der erste Teil des Buchs beantwortet eine Frage, die du dir wahrscheinlich nie g
 >
 > **Das alltägliche Bild:** Die Vorschlagsleiste über deiner Handy-Tastatur. Sie schlägt das nächste Wort erst vor, nachdem sie alles gesehen hat, was du bisher getippt hast — du kannst sie nicht nach dem vierten Wort fragen, ohne die ersten drei zu akzeptieren. Eine KI, die eine Antwort schreibt, ist genau diese Vorschlagsmaschine mit dauerhaft gedrückter „Übernehmen"-Taste — im Maschinentempo.
 >
-> **Was wirklich passiert:** Das Lesen deiner Frage ist schnell, weil alles, was du geschickt hast, schon da ist und auf einmal aufgenommen werden kann. Das Schreiben ist anders: Die Maschine erzeugt ein Stück, benutzt es (plus alles davor), um das nächste zu wählen, dann das nächste — ein Staffellauf mit genau einem Läufer. Deshalb hat die Gesamtdauer jeder Antwort eine sture Form: ein Warten auf das erste Stück, dann ein gleichmäßiger Rhythmus von einem Schritt pro Stück bis zum Ende. Noch so viel rohe Kraft erlaubt der Maschine nicht vorzupreschen, weil die Stücke, zu denen man vorpreschen könnte, schlicht noch nicht existieren.
+> **Was wirklich passiert:** Das Lesen deiner Frage ist schnell, weil alles, was du geschickt hast, schon da ist und auf einmal aufgenommen werden kann. Das Schreiben ist anders: Die Maschine erzeugt ein Stück, benutzt es (plus alles davor), um das nächste zu wählen, dann das nächste — ein Staffellauf, bei dem derselbe Läufer jede Etappe der Reihe nach laufen muss. Deshalb hat die Gesamtdauer jeder Antwort eine sture Form: ein Warten auf das erste Stück, dann ein gleichmäßiger Rhythmus von einem Schritt pro Stück bis zum Ende. Noch so viel rohe Kraft erlaubt der Maschine nicht vorzupreschen, weil die Stücke, zu denen man vorpreschen könnte, schlicht noch nicht existieren.
 >
 > **Warum es für dich zählt:** Die beiden Hälften des Wartens haben verschiedene Besitzer und verschiedene Reparaturen. Kurze Antworten stehen oder fallen damit, wie schnell das erste Stück kommt. Lange Antworten stehen oder fallen mit dem Rhythmus zwischen den Stücken. Wenn eine App sich flink anfühlt, aber langsam „tippt", ist das ein Rhythmusproblem; wenn sie stumm hängt, bevor sie irgendetwas sagt, ist das ein Erstes-Stück-Problem — und kein Tipptempo-Upgrade repariert ein Erstes-Stück-Warten.
 
@@ -89,7 +92,7 @@ Der erste Teil des Buchs beantwortet eine Frage, die du dir wahrscheinlich nie g
 >
 > **Was wirklich passiert:** Während dein Gespräch wächst, schreibt die Maschine zu jedem Wortstück eine kleine Notiz — was dieses Stück für alles Spätere bedeutet. Diese Notizen sind der Grund, warum jedes neue Stück geschrieben werden kann, ohne die ganze bisherige Arbeit zu wiederholen; ohne sie würde jedes nächste Wort umso langsamer, je länger du redest. Die Notizen leben im schnellsten und teuersten Speicher des Gebäudes, weil sie bei jedem einzelnen erzeugten Stück konsultiert werden.
 >
-> **Warum es für dich zählt:** Bei einem langen Gespräch können diese Notizen so groß werden wie das Gehirn selbst — und sie werden *pro Gespräch* geführt, eine wachsende Kladden pro Gast jongliert eine vielbeschäftigte Küche also ständig. Wenn eine Firma begrenzt, wie viel du schicken darfst, ist dieses Notizbuch — nicht das Gehirn — meist der Grund. Und es bereitet die letzte Idee dieses Teils vor.
+> **Warum es für dich zählt:** Bei einem langen Gespräch können diese Notizen so groß werden wie das Gehirn selbst — und sie werden *pro Gespräch* geführt, eine wachsende Kladden pro Gast jongliert eine vielbeschäftigte Küche also ständig. Wenn eine Firma begrenzt, wie viel du schicken darfst, ist dieses Notizbuch — nicht das Gehirn — meist der Grund — und es bereitet die letzte Idee dieses Teils vor.
 
 ## 6. Lange Gespräche kosten mehr: der Sitzplan
 
@@ -125,7 +128,7 @@ Das Gehirn der KI ist nur ein Teil dessen, was dir antwortet. Drumherum liegt ei
 
 > **Das alltägliche Bild:** Stell dir ein Hotel vor, das früher von jedem Gast eine ununterbrochene Zimmerreihe für den längstmöglichen Aufenthalt verlangte. Ein Gast, der vielleicht zehn Nächte bliebe, bekam zehn Zimmer — und ging meist nach zwei, hinterließ reservierte Leerzimmer, die niemand nutzen konnte. Das Hotel war halb leer und wies dennoch Gäste ab. Die neue Regel: Die Nächte eines Gastes dürfen in beliebigen Zimmern liegen, und die Rezeption führt ein Kassenbuch, das festhält, welches Zimmer welche Nacht enthält. Plötzlich wird fast nichts mehr verschwendet.
 
-> **Was wirklich passiert:** Das Notizbuch der Küche — ihre laufende Kopie deiner Bestellung — wurde früher auf die verschwenderische Art geführt; bei echten Messungen enthielt nur etwa ein Viertel bis ein Drittel etwas Nützliches. Zwei Reparaturen haben alles verändert. Erstens lebt das Notizbuch jetzt in gleich großen Zetteln überall im Speicher, verwaltet über ein Kassenbuch, sodass Lücken immer wiederverwendbar sind. Zweitens — der schöne Teil —: Wenn hundert deiner KI-Helfer ihre Bestellungen alle mit derselben Instruktionsseite beginnen, schreibt die Küche diese geteilte Seite einmal, und alle zeigen darauf — wie jeder Tisch sich eine Platte Vorspeisen teilt, statt hundert identische Platten zu bestellen.
+> **Was wirklich passiert:** Das Notizbuch der Küche — ihre laufende Kopie deiner Bestellung — wurde früher auf die verschwenderische Art geführt; in Messungen, die die Quellen des Buchs festhalten, enthielt nur etwa ein Viertel bis ein Drittel etwas Nützliches. Zwei Reparaturen haben alles verändert. Erstens lebt das Notizbuch jetzt in gleich großen Zetteln überall im Speicher, verwaltet über ein Kassenbuch, sodass Lücken immer wiederverwendbar sind. Zweitens — der schöne Teil —: Wenn viele Anfragen mit derselben Instruktionsseite beginnen (etwa viele Kopien eines Assistenten oder die Helfer-Schwärme, denen du in Teil IV begegnen wirst), schreibt die Küche diese geteilte Seite einmal, und alle zeigen darauf — wie jeder Tisch sich eine Platte Vorspeisen teilt, statt hundert identische Platten zu bestellen.
 
 > **Warum es für dich zählt:** Die KI mit denselben Eingangsworten erneut zu fragen — dieselben Instruktionen, dieselben Dokumente — kann beim zweiten Mal fast kostenlos und viel schneller sein, weil die Küche ihre eigenen Notizen wiedererkennt. Ändere aber ein Wort ganz am Anfang, passen die Notizen nicht mehr, und du zahlst wieder Vollpreis. Wo du deine Änderungen platzierst, ist genauso wichtig wie das, was du änderst.
 
@@ -147,7 +150,7 @@ Das Gehirn der KI ist nur ein Teil dessen, was dir antwortet. Drumherum liegt ei
 
 > **Was wirklich passiert:** Ein Wortstück zu erzeugen kostet normalerweise einen vollen Durchlauf durchs ganze Gehirn — das ist der unvermeidliche Tribut, weil jedes Stück vom letzten abhängt. Der Trick: Mehrere vorgeschlagene Stücke zu prüfen kostet fast dasselbe wie eines zu erzeugen, denn das Teure ist das Heranschaffen des Wissens, nicht der Blick auf ein paar Vermutungen, nachdem es da ist. Ein billiger Vorschläger legt ein paar Stücke voraus, das echte Gehirn prüft alle auf einmal, behält die guten, schreibt ab dem ersten Fehler neu — und bemerkenswerterweise ist der fertige Text so gebaut, dass er exakt so herauskommt, als hätte das echte Gehirn jedes Stück selbst geschrieben. Kein billiger Abklatsch; dieselben Worte, schneller.
 
-> **Warum es für dich zählt:** Das ist einer der wenigen Geschwindigkeitstricks, die überhaupt nichts an Qualität kosten — wenn er passt. Er glänzt, wenn die KI Text umformuliert oder fortsetzt, der dem ähnelt, was sie bekam, und er hilft am wenigsten, wenn die Antwort strenge Formen einhalten muss — exakte Formate etwa —, weil die Vermutungen dann ständig verworfen werden. Wer seine eigene Küche betreibt, kann allein mit diesem Schalter die Schreibgeschwindigkeit eines großen Gehirns auf derselben Maschine verdoppeln.
+> **Warum es für dich zählt:** Das ist einer der wenigen Geschwindigkeitstricks, die überhaupt nichts an Qualität kosten — wenn er passt. Er glänzt, wenn die KI Text umformuliert oder fortsetzt, der dem ähnelt, was sie bekam, und er hilft am wenigsten, wenn die Antwort strenge Formen einhalten muss — exakte Formate etwa —, weil die Vermutungen dann ständig verworfen werden. Wer seine eigene Küche betreibt (mehr zu Heimküchen in Teil IV), kann allein mit diesem einen Schalter die Schreibgeschwindigkeit eines großen Gehirns auf derselben Maschine verdoppeln.
 
 ## 5. Kleiner schreiben
 
@@ -165,9 +168,9 @@ Das Gehirn der KI ist nur ein Teil dessen, was dir antwortet. Drumherum liegt ei
 
 > **Das alltägliche Bild:** Ein Catering-Unternehmen gewinnt eine Hochzeit. Die Rezeptsammlung passt in keine einzige Küche mehr, also wird geteilt: Jede Küche hält einen Teil der Rezepte, jede Küche einen Teil der Gäste, und Läufer tragen halbfertige Gerichte zwischen den Küchen hin und her, damit die Hochzeit wie von einem Herd wirkt. Es funktioniert — aber die Läufer sind ständig beschäftigt, und je größer die Hochzeit, desto mehr frisst das Laufen die Gewinne.
 
-> **Was wirklich passiert:** Zwei Dinge wachsen aus einer Küche heraus. Erstens: Die größten Gehirne sind physisch größer, als ein Chip fassen kann, also verteilt sich ihr Wissen über viele Chips, die sich ständig Teile zuwerfen müssen — teile die Rezepte, teile die Gäste oder eröffne identische Filialen —, und die größten modernen Gehirne gehen weiter: Sie halten einen Schwarm von Spezialisten bereit, bei dem jedes Wortstück nur die wenigen Spezialisten konsultiert, die es braucht; deshalb kann ein Riesengehirn manchmal schneller antworten als ein kleinerer Allrounder. Zweitens: Ein sehr langes Gespräch ist seine eigene Hochzeit — bevor die KI ein einziges Wort sagt, muss alles, was du geliefert hast, mit allem anderen abgeglichen werden, und dieser Abgleich wächst schmerzhaft schnell: Verdopple den Stapel, und der Abgleich wächst weit mehr als doppelt.
+> **Was wirklich passiert:** Zwei Dinge wachsen aus einer Küche heraus. Erstens: Die größten Gehirne sind physisch größer, als ein Chip fassen kann, also verteilt sich ihr Wissen über viele Chips, die sich ständig Teile zuwerfen müssen — teile die Rezepte, teile die Gäste oder eröffne identische Filialen. Die größten modernen Gehirne gehen weiter: Sie halten einen Schwarm von Spezialisten bereit, bei dem jedes Wortstück nur die wenigen Spezialisten konsultiert, die es braucht — deshalb kann ein Riesengehirn manchmal schneller antworten als ein kleinerer Allrounder. Zweitens: Ein sehr langes Gespräch ist seine eigene Hochzeit — bevor die KI ein einziges Wort sagt, muss alles, was du geliefert hast, mit allem anderen abgeglichen werden, und dieser Abgleich wächst schmerzhaft schnell: Verdopple den Stapel, und der Abgleich wächst weit mehr als doppelt.
 
-> **Warum es für dich zählt:** Sehr lange Gespräche werden nicht wie „etwas längere kurze" bepreist — Firmen verlangen Aufschlag, manche kassieren eine Art Vordrängelgebühr, sobald du eine Größengrenze überschreitest. Die Lösung ist Haushalten: Halte unveränderliche Instruktionen und Dokumente vorne (damit geteilte Notizen greifen, Idee zwei) und kürze oder fasse die Mitte zusammen, statt alles aufzutürmen. Ein aufgeräumtes langes Gespräch kostet oft ein Vielfaches weniger als ein unordentliches desselben Nutzens.
+> **Warum es für dich zählt:** Sehr lange Gespräche werden nicht wie „etwas längere kurze" bepreist — Firmen verlangen Aufschlag, manche erhöhen den Stückpreis, sobald du eine Größengrenze überschreitest. Die Lösung ist Haushalten: Halte unveränderliche Instruktionen und Dokumente vorne (damit geteilte Notizen greifen, Idee zwei) und kürze oder fasse die Mitte zusammen, statt alles aufzutürmen. Ein aufgeräumtes langes Gespräch kostet oft ein Vielfaches weniger als ein unordentliches desselben Nutzens.
 
 ---
 
@@ -181,7 +184,7 @@ Die ersten beiden Teile dieses Guides gingen in die Küche hinein: die Währung 
 
 ## 1. Teller kommen einzeln — und der erste dauert am längsten
 
-> **In einem Satz:** Eine gute Küche lässt dich nicht warten, bis das ganze Menü verpackt ist, bevor du Essen siehst — Teller kommen, sobald sie fertig sind, und fast dein gesamtes Warten liegt vor dem allerersten Teller.
+> **In einem Satz:** Eine gute Küche lässt dich nicht warten, bis das ganze Menü verpackt ist, bevor du Essen siehst — Teller kommen, sobald sie fertig sind, und bei kurzen Antworten liegt fast dein gesamtes Warten vor dem allerersten Teller; bei langen summiert sich der Rhythmus zwischen den Tellern leise.
 >
 > **Das alltägliche Bild:** Ein Running-Sushi-Restaurant mit Fließband. Du setzt dich, bestellst, und im Moment, in dem der erste Teller fertig ist, gleitet er zu dir — dann der nächste, dann der nächste, im gleichmäßigen Rhythmus. Die Alternative ist das verpackte Take-away: Du stehst an der Theke, hungrig, siehst nichts, bis das ganze Menü auf einmal erscheint. Gleiches Essen, gleiche Küche — völlig anderes Wartungsgefühl.
 >
@@ -227,7 +230,7 @@ Die ersten beiden Teile dieses Guides gingen in die Küche hinein: die Währung 
 >
 > **Was wirklich passiert:** Der größte Teil der Arbeit, die du einer KI schickst, ist leicht — sortieren, etikettieren, kurze Antworten — und eine billige, schnelle KI erledigt sie genauso gut wie das teure Flaggschiff. Der Trick ist, vor dem Abschicken zu wissen, was was ist, und das ist eine erlernbare Fähigkeit: Teams, die leichte Anfragen an die billige Küche und schwere an die starke leiten, berichten von ungefähr halbierten Rechnungen bei kaum geminderter Qualität. Es gibt außerdem einen Dauerrabatt, den niemand genug nutzt: die Nachtschiene. Alles, was nur *irgendwann* ankommen muss — ein Stapel Berichte bis morgen früh, eine nächtliche Prüfung —, kann die Nachtzustellung zum halben Preis nehmen: identisches Essen, langsamere Ankunft.
 >
-> **Warum es für dich zählt:** Die teuerste Einzelgewohnheit ist, alles „zur Sicherheit" an die stärkste, teuerste Küche zu schicken. Wähle zwei Küchen — eine billige, eine starke — und entscheide, welche Bestellungen welche brauchen. Und stell deine wiederholbare, niemands-wartet-Arbeit auf die Nachtschiene; einen Dauergutschein über fünfzig Prozent auszuschlagen ist Mildtätigkeit an die Eisenbahn.
+> **Warum es für dich zählt:** Die teuerste Einzelgewohnheit ist, alles „zur Sicherheit" an die stärkste, teuerste Küche zu schicken. Wähle zwei Küchen — eine billige, eine starke — und entscheide, welche Bestellungen welche brauchen. Und stell deine wiederholbare, niemands-wartet-Arbeit auf die Nachtschiene; einen Dauergutschein über fünfzig Prozent auszuschlagen ist Mildtätigkeit an den Zustelldienst.
 
 ## 6. Wenn deine Lieblingsküche schließt
 
@@ -317,7 +320,7 @@ Das ist das ganze Buch in schlichten Worten. Das Gehirn ist brillant; die Küche
 
 1. Hinter jeder Antwort stehen drei Arbeiter: das Gehirn, die Küche und du.
 2. Abgerechnet wird in der Währung der Küche: Wortstücken.
-3. Antworten kommen Stück für Stück — ein Staffellauf mit einem Läufer.
+3. Antworten kommen Stück für Stück — derselbe Läufer läuft jede Etappe des Staffellaufs.
 4. Das Tempo setzt das Heranschaffen, nicht das Denken. Mehr Köche verbreitern keine Treppe.
 5. Jedes Gespräch verbraucht eine laufende Kopie von allem bisher Gesagten — lange Gespräche kosten echtes Geld.
 6. Du teilst dir die Küche mit Fremden. Bestellungen zu bündeln hält sie bezahlbar.

@@ -16,7 +16,9 @@ Bir yapay zekâya yazıyorsun ve kelimeler geri geliyor — aslında senin için
 
 Bu rehber de mutfağı, fikir fikir, ünlü bir fizikçinin (Richard Feynman) kullandığı yöntemle gezdiriyor: bir şeyi basitçe açıklayamıyorsan, onu henüz anlamamışsındır. Aşağıdaki her fikir dört şey alır — düz bir cümle, gündelik hayattan bir tablo, gerçekte ne olduğu ve bunun senin için neden önemli olduğu.
 
-Dört bölümü sırayla oku. Her biri yaklaşık on dakika sürer.
+Dört bölümü sırayla oku. Her biri yaklaşık on dakika sürer. İçeri
+girmeden önce küçük bir isim anlaşması: kitap buraya makine dairesi
+diyor; bu rehber mutfağa diyor — aynı makine, kapısı daha güler yüzlü.
 
 ---
 
@@ -50,7 +52,7 @@ Kitabın ilk bölümü muhtemelen hiç sormadığın bir soruyu yanıtlıyor: bi
 >
 > **Gündelik tablo:** Telefonundaki klavyenin kelime öneri çubuğu. Sadece o ana kadar yazdığın her şeyi gördükten sonra sıradaki kelimeyi önerir — ilk üçü kabul etmeden dördüncü kelimeyi isteyemezsin. Cevap yazan bir yapay zekâ, "kabul et" tuşu basılı tutulmuş, makine hızında çalışan o öneri makinesidir.
 >
-> **Gerçekte ne oluyor:** Sorunu okumak hızlıdır, çünkü gönderdiğin her şey zaten oradadır ve tek seferde kavranabilir. Yazmak farklıdır: makine bir parça üretir, sonra onu (ve öncesindeki her şeyi) kullanarak sıradakini seçer, sonra sıradakini — tek koşuculu, disiplinli bir bayram koşusu. Bu yüzden her cevabın toplam süresinin inatçı bir şekli vardır: ilk parça için bir bekleme, sonra sona kadar her parçada bir adımlık istikrarlı bir ritim. Hiçbir ham güç makinenin öne atlamasını sağlayamaz, çünkü atlanacak parçalar henüz yoktur.
+> **Gerçekte ne oluyor:** Sorunu okumak hızlıdır, çünkü gönderdiğin her şey zaten oradadır ve tek seferde kavranabilir. Yazmak farklıdır: makine bir parça üretir, sonra onu (ve öncesindeki her şeyi) kullanarak sıradakini seçer, sonra sıradakini — her ayağını aynı koşucunun, sırayla koşmak zorunda olduğu bir bayrak yarışı. Bu yüzden her cevabın toplam süresinin inatçı bir şekli vardır: ilk parça için bir bekleme, sonra sona kadar her parçada bir adımlık istikrarlı bir ritim. Hiçbir ham güç makinenin öne atlamasını sağlayamaz, çünkü atlanacak parçalar henüz yoktur.
 >
 > **Neden önemli:** Beklemenin iki yarısının sahibi ve çözümü farklıdır. Kısa cevaplar ilk parçanın hızlı gelmesine bağlıdır; uzun cevaplar parçalar arasındaki ritme bağlıdır. Bir uygulama seri hissettiriyor ama "yavaş yazıyorsa", sorun rittir; bir şey söylemeden asılı kalıyorsa, sorun ilk parçadır — ve hiçbir yazma hızı yükseltmesi ilk parça beklemesini düzeltmez.
 
@@ -72,7 +74,7 @@ Kitabın ilk bölümü muhtemelen hiç sormadığın bir soruyu yanıtlıyor: bi
 >
 > **Gerçekte ne oluyor:** Sohbetin büyüdükçe makine, her kelime parçası için küçük bir not yazar — o parçanın sonrasına gelen her şey için ne anlama geldiği. Bu notlar, her yeni parçanın geçmiş işin tamamını yeniden yapmadan yazılabilmesinin nedenidir; notlar olmasaydı, konuştukça her sonraki kelime daha da yavaşlardı. Notlar, binadaki en hızlı ve en pahalı bellekte yaşar, çünkü üretilen her tek parçada onlara danışılır.
 >
-> **Neden önemli:** Uzun bir sohbet için bu notlar, beyinin kendisi kadar büyüyebilir — ve *sohbet başına* tutulurlar; yoğun bir mutfak her misafir için büyüyen birer defterle jonglator yapar. Bir şirket ne kadar gönderebileceğini sınırladığında, neden genellikle bu defterdir — beyin değil. Ve bu, bölümün son fikrine zemin hazırlar.
+> **Neden önemli:** Uzun bir sohbet için bu notlar, beyinin kendisi kadar büyüyebilir — ve *sohbet başına* tutulurlar; yoğun bir mutfak her misafir için büyüyen birer defterle jonglator yapar. Bir şirket ne kadar gönderebileceğini sınırladığında, neden genellikle bu defterdir — beyin değil — ve bu, bölümün son fikrine zemin hazırlar.
 
 ## 6. Uzun sohbetler daha pahalıya gelir: oturma planı
 
@@ -108,7 +110,7 @@ Yapay zekânın beyni, sana cevap veren şeyin yalnızca bir parçasıdır. Etra
 
 > **Gündelik tablo:** Bir otel, her konuğundan, olası en uzun kalışı için kopmaz bir oda sırası ayırmasını istesin. On gece kalabilir bir konuğa on oda verilirdi — ve çoğu iki gece sonra ayrılır, kimse kullanamayacağı rezerve-boş odalar bırakırdı. Otel yarı boş dururdu ve hâlâ konu çevirirdi. Yeni kural: her konunun geceleri herhangi bir odalarda oturabilir, resepsiyon hangi odada hangi gecenin olduğunu gösteren bir defter tutar. Birdenbire neredeyse hiçbir şey boşa gitmez.
 
-> **Gerçekte ne oluyor:** Mutfağın not defteri — siparişinin o anki güncel kopyası — eskiden israflı biçimde tutulurdu; gerçek ölçümlerde ancak dörtte biri ile üçte biri arasında bir kısmında işe yarar bir şey vardı. İki düzeltme her şeyi değiştirdi. Birincisi, defter artık bellekte her yerde, aynı boyutlu kıyıklar halinde yaşar ve bir defter takip eder; boşluklar her zaman yeniden kullanılabilir. İkincisi — güzel olan kısım — yüz tane yapay zekâ yardımcının hepsi siparişine aynı talimat sayfasıyla başladığında, mutfak o ortak sayfayı bir kez yazar ve herkes ona işaret eder; yüz özdeş tabak söylemek yerine her masanın tek bir meze tabağını paylaşması gibi.
+> **Gerçekte ne oluyor:** Mutfağın not defteri — siparişinin o anki güncel kopyası — eskiden israflı biçimde tutulurdu; kitabın kaynaklarının kaydettiği ölçümlerde ancak dörtte biri ile üçte biri arasında bir kısmında işe yarar bir şey vardı. İki düzeltme her şeyi değiştirdi. Birincisi, defter artık bellekte her yerde, aynı boyutlu kıyıklar halinde yaşar ve bir defter takip eder; boşluklar her zaman yeniden kullanılabilir. İkincisi — güzel olan kısım — birçok istek aynı talimat sayfasıyla başladığında (söz gelimi bir asistanın birçok kopyası ya da Bölüm IV'te tanışacağın yardımcı sürüleri), mutfak o ortak sayfayı bir kez yazar ve herkes ona işaret eder; yüz özdeş tabak söylemek yerine her masanın tek bir meze tabağını paylaşması gibi.
 
 > **Neden önemli:** Aynı açılış kelimeleriyle — aynı talimatlar, aynı belgelerle — yapay zekâya tekrar sormak, ikinci kez neredeyse bedava ve çok daha hızlı olabilir, çünkü mutfak kendi notlarını tanır. Ama en baştaki tek bir kelimeyi değiştir, notlar artık eşleşmez ve yeniden tam fiyat ödersin. Değişikliklerini nereye koyduğun, neyi değiştirdiğin kadar önemlidir.
 
@@ -130,7 +132,7 @@ Yapay zekânın beyni, sana cevap veren şeyin yalnızca bir parçasıdır. Etra
 
 > **Gerçekte ne oluyor:** Bir kelime parçası üretmek normalde bütün beynin bir tam turunu gerektirir — kaçamayacağın geçiş ücreti budur, çünkü her parça öncekine bağlıdır. Numara şudur: birkaç önerilen parçayı kontrol etmek, bir tane üretmekle neredeyse aynı tutar, çünkü pahalı kısım beynin bilgisini getirmektir; bir kez getirildikten sonra birkaç tahmine bakmak bedavadır. Ucuz bir tahminci birkaç parça önerir, gerçek beyin hepsini birden gözden geçirir, iyileri korur, ilk hatada yeniden yazar — ve dikkat çekici biçimde, nihai metin, gerçek beyin her parçayı kendisi yazmış gibi tamamen aynı çıkacak şekilde kuruludur. Ucuz bir taklit değil; aynı kelimeler, daha hızlı.
 
-> **Neden önemli:** Bu, hiç kaliteye mal olmayan birkaç hız numarasından biridir — uyduğu zaman. Yapay zekâ verilenlere benzeyen metni yeniden yazarken ya da sürdürürken parlar; cevabın kesin biçimler gibi katı şekiller izlemesi gerektiğinde ise en az yardım eder — tahminler sürekli çöpe atılır. Kendi mutfağını işletiyorsan, yalnızca bu ayar, aynı makinede koca bir beynin yazma hızını ikiye katlayabilir.
+> **Neden önemli:** Bu, hiç kaliteye mal olmayan birkaç hız numarasından biridir — uyduğu zaman. Yapay zekâ verilenlere benzeyen metni yeniden yazarken ya da sürdürürken parlar; cevabın kesin biçimler gibi katı şekiller izlemesi gerektiğinde ise en az yardım eder — tahminler sürekli çöpe atılır. Kendi mutfağını işletiyorsan (ev mutfakları hakkında daha fazlası Bölüm IV'te), yalnızca bu tek şalter, aynı makinede koca bir beynin yazma hızını ikiye katlayabilir.
 
 ## 5. Daha küçük yazmak
 
@@ -148,9 +150,9 @@ Yapay zekânın beyni, sana cevap veren şeyin yalnızca bir parçasıdır. Etra
 
 > **Gündelik tablo:** Bir catering şirketi bir düğün kazanır. Tarif koleksiyonu artık tek mutfağa sığmaz, bölünür: her mutfak tariflerin bir dilimini, her mutfak konukların bir dilimini tutar ve koşucular mutfaklar arasında yarım yapılmış tabakları taşır; böylece düğün tek ocaktan çıkmış gibi hissedilir. İşler — ama koşucular hep meşguldür ve düğün büyüdükçe koşmak kazanımları daha çok yiyip bitirir.
 
-> **Gerçekte ne oluyor:** İki farklı şey tek mutfağı aşar. Birincisi, en büyük beyinler fiziksel olarak tek bir çipte tutulamayacak kadar büyüktür; bilgileri birbirine sürekli parça uzatan birçok çipe yayılır — tarifleri böl, konukları böl ya da aynı şubeleri aç — ve en büyük modern beyinler daha da ileri gider: bir uzmanlar kalabalığı tutar; her kelime parçası yalnızca ihtiyaç duyduğu birkaç uzmana danışır. Dev bir beynin bazen daha küçük bir all-round'dan hızlı cevap verebilmesinin nedeni budur. İkincisi, çok uzun bir sohbetin kendisi bir düğündür: yapay zekâ tek kelime söylemeden önce verdiğin her şey diğer her şeyle çapraz kontrol edilmelidir ve bu çapraz kontrol acı verici hızda büyür — yığını ikiye katlamak, kontrolü ikiye katlamaktan çok daha fazlasını yapar.
+> **Gerçekte ne oluyor:** İki farklı şey tek mutfağı aşar. Birincisi, en büyük beyinler fiziksel olarak tek bir çipte tutulamayacak kadar büyüktür; bilgileri birbirine sürekli parça uzatan birçok çipe yayılır — tarifleri böl, konukları böl ya da aynı şubeleri aç. En büyük modern beyinler daha da ileri gider: bir uzmanlar kalabalığı tutar; her kelime parçası yalnızca ihtiyaç duyduğu birkaç uzmana danışır — dev bir beynin bazen daha küçük bir all-round'dan hızlı cevap verebilmesinin nedeni budur. İkincisi, çok uzun bir sohbetin kendisi bir düğündür: yapay zekâ tek kelime söylemeden önce verdiğin her şey diğer her şeyle çapraz kontrol edilmelidir ve bu çapraz kontrol acı verici hızda büyür — yığını ikiye katlamak, kontrolü ikiye katlamaktan çok daha fazlasını yapar.
 
-> **Neden önemli:** Çok uzun sohbetler, biraz daha uzun kısa sohbetler gibi fiyatlanmaz — şirketler bunlara ek ücret uygular, bazıları bir boyut sınırını geçtiğin anda sıra atlama ücreti keser. Çözüm derli topluluktur: değişmeyen talimat ve belgeleri önde tut (fikir ikideki ortak notlar çalışsın) ve her şeyin yığılmasına izin vermek yerine ortayı budayıp özetle. Düzenli bir uzun sohbet, aynı faydayla sonuçlanan dağınık bir sohbetten çoğu zaman birkaç kat daha ucuzdur.
+> **Neden önemli:** Çok uzun sohbetler, biraz daha uzun kısa sohbetler gibi fiyatlanmaz — şirketler bunlara ek ücret uygular, bazıları bir boyut sınırını geçtiğin anda parça başı fiyatı yükseltir. Çözüm derli topluluktur: değişmeyen talimat ve belgeleri önde tut (fikir ikideki ortak notlar çalışsın) ve her şeyin yığılmasına izin vermek yerine ortayı budayıp özetle. Düzenli bir uzun sohbet, aynı faydayla sonuçlanan dağınık bir sohbetten çoğu zaman birkaç kat daha ucuzdur.
 
 ---
 
@@ -164,7 +166,7 @@ Rehberin ilk iki bölümü mutfağın içine girdi: kelime parçası para birimi
 
 ## 1. Tabaklar tek tek gelir — ve ilk tabak en uzun sürer
 
-> **Tek cümlede:** İyi bir mutfak, bütün yemeğin paketlenmesini beklemez — tabaklar hazır oldukça çıkar ve beklemenin neredeyse tamamı, çok ilk tabaktan önce gerçekleşir.
+> **Tek cümlede:** İyi bir mutfak, bütün yemeğin paketlenmesini beklemez — tabaklar hazır oldukça çıkar; kısa cevaplarda beklemenin neredeyse tamamı çok ilk tabaktan önce gerçekleşir, uzun cevaplardaysa tabaklar arasındaki ritim sessizce birikir.
 >
 > **Gündelik tablo:** Konveyörlü suşi restoranı. Oturursun, sipariş verirsin ve ilk tabak hazır olduğu an sana doğru kayar — sonra sıradaki, sonra sıradaki, istikrarlı bir ritimle. Alternatif, paket servis: bütün yemek bir anda önüne gelene kadar açlıkla tezgâha yaslanıp hiçbir şey izlersin. Aynı yemek, aynı mutfak — bekleme deneyimi bambaşka.
 >
@@ -210,7 +212,7 @@ Rehberin ilk iki bölümü mutfağın içine girdi: kelime parçası para birimi
 >
 > **Gerçekte ne oluyor:** Bir yapay zekâya gönderdiğin işin çoğu kolaydır — sınıflandırma, etiketleme, kısa cevaplar — ve ucuz, hızlı bir yapay zekâ bunu pahalı amiral gemisi kadar iyi yapar. Hüner, sipariş çıkmadan *önce* hangisinin hangisi olduğunu bilmektir ve bu öğrenilmiş bir beceridir: kolay istekleri ucuz mutfağa, zorları güçlü mutfağa yönlendiren ekipler, faturalarını kabaca yarıya indirip neredeyse hiç kalite kaybetmediklerini bildirmektedir. Ayrıca kimsenin yeterince kullanmadığı sürekli bir indirim vardır: gece şeridi. Yalnızca *sonunda* gelmesi gereken her şey — yarın sabaha hazır olması gereken bir yığın rapor, gecelik bir kontrol — yarı fiyatla gece teslimatına binabilir: aynı yemek, daha geç varış.
 >
-> **Neden önemli:** En pahalı tek alışkanlık, her şeyi "güvenli olsun" diye en güçlü, en pahalı mutfağa göndermektir. İki mutfak seç — biri ucuz, biri güçlü — ve hangi siparişlerin hangisini gerektirdiğine karar ver. Tekrarlanabilir, kimsenin beklemediği işleri gece şeridine koy; sürekli bir yarı fiyat kuponunu reddetmek, demiryoluna hayır demektir.
+> **Neden önemli:** En pahalı tek alışkanlık, her şeyi "güvenli olsun" diye en güçlü, en pahalı mutfağa göndermektir. İki mutfak seç — biri ucuz, biri güçlü — ve hangi siparişlerin hangisini gerektirdiğine karar ver. Tekrarlanabilir, kimsenin beklemediği işleri gece şeridine koy; sürekli bir yarı fiyat kuponunu reddetmek, dağıtım servisine bağış yapmaktır.
 
 ## 6. Gözde mutfağın kapandığında
 
@@ -300,7 +302,7 @@ Kitabın tamamı sade dille bu. Beyin harika; mutfağın sana kaça mal olacağ�
 
 1. Her cevabın arkasında üç işçi durur: beyin, mutfak ve sen.
 2. Fatura, mutfağın kendi para birimiyle kesilir: kelime parçaları.
-3. Cevaplar bir parça ile gelir — tek koşuculu bir bayram koşusu.
+3. Cevaplar bir parça ile gelir — bayrak yarışının her ayağını aynı koşucu koşar.
 4. Hızı getirmek belirler, düşünmek değil. Daha çok şef, merdiveni genişletmez.
 5. Her sohbet, şu ana kadar söylenen her şeyin güncel bir kopyasını kullanır — uzun sohbetler gerçek para tutar.
 6. Mutfağı yabancılarla paylaşırsın. Siparişleri gruplandırmak, ucuza tutmanın yoludur.

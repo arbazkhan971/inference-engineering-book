@@ -34,7 +34,9 @@ reçoit quatre choses — une phrase simple, une image du quotidien, ce qui se
 passe vraiment, et pourquoi cela compte pour vous.
 
 Lisez les quatre parties dans l'ordre. Chacune demande une dizaine de
-minutes.
+minutes. Une poignée de main sur les noms avant d'entrer : le livre
+appelle cela la salle des machines ; ce guide l'appelle une cuisine —
+même machine, porte plus accueillante.
 
 ---
 
@@ -75,7 +77,7 @@ caché qui rend les longues conversations coûteuses.
 >
 > **L'image du quotidien :** La barre de suggestions du clavier de votre téléphone. Elle ne propose le mot suivant qu'après avoir vu tout ce que vous avez tapé jusqu'ici — impossible de lui demander le quatrième mot sans accepter les trois premiers. Une IA qui écrit une réponse, c'est cette machine à suggestions avec la touche « accepter » maintenue enfoncée, à la vitesse d'une machine.
 >
-> **Ce qui se passe vraiment :** Lire votre question est rapide, parce que tout ce que vous avez envoyé est déjà là et peut être pris d'un seul bloc. Écrire est différent : la machine produit un morceau, puis s'en sert (avec tout ce qui précède) pour choisir le suivant, puis le suivant — un relais strict avec un seul coureur. Le temps total de chaque réponse a donc une forme têtue : une attente avant le premier morceau, puis un rythme régulier d'un pas par morceau jusqu'à la fin. Aucune puissance brute ne permet à la machine de sauter en avant, parce que les morceaux vers lesquels sauter n'existent pas encore.
+> **Ce qui se passe vraiment :** Lire votre question est rapide, parce que tout ce que vous avez envoyé est déjà là et peut être pris d'un seul bloc. Écrire est différent : la machine produit un morceau, puis s'en sert (avec tout ce qui précède) pour choisir le suivant, puis le suivant — un relais où le même coureur doit courir chaque étape, dans l'ordre. Le temps total de chaque réponse a donc une forme têtue : une attente avant le premier morceau, puis un rythme régulier d'un pas par morceau jusqu'à la fin. Aucune puissance brute ne permet à la machine de sauter en avant, parce que les morceaux vers lesquels sauter n'existent pas encore.
 >
 > **Pourquoi cela compte pour vous :** Les deux moitiés de l'attente ont des propriétaires et des remèdes différents. Les réponses courtes vivent ou meurent selon la rapidité d'arrivée du premier morceau. Les réponses longues vivent ou meurent selon le rythme entre les morceaux. Si une application paraît réactive mais « tape » lentement, c'est un problème de rythme ; si elle reste muette avant de dire quoi que ce soit, c'est un problème de premier morceau — et aucune mise à niveau de vitesse de frappe ne répare une attente de premier morceau.
 
@@ -97,7 +99,7 @@ caché qui rend les longues conversations coûteuses.
 >
 > **Ce qui se passe vraiment :** À mesure que votre conversation grandit, la machine écrit une petite note pour chaque morceau de mot — ce que ce morceau signifie pour tout ce qui vient après. Ces notes sont la raison pour laquelle chaque nouveau morceau peut s'écrire sans refaire tout le travail passé ; sans elles, chaque mot suivant deviendrait plus lent au fur et à mesure que vous parlez. Les notes vivent dans la mémoire la plus rapide et la plus chère du bâtiment, parce qu'elles sont consultées pour chaque morceau produit.
 >
-> **Pourquoi cela compte pour vous :** Sur une longue conversation, ces notes peuvent devenir aussi grosses que le cerveau lui-même — et elles sont conservées *par conversation*, donc une cuisine chargée jongle avec un carnet qui grossit par client. Quand une entreprise plafonne ce que vous pouvez envoyer, c'est en général ce carnet — pas le cerveau — qui en est la raison. Et cela prépare la dernière idée de cette partie.
+> **Pourquoi cela compte pour vous :** Sur une longue conversation, ces notes peuvent devenir aussi grosses que le cerveau lui-même — et elles sont conservées *par conversation*, donc une cuisine chargée jongle avec un carnet qui grossit par client. Quand une entreprise plafonne ce que vous pouvez envoyer, c'est en général ce carnet — pas le cerveau — qui en est la raison — et cela prépare la dernière idée de cette partie.
 
 ## 6. Les longues conversations coûtent plus cher : le plan des tables
 
@@ -132,7 +134,7 @@ Le cerveau de l'IA n'est qu'une partie de ce qui vous répond. Autour de lui, un
 
 > **L'image du quotidien :** Imaginez un hôtel qui exigeait autrefois de chaque client qu'il réserve une rangée ininterrompue de chambres pour son plus long séjour possible. Un client qui resterait peut-être dix nuits recevait dix chambres — et repartait le plus souvent après deux, laissant des chambres réservées-vides inutilisables. L'hôtel était à moitié vide et refusait quand même du monde. La nouvelle politique : les nuits de n'importe quel client peuvent occuper n'importe quelles chambres, et la réception tient un registre qui dit quelle chambre abrite quelle nuit. D'un coup, presque plus rien ne se perd.
 
-> **Ce qui se passe vraiment :** Le carnet de la cuisine — sa copie vivante de votre commande en cours — était tenu à l'ancienne, gaspilleuse, et sur des mesures réelles, seulement environ un quart à un tiers contenait quelque chose d'utile. Deux correctifs ont tout changé. Premièrement, le carnet vit désormais en bribes de même taille n'importe où en mémoire, suivies par un registre, donc les trous sont toujours réutilisables. Deuxièmement — la partie belle — quand cent de vos assistants IA commencent tous leur commande par la même page d'instructions, la cuisine écrit cette page partagée une seule fois et tout le monde la pointe, comme chaque table partageant une seule assiette d'entrées au lieu de commander cent assiettes identiques.
+> **Ce qui se passe vraiment :** Le carnet de la cuisine — sa copie vivante de votre commande en cours — était tenu à l'ancienne, gaspilleuse, et dans les mesures que relatent les sources du livre, seulement environ un quart à un tiers contenait quelque chose d'utile. Deux correctifs ont tout changé. Premièrement, le carnet vit désormais en bribes de même taille n'importe où en mémoire, suivies par un registre, donc les trous sont toujours réutilisables. Deuxièmement — la partie belle — quand de nombreuses requêtes commencent par la même page d'instructions (disons plusieurs copies d'un même assistant, ou les nuées d'assistants que vous rencontrerez dans la Partie IV), la cuisine écrit cette page partagée une seule fois et tout le monde la pointe, comme chaque table partageant une seule assiette d'entrées au lieu de commander cent assiettes identiques.
 
 > **Pourquoi cela compte pour vous :** Redemander à l'IA avec les mêmes mots d'ouverture — mêmes instructions, mêmes documents — peut être presque gratuit et bien plus rapide la deuxième fois, parce que la cuisine reconnaît ses propres notes. Changez un seul mot au début, en revanche, et les notes ne correspondent plus : vous repayez le prix plein. L'endroit où vous placez vos changements compte autant que ce que vous changez.
 
@@ -154,7 +156,7 @@ Le cerveau de l'IA n'est qu'une partie de ce qui vous répond. Autour de lui, un
 
 > **Ce qui se passe vraiment :** Produire un morceau de mot demande normalement une passe complète du cerveau entier — c'est le péage incontournable, parce que chaque morceau dépend du précédent. L'astuce, c'est que vérifier plusieurs morceaux proposés coûte presque autant que d'en produire un, puisque la partie chère est d'aller chercher le savoir du cerveau, pas de jeter un œil à quelques suppositions une fois ce savoir rapatrié. Un devineur pas cher propose quelques morceaux d'avance, le vrai cerveau les passe tous en revue d'un coup, garde les bons, réécrit à la première erreur — et, remarquablement, le texte final est conçu pour sortir exactement comme si le vrai cerveau avait écrit chaque morceau lui-même. Pas une imitation au rabais ; les mêmes mots, plus vite.
 
-> **Pourquoi cela compte pour vous :** C'est l'une des rares astuces de vitesse qui ne coûte aucune qualité — quand elle s'applique. Elle brille quand l'IA reformule ou continue un texte qui ressemble à ce qu'on lui a donné, et elle aide le moins quand la réponse doit suivre des formes strictes, comme des formats exacts, où les suppositions partent sans cesse à la corbeille. Si vous dirigez votre propre cuisine, ce simple réglage peut doubler la vitesse d'écriture d'un gros cerveau sur la même machine.
+> **Pourquoi cela compte pour vous :** C'est l'une des rares astuces de vitesse qui ne coûte aucune qualité — quand elle s'applique. Elle brille quand l'IA reformule ou continue un texte qui ressemble à ce qu'on lui a donné, et elle aide le moins quand la réponse doit suivre des formes strictes, comme des formats exacts, où les suppositions partent sans cesse à la corbeille. Si vous dirigez votre propre cuisine (plus sur les cuisines maison dans la Partie IV), cet interrupteur à lui seul peut doubler la vitesse d'écriture d'un gros cerveau sur la même machine.
 
 ## 5. Écrire plus petit
 
@@ -172,9 +174,9 @@ Le cerveau de l'IA n'est qu'une partie de ce qui vous répond. Autour de lui, un
 
 > **L'image du quotidien :** Un traiteur gagne un mariage. Le recueil de recettes ne tient plus dans une cuisine, alors on le découpe : chaque cuisine garde une tranche des recettes, chaque cuisine garde une tranche des invités, et des coursiers portent des plats à moitié finis entre les cuisines pour que le mariage semble sortir d'un seul feu. Ça marche — mais les coursiers n'arrêtent pas, et plus le mariage est grand, plus les courses mangent le bénéfice.
 
-> **Ce qui se passe vraiment :** Deux choses différentes finissent par dépasser une cuisine. D'abord, les plus gros cerveaux sont physiquement plus vastes qu'une seule puce ne peut contenir, donc leur savoir est réparti sur plusieurs puces qui doivent se passer des fragments en permanence — couper les recettes, couper les invités, ou ouvrir des succursales identiques — et les plus gros cerveaux modernes vont plus loin encore : ils gardent une foule de spécialistes où chaque morceau de mot ne consulte que les quelques spécialistes dont il a besoin, ce qui explique qu'un cerveau géant peut parfois répondre plus vite qu'un plus petit touche-à-tout. Ensuite, une très longue conversation est son propre mariage : avant que l'IA dise un mot, tout ce que vous avez fourni doit être recoupé avec tout le reste, et ce recoupement croît douloureusement vite — doubler le tas fait bien plus que doubler la vérification.
+> **Ce qui se passe vraiment :** Deux choses différentes finissent par dépasser une cuisine. D'abord, les plus gros cerveaux sont physiquement plus vastes qu'une seule puce ne peut contenir, donc leur savoir est réparti sur plusieurs puces qui doivent se passer des fragments en permanence — couper les recettes, couper les invités, ou ouvrir des succursales identiques. Les plus gros cerveaux modernes vont plus loin encore : ils gardent une foule de spécialistes où chaque morceau de mot ne consulte que les quelques spécialistes dont il a besoin — ce qui explique qu'un cerveau géant peut parfois répondre plus vite qu'un plus petit touche-à-tout. Ensuite, une très longue conversation est son propre mariage : avant que l'IA dise un mot, tout ce que vous avez fourni doit être recoupé avec tout le reste, et ce recoupement croît douloureusement vite — doubler le tas fait bien plus que doubler la vérification.
 
-> **Pourquoi cela compte pour vous :** Les très longues conversations ne sont pas tarifées comme des courtes un peu plus longues — les entreprises les facturent en supplément, et certaines font payer un droit de priorité dès que vous franchissez un palier de taille. Le remède est de l'ordre du ménage : gardez les instructions et documents invariables au début (pour que les notes partagées fonctionnent, idée deux), et élaguez ou résumez le milieu plutôt que de laisser tout s'empiler. Une longue conversation bien tenue coûte souvent plusieurs fois moins cher qu'une conversation brouillonne de même utilité.
+> **Pourquoi cela compte pour vous :** Les très longues conversations ne sont pas tarifées comme des courtes un peu plus longues — les entreprises les facturent en supplément, et certaines augmentent le prix au morceau dès que vous franchissez un palier de taille. Le remède est de l'ordre du ménage : gardez les instructions et documents invariables au début (pour que les notes partagées fonctionnent, idée deux), et élaguez ou résumez le milieu plutôt que de laisser tout s'empiler. Une longue conversation bien tenue coûte souvent plusieurs fois moins cher qu'une conversation brouillonne de même utilité.
 
 ---
 
@@ -187,7 +189,7 @@ Les deux premières parties de ce guide sont entrées dans la cuisine : la monna
 
 ## 1. Les plats arrivent un par un — et la première assiette est la plus longue à attendre
 
-> **En une phrase :** Une bonne cuisine ne vous fait pas attendre que tout le repas soit emballé pour voir de la nourriture — les assiettes sortent dès qu'elles sont prêtes, et presque toute votre attente se joue avant la toute première assiette.
+> **En une phrase :** Une bonne cuisine ne vous fait pas attendre que tout le repas soit emballé pour voir de la nourriture — les assiettes sortent dès qu'elles sont prêtes, et pour les réponses courtes, presque toute votre attente se joue avant la toute première assiette ; pour les longues, le rythme entre les assiettes s'accumule discrètement.
 >
 > **L'image du quotidien :** Un restaurant de sushis au tapis roulant. Vous vous asseyez, vous commandez, et dès que la première assiette est prête elle glisse vers vous — puis la suivante, puis la suivante, à un rythme régulier. L'alternative, c'est la commande emportée sous boîte : vous restez au comptoir, affamé, à ne rien voir, jusqu'à ce que le repas entier apparaisse d'un coup. Même nourriture, même cuisine — expérience de l'attente complètement différente.
 >
@@ -233,7 +235,7 @@ Les deux premières parties de ce guide sont entrées dans la cuisine : la monna
 >
 > **Ce qui se passe vraiment :** La plupart du travail que vous envoyez à une IA est facile — trier, étiqueter, réponses courtes — et une IA pas chère et rapide le fait aussi bien que le vaisseau amiral coûteux. L'astuce est de savoir lequel est lequel *avant* que la commande parte, et c'est une compétence qui s'apprend : les équipes qui routent les demandes faciles vers la cuisine pas chère et les dures vers la cuisine forte rapportent des factures réduites environ de moitié, en perdant à peine de la qualité. Il y a aussi une remise permanente que personne n'utilise assez : la voie de nuit. Tout ce qui a juste besoin d'arriver *finalement* — une pile de rapports dus demain matin, une vérification nocturne — peut voyager par la livraison de nuit à moitié prix, nourriture identique, arrivée plus lente.
 >
-> **Pourquoi cela compte pour vous :** L'habitude la plus coûteuse est d'envoyer tout à la cuisine la plus forte et la plus chère « par précaution ». Choisissez deux cuisines — une pas chère, une forte — et décidez quelles commandes exigent laquelle. Et mettez votre travail répétable, que personne n'attend, sur la voie de nuit ; refuser un coupon permanent de moitié prix, c'est faire cadeau au chemin de fer.
+> **Pourquoi cela compte pour vous :** L'habitude la plus coûteuse est d'envoyer tout à la cuisine la plus forte et la plus chère « par précaution ». Choisissez deux cuisines — une pas chère, une forte — et décidez quelles commandes exigent laquelle. Et mettez votre travail répétable, que personne n'attend, sur la voie de nuit ; refuser un coupon permanent de moitié prix, c'est faire cadeau au service de livraison.
 
 ## 6. Quand votre cuisine préférée ferme
 
@@ -322,7 +324,7 @@ C'est tout le livre en mots simples. Le cerveau est brillant ; la cuisine décid
 
 1. Trois ouvriers se tiennent derrière chaque réponse : le cerveau, la cuisine, et vous.
 2. On vous facture dans la monnaie propre de la cuisine : les morceaux de mots.
-3. Les réponses arrivent un morceau à la fois — un relais avec un seul coureur.
+3. Les réponses arrivent un morceau à la fois — le même coureur court chaque étape du relais.
 4. Le rythme est fixé par les allers-retours, pas par la réflexion. Plus de chefs n'élargissent pas l'escalier.
 5. Chaque conversation utilise une copie vivante de tout ce qui a été dit — les longues discussions coûtent de l'argent réel.
 6. Vous partagez la cuisine avec des inconnus. Regrouper les commandes, c'est ce qui la garde abordable.

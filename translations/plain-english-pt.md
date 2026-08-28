@@ -33,7 +33,9 @@ de forma simples, é porque não entendeu. Cada ideia abaixo ganha quatro
 coisas — uma frase simples, uma imagem do dia a dia, o que realmente
 acontece e por que isso importa para você.
 
-Leia as quatro partes em ordem. Cada uma leva uns dez minutos.
+Leia as quatro partes em ordem. Cada uma leva uns dez minutos. Um combinado
+sobre os nomes antes de você entrar: o livro chama isso de sala de
+máquinas; este guia chama de cozinha — mesma máquina, porta mais amigável.
 
 ---
 
@@ -67,7 +69,7 @@ A primeira parte do livro responde a uma pergunta que você provavelmente nunca 
 >
 > **A imagem do dia a dia:** A barra de sugestões do teclado do seu celular. Ela oferece a próxima palavra só depois de ver tudo o que você já digitou — não dá para pedir a quarta palavra sem aceitar as três primeiras. Uma IA escrevendo uma resposta é aquela máquina de sugestão com a tecla "aceitar" pressionada sem soltar, rodando em velocidade de máquina.
 >
-> **O que realmente acontece:** Ler a sua pergunta é rápido, porque tudo o que você enviou já está ali e pode ser absorvido de uma vez. Escrever é diferente: a máquina produz um pedaço, usa-o (mais tudo o que veio antes) para escolher o próximo, depois o próximo — um revezamento rigoroso com um único corredor. Por isso o tempo total de cada resposta tem um formato teimoso: uma espera pela primeira peça e, a seguir, um ritmo constante de um passo por peça até o fim. Nenhuma força bruta permite à máquina pular etapas, porque as peças para onde pular ainda não existem.
+> **O que realmente acontece:** Ler a sua pergunta é rápido, porque tudo o que você enviou já está ali e pode ser absorvido de uma vez. Escrever é diferente: a máquina produz um pedaço, usa-o (mais tudo o que veio antes) para escolher o próximo, depois o próximo — um revezamento em que o mesmo corredor precisa correr todos os trechos, em ordem. Por isso o tempo total de cada resposta tem um formato teimoso: uma espera pela primeira peça e, a seguir, um ritmo constante de um passo por peça até o fim. Nenhuma força bruta permite à máquina pular etapas, porque as peças para onde pular ainda não existem.
 >
 > **Por que isso importa para você:** As duas metades da espera têm donos diferentes e consertos diferentes. Respostas curtas vivem ou morrem pela velocidade da primeira peça. Respostas longas vivem ou morrem pelo ritmo entre as peças. Se um aplicativo abre rápido mas "digita" devagar, é um problema de ritmo; se ele trava em silêncio antes de dizer qualquer coisa, é um problema de primeira peça — e nenhum upgrade de velocidade de digitação conserta uma espera de primeira peça.
 
@@ -89,7 +91,7 @@ A primeira parte do livro responde a uma pergunta que você provavelmente nunca 
 >
 > **O que realmente acontece:** Conforme a sua conversa cresce, a máquina escreve uma notinha para cada pedaço de palavra — o que aquele pedaço significa para tudo o que vem depois. Essas notas são o motivo de cada peça nova poder ser escrita sem refazer todo o trabalho passado; sem elas, cada próxima palavra ficaria mais lenta quanto mais você conversasse. As notas vivem na memória mais rápida e mais cara do prédio, porque são consultadas a cada único pedaço gerado.
 >
-> **Por que isso importa para você:** Numa conversa longa, essas notas podem crescer até ficar do tamanho do próprio cérebro — e elas são mantidas *por conversa*, então uma cozinha cheia faz malabarismo com um caderno crescente por convidado. Quando uma empresa limita o quanto você pode enviar, esse caderno — não o cérebro — é normalmente o motivo. E isso prepara a última ideia desta parte.
+> **Por que isso importa para você:** Numa conversa longa, essas notas podem crescer até ficar do tamanho do próprio cérebro — e elas são mantidas *por conversa*, então uma cozinha cheia faz malabarismo com um caderno crescente por convidado. Quando uma empresa limita o quanto você pode enviar, esse caderno — não o cérebro — é normalmente o motivo — e isso prepara a última ideia desta parte.
 
 ## 6. Conversas longas custam mais: a mesa de lugares
 
@@ -125,7 +127,7 @@ O cérebro da IA é só uma parte do que responde a você. Ao redor dele existe 
 
 > **A imagem do dia a dia:** Imagine um hotel que exigia que cada hóspede reservasse uma fileira inteira e contígua de quartos para a sua estadia mais longa possível. Um hóspede que talvez ficasse dez noites ganhava dez quartos — e geralmente ia embora depois de dois, deixando quartos reservados e vazios que ninguém podia usar. O hotel ficava meio vazio e mesmo assim recusava gente. A nova regra: as noites de qualquer hóspede podem ficar em quaisquer quartos, e a recepção mantém um livro-razão dizendo qual quarto guarda qual noite. De repente, quase nada se desperdiça.
 
-> **O que realmente acontece:** O caderno da cozinha — a sua cópia viva do pedido até agora — era mantido do jeito desperdiçador, e em medições reais só cerca de um quarto a um terço dele continha algo útil. Dois consertos mudaram tudo. Primeiro, o caderno agora vive em retalhos do mesmo tamanho espalhados pela memória, rastreados por um livro-razão, então os buracos sempre podem ser reaproveitados. Segundo — a parte bonita —, quando cem dos seus ajudantes de IA começam os pedidos com a mesma página de instruções, a cozinha escreve essa página compartilhada uma vez e todos apontam para ela, como todas as mesas dividindo um único prato de entradas em vez de pedir cem pratos idênticos.
+> **O que realmente acontece:** O caderno da cozinha — a sua cópia viva do pedido até agora — era mantido do jeito desperdiçador, e nas medições que as fontes do livro registram só cerca de um quarto a um terço dele continha algo útil. Dois consertos mudaram tudo. Primeiro, o caderno agora vive em retalhos do mesmo tamanho espalhados pela memória, rastreados por um livro-razão, então os buracos sempre podem ser reaproveitados. Segundo — a parte bonita —, quando muitos pedidos começam com a mesma página de instruções (digamos, muitas cópias de um assistente, ou os enxames de ajudantes que você conhecerá na Parte IV), a cozinha escreve essa página compartilhada uma vez e todos apontam para ela, como todas as mesas dividindo um único prato de entradas em vez de pedir cem pratos idênticos.
 
 > **Por que isso importa para você:** Pedir de novo à IA com as mesmas palavras de abertura — as mesmas instruções, os mesmos documentos — pode sair quase de graça e muito mais rápido na segunda vez, porque a cozinha reconhece as próprias anotações. Mude uma palavra no começo, porém, e as anotações não batem mais: você paga preço cheio outra vez. Onde você coloca as suas mudanças importa tanto quanto o que você muda.
 
@@ -147,7 +149,7 @@ O cérebro da IA é só uma parte do que responde a você. Ao redor dele existe 
 
 > **O que realmente acontece:** Produzir um pedaço de palavra normalmente exige uma passada completa pelo cérebro inteiro — esse é o pedágio impossível de desviar, porque cada peça depende da anterior. O truque é que conferir vários pedaços propostos custa quase o mesmo que produzir um, já que a parte cara é buscar o conhecimento do cérebro, não dar uma olhada em alguns chutes depois que ele já foi buscado. Um adivinhador barato propõe algumas peças à frente, o cérebro de verdade revisa todas de uma vez, mantém as boas, reescreve a partir do primeiro erro — e, notavelmente, o texto final é construído de um jeito que sai exatamente como se o cérebro de verdade tivesse escrito cada peça ele mesmo. Não é uma imitação barata; são as mesmas palavras, mais rápido.
 
-> **Por que isso importa para você:** Esse é um dos poucos truques de velocidade que não custa qualidade nenhuma — quando ele se encaixa. Brilha quando a IA está reescrevendo ou continuando um texto parecido com o que recebeu, e ajuda menos quando a resposta precisa seguir formatos rígidos, como formas exatas, onde os chutes vivem sendo descartados. Se você administra a sua própria cozinha, só essa opção pode dobrar a velocidade de escrita de um cérebro grande na mesma máquina.
+> **Por que isso importa para você:** Esse é um dos poucos truques de velocidade que não custa qualidade nenhuma — quando ele se encaixa. Brilha quando a IA está reescrevendo ou continuando um texto parecido com o que recebeu, e ajuda menos quando a resposta precisa seguir formatos rígidos, como formas exatas, onde os chutes vivem sendo descartados. Se você administra a sua própria cozinha (mais sobre cozinhas domésticas na Parte IV), só esse interruptor já pode dobrar a velocidade de escrita de um cérebro grande na mesma máquina.
 
 ## 5. Escrever menor
 
@@ -165,9 +167,9 @@ O cérebro da IA é só uma parte do que responde a você. Ao redor dele existe 
 
 > **A imagem do dia a dia:** Uma empresa de bufês ganha um casamento. A coleção de receitas não cabe mais numa cozinha só, então é dividida: cada cozinha guarda uma fatia das receitas, cada cozinha guarda uma fatia dos convidados, e corredores levam pratos pela metade de uma cozinha para outra para que o casamento pareça ter saído de um fogão só. Funciona — mas os corredores ficam ocupados, e quanto maior o casamento, mais o corre corrói o ganho.
 
-> **O que realmente acontece:** Duas coisas diferentes ultrapassam uma cozinha. Primeiro, os maiores cérebros são fisicamente maiores do que um chip aguenta, então o conhecimento deles é espalhado por muitos chips que precisam constantemente passar peças uns aos outros — divida as receitas, divida os convidados, ou abra filiais idênticas — e os maiores cérebros modernos vão além, mantendo uma multidão de especialistas em que cada pedaço de palavra consulta apenas os poucos de que precisa, e é por isso que um cérebro gigante às vezes responde mais rápido que um generalista menor. Segundo, uma conversa muito longa é o seu próprio casamento: antes de a IA dizer uma palavra, tudo o que você forneceu precisa ser cruzado com todo o resto, e esse cruzamento cresce dolorosamente rápido — dobrar a pilha mais que dobra a conferência.
+> **O que realmente acontece:** Duas coisas diferentes ultrapassam uma cozinha. Primeiro, os maiores cérebros são fisicamente maiores do que um chip aguenta, então o conhecimento deles é espalhado por muitos chips que precisam constantemente passar peças uns aos outros — divida as receitas, divida os convidados, ou abra filiais idênticas. Os maiores cérebros modernos vão além, mantendo uma multidão de especialistas em que cada pedaço de palavra consulta apenas os poucos de que precisa — e é por isso que um cérebro gigante às vezes responde mais rápido que um generalista menor. Segundo, uma conversa muito longa é o seu próprio casamento: antes de a IA dizer uma palavra, tudo o que você forneceu precisa ser cruzado com todo o resto, e esse cruzamento cresce dolorosamente rápido — dobrar a pilha mais que dobra a conferência.
 
-> **Por que isso importa para você:** Conversas muito longas não são precificadas como conversas curtas um pouco mais longas — as empresas cobram extra por elas, e algumas cobram uma taxa de furar a fila no instante em que você cruza um limite de tamanho. A solução é arrumação: mantenha instruções e documentos imutáveis no começo (para as notas compartilhadas funcionarem, ideia dois) e pode ou resuma o meio em vez de deixar tudo se empilhar. Uma conversa longa arrumada costuma custar várias vezes menos que uma bagunçada da mesma utilidade.
+> **Por que isso importa para você:** Conversas muito longas não são precificadas como conversas curtas um pouco mais longas — as empresas cobram extra por elas, e algumas aumentam o preço por pedaço no instante em que você cruza um limite de tamanho. A solução é arrumação: mantenha instruções e documentos imutáveis no começo (para as notas compartilhadas funcionarem, ideia dois) e pode ou resuma o meio em vez de deixar tudo se empilhar. Uma conversa longa arrumada costuma custar várias vezes menos que uma bagunçada da mesma utilidade.
 
 ---
 
@@ -181,7 +183,7 @@ As duas primeiras partes deste guia entraram na cozinha: a moeda dos pedaços de
 
 ## 1. Os pratos chegam um a um — e o primeiro prato é o que demora mais
 
-> **Em uma frase:** Uma boa cozinha não faz você esperar a refeição inteira embalada para só então ver comida — os pratos saem conforme ficam prontos, e quase toda a sua espera acontece antes do primeiro prato.
+> **Em uma frase:** Uma boa cozinha não faz você esperar a refeição inteira embalada para só então ver comida — os pratos saem conforme ficam prontos, e para respostas curtas quase toda a sua espera acontece antes do primeiro prato; para as longas, o ritmo entre os pratos vai se acumulando em silêncio.
 >
 > **A imagem do dia a dia:** Um restaurante japonês com esteira de sushi. Você senta, pede, e no momento em que o primeiro prato fica pronto ele desliza até você — depois o próximo, e o próximo, num ritmo constante. A alternativa é a marmita pronta para levar: você fica no balcão, com fome, olhando o nada, até a refeição inteira aparecer de uma vez. Mesma comida, mesma cozinha — experiência de espera completamente diferente.
 >
@@ -227,7 +229,7 @@ As duas primeiras partes deste guia entraram na cozinha: a moeda dos pedaços de
 >
 > **O que realmente acontece:** A maior parte do trabalho que você manda para uma IA é fácil — classificar, rotular, respostas curtas — e uma IA barata e rápida faz isso tão bem quanto a flagship cara. O truque é saber qual é qual *antes* de o pedido sair, e isso é habilidade aprendida: equipes que mandam pedidos fáceis para a cozinha barata e os difíceis para a forte relatam contas cortadas mais ou menos pela metade com perda de qualidade quase nula. Existe também um desconto permanente que ninguém usa o suficiente: a faixa da madrugada. Qualquer coisa que só precisa *eventualmente* chegar — uma pilha de relatórios para amanhã cedo, uma checagem noturna — pode ir na entrega noturna com metade do preço, comida idêntica, chegada mais lenta.
 >
-> **Por que isso importa para você:** O hábito mais caro de todos é mandar tudo para a cozinha mais forte e mais cara "por segurança". Escolha duas cozinhas — uma barata, uma forte — e decida quais pedidos precisam de qual. E coloque o seu trabalho repetitivo, em que ninguém está esperando, na faixa da madrugada; recusar um cupom permanente de metade do preço é caridade com a ferrovia.
+> **Por que isso importa para você:** O hábito mais caro de todos é mandar tudo para a cozinha mais forte e mais cara "por segurança". Escolha duas cozinhas — uma barata, uma forte — e decida quais pedidos precisam de qual. E coloque o seu trabalho repetitivo, em que ninguém está esperando, na faixa da madrugada; recusar um cupom permanente de metade do preço é caridade com o serviço de entrega.
 
 ## 6. Quando a sua cozinha favorita fecha
 
@@ -317,7 +319,7 @@ Esse é o livro inteiro em palavras simples. O cérebro é brilhante; a cozinha 
 
 1. Três trabalhadores ficam atrás de cada resposta: o cérebro, a cozinha e você.
 2. Você é cobrado na moeda própria da cozinha: pedaços de palavras.
-3. As respostas chegam um pedaço por vez — um revezamento com um único corredor.
+3. As respostas chegam um pedaço por vez — o mesmo corredor corre todos os trechos do revezamento.
 4. O passo é definido pelas buscas, não pelo pensamento. Mais chefes não alargam a escada.
 5. Toda conversa usa uma cópia viva de tudo o que foi dito até agora — conversas longas custam dinheiro de verdade.
 6. Você divide a cozinha com estranhos. Agrupar pedidos é o que a mantém acessível.

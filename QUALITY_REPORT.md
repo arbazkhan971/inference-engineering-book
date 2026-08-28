@@ -3,8 +3,47 @@
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the clean-room
-re-seal pass (iteration 88): the sealed release candidate was proven to
+command where one exists. Last updated: 2026-08-28, after the translation re-sync pass
+(iteration 89): the residual logged at iteration 86 — the 12
+plain-English-guide translations sitting 10 fixes behind the post-pedagogy
+English source — is CLOSED. All 12 languages (es fr de pt ru ar hi id tr ja
+ko zh) now carry the ten plain-guide fixes plus the napkin-rule-3 ripple at
+semantically matching sites: the engine-room↔kitchen naming handshake, the
+relay rewording (same runner, every leg, in order) in body and napkin, the
+sourced-measurement attribution, the helper-economy scoping ("many requests
+… helper swarms … Part IV") with the home-kitchen forward pointer,
+flag→switch, the Part II §6 sentence split, the per-piece price relabeling,
+the short/long two-waits scoping, delivery-service charity, and the Part I
+§5 merge. Provenance, logged honestly: 8 of 12 files carried an uncommitted
+partial re-sync left by an interrupted prior session — every hunk was
+verified against the English fix sites before adoption (scope discipline
+confirmed: only fix-site edits in those diffs); the remaining 4 (tr ja ko
+zh) were updated in this pass against the same 11-site checklist, each in
+native register and each file's own established terminology (tr's relay
+corrected to "bayrak yarışı", the proper Turkish term, at both of its only
+two sites — both being edited anyway; ja/ko/zh follow their files' own
+part-numbering and engine-room vocabulary). Old-phrase greps zero-hit
+across all 12 files; new-phrase presence verified per file (wrap-tolerant
+matching for blockquote-continuation lines). No English source, figures, or
+companion code changed. The pass also surfaced and fixed a PRE-EXISTING
+build defect: validating that the edited ledger row reached the EPUB
+showed the F.1 gate-ledger's fuzz-round-2 and pedagogy rows carried raw
+in-cell `|` characters (quoted table prose), which terminate a pandoc
+pipe-table cell — every build since those records landed silently shipped
+the ledger truncated mid-sentence (24.5K of the pedagogy row's 73.6K chars;
+the clean-room bit-for-bit reproduction had faithfully reproduced the
+defect). All four stray pipes escaped (`\|`), the full ledger verified
+present in the rebuilt EPUB (probes: the ch18 record beyond the old cut,
+the plain-guide record, and the new residual text all reach ch026),
+and lint-manuscript.py gained a fail-closed pipe-table guard (any row
+with more unescaped pipes than its header fails the build — proven both
+ways: green at HEAD, exit 1 on a deliberately re-broken pipe). EPUB now
+6,327,755 bytes (+18,734 over the truncated build), md5 8527f62a…,
+deterministic across rebuilds; tools/verify.sh ALL OFFLINE CHECKS PASSED.
+The single remaining release item is unchanged and human-only: the final
+proof — Kindle Previewer page-through on the retail EPUB at upload time
+(runbook F.5). Prior pass kept as history: the clean-room re-seal pass
+(iteration 88): the sealed release candidate was proven to
 reproduce BIT-FOR-BIT from a fresh clone at HEAD 3d4c00a — full protocol:
 `git clone` from origin → one-command `tools/build.sh` (figures on, 34/34
 mermaid staged, 0 degraded, no build dirt) → `validate-epub.py` passes →

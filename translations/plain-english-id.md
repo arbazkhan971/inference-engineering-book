@@ -36,7 +36,9 @@ gambaran sehari-hari, apa yang sebenarnya terjadi, dan mengapa hal itu penting
 bagi Anda.
 
 Bacalah keempat bagian secara berurutan. Masing-masing butuh sekitar sepuluh
-menit.
+menit. Satu kesepakatan penamaan sebelum Anda melangkah masuk: buku ini
+menyebutnya ruang mesin; panduan ini menyebutnya dapur — mesinnya sama,
+pintunya lebih ramah.
 
 ---
 
@@ -78,7 +80,7 @@ panjang menjadi mahal.
 >
 > **Gambaran sehari-hari:** Bar saran kata di papan ketik ponsel Anda. Ia menawarkan kata berikutnya hanya setelah melihat semua yang sudah Anda ketik sejauh ini — Anda tidak bisa meminta kata keempat tanpa menerima tiga kata pertama. AI yang sedang menulis jawaban adalah mesin saran itu dengan tombol "terima" yang tertekan terus, berjalan dengan kecepatan mesin.
 >
-> **Apa yang sebenarnya terjadi:** Membaca pertanyaan Anda itu cepat, karena semua yang Anda kirim sudah tersedia dan bisa diserap sekaligus. Menulis itu beda: mesin menghasilkan satu potongan, lalu memakainya (plus semua sebelumnya) untuk memilih potongan berikutnya, lalu berikutnya lagi — lari estafet yang ketat dengan satu pelari. Jadi total waktu setiap jawaban punya bentuk yang membandel: satu masa tunggu untuk potongan pertama, lalu irama mantap satu langkah per potongan sampai selesai. Sekuat apa pun tenaganya, mesin tidak bisa melompat ke depan, karena potongan yang mau dilompati itu belum ada.
+> **Apa yang sebenarnya terjadi:** Membaca pertanyaan Anda itu cepat, karena semua yang Anda kirim sudah tersedia dan bisa diserap sekaligus. Menulis itu beda: mesin menghasilkan satu potongan, lalu memakainya (plus semua sebelumnya) untuk memilih potongan berikutnya, lalu berikutnya lagi — estafet yang harus dijalani pelari yang sama di setiap babak, berurutan. Jadi total waktu setiap jawaban punya bentuk yang membandel: satu masa tunggu untuk potongan pertama, lalu irama mantap satu langkah per potongan sampai selesai. Sekuat apa pun tenaganya, mesin tidak bisa melompat ke depan, karena potongan yang mau dilompati itu belum ada.
 >
 > **Mengapa ini penting bagi Anda:** Dua paruh penantian itu punya pemilik yang berbeda dan solusi yang berbeda. Jawaban pendek hidup-mati pada cepatnya potongan pertama tiba. Jawaban panjang hidup-mati pada irama antar potongan. Kalau sebuah aplikasi terasa responsif tapi "mengetiknya" lambat, itu masalah irama; kalau ia menggantung diam-diam sebelum mengatakan apa pun, itu masalah potongan pertama — dan tidak ada upgrade kecepatan mengetik yang bisa memperbaiki masa tunggu potongan pertama.
 
@@ -100,7 +102,7 @@ panjang menjadi mahal.
 >
 > **Apa yang sebenarnya terjadi:** Seiring percakapan Anda memanjang, mesin menulis catatan kecil untuk setiap potongan kata — apa arti potongan itu bagi semua yang datang kemudian. Catatan-catatan itulah alasan setiap potongan baru bisa ditulis tanpa mengulang semua kerja masa lalu; tanpa mereka, setiap kata berikutnya akan makin lambat semakin lama Anda bicara. Catatan itu tinggal di memori tercepat dan termahal di gedung itu, karena ia diperiksa untuk setiap potongan yang dihasilkan.
 >
-> **Mengapa ini penting bagi Anda:** Untuk percakapan yang panjang, catatan ini bisa tumbuh sebesar otaknya sendiri — dan disimpan *per percakapan*, jadi dapur yang sibuk harus menjuggling satu buku catatan yang terus membesar untuk tiap tamu. Ketika sebuah perusahaan membatasi seberapa banyak Anda bisa mengirim, biasanya buku catatan inilah alasannya — bukan otaknya. Dan ini mengantar kita ke ide terakhir bagian ini.
+> **Mengapa ini penting bagi Anda:** Untuk percakapan yang panjang, catatan ini bisa tumbuh sebesar otaknya sendiri — dan disimpan *per percakapan*, jadi dapur yang sibuk harus menjuggling satu buku catatan yang terus membesar untuk tiap tamu. Ketika sebuah perusahaan membatasi seberapa banyak Anda bisa mengirim, biasanya buku catatan inilah alasannya — bukan otaknya — dan ini mengantar kita ke ide terakhir bagian ini.
 
 ## 6. Percakapan panjang lebih mahal: denah tempat duduk
 
@@ -139,7 +141,7 @@ Anda.
 >
 > **Gambaran sehari-hari:** Bayangkan hotel yang dulu mewajibkan setiap tamu memesan satu barisan kamar menyambung untuk masa menginap terpanjang yang mungkin. Tamu yang mungkin menginap sepuluh malam mendapat sepuluh kamar — dan umumnya pulang setelah dua malam, meninggalkan kamar terisi-reservasi-tapi-kosong yang tak bisa dipakai siapa pun. Hotelnya setengah kosong tapi masih menolak tamu. Kebijakan baru: malam menginap tamu mana pun boleh menempati kamar mana pun, dan meja depan menyimpan buku besar yang mencatat kamar mana berisi malam yang mana. Seketika hampir tak ada yang terbuang.
 >
-> **Apa yang sebenarnya terjadi:** Buku catatan dapur — salinan pesanan Anda sejauh ini — dulu disimpan dengan cara yang boros itu, dan pada pengukuran nyata hanya sekitar seperempat hingga sepertiganya berisi sesuatu yang berguna. Dua perbaikan mengubah segalanya. Pertama, buku catatan kini tinggal di sobekan-seragam di mana pun dalam memori, dilacak sebuah buku besar, sehingga celah selalu bisa dipakai ulang. Kedua — bagian yang indah — ketika seratus asisten AI Anda semua memulai pesanannya dengan halaman instruksi yang sama, dapur menulis halaman bersama itu satu kali dan semuanya menunjuk ke sana, seperti semua meja berbagi satu piring hidangan pembuka alih-alih memesan seratus piring identik.
+> **Apa yang sebenarnya terjadi:** Buku catatan dapur — salinan pesanan Anda sejauh ini — dulu disimpan dengan cara yang boros itu, dan dalam pengukuran yang dicatat sumber-sumber buku ini, hanya sekitar seperempat hingga sepertiganya berisi sesuatu yang berguna. Dua perbaikan mengubah segalanya. Pertama, buku catatan kini tinggal di sobekan-seragam di mana pun dalam memori, dilacak sebuah buku besar, sehingga celah selalu bisa dipakai ulang. Kedua — bagian yang indah — ketika banyak permintaan dimulai dengan halaman instruksi yang sama (katakanlah, banyak salinan sebuah asisten, atau kawanan pembantu yang akan Anda temui di Bagian IV), dapur menulis halaman bersama itu satu kali dan semuanya menunjuk ke sana, seperti semua meja berbagi satu piring hidangan pembuka alih-alih memesan seratus piring identik.
 >
 > **Mengapa ini penting bagi Anda:** Meminta lagi kepada AI dengan kata-kata pembuka yang sama — instruksi yang sama, dokumen yang sama — bisa nyaris gratis dan jauh lebih cepat pada kali kedua, karena dapur mengenali catatannya sendiri. Tapi ubah satu kata di awal, dan catatan itu tak cocok lagi, jadi Anda membayar harga penuh lagi. Di mana Anda meletakkan perubahan sama pentingnya dengan apa yang Anda ubah.
 
@@ -161,7 +163,7 @@ Anda.
 >
 > **Apa yang sebenarnya terjadi:** Menghasilkan satu potongan kata biasanya memakan satu putaran penuh seluruh otak — itulah ongkos yang tak bisa dihindari, karena tiap potongan bergantung pada yang sebelumnya. Triknya: memeriksa beberapa potongan usulan nyaris semahal menghasilkan satu, karena bagian mahalnya adalah mengambil pengetahuan otak, bukan melirik beberapa tebakan setelahnya diambil. Seorang penebak murah mengusulkan beberapa potongan ke depan, otak sungguhan meninjaunya sekaligus, menyimpan yang bagus, menulis ulang pada kesalahan pertama — dan, luar biasa, teks akhirnya dibangun sedemikian sehingga hasilnya persis seperti jika otak sungguhan menulis setiap potongannya sendiri. Bukan tiruan murahan; kata-kata yang sama, lebih cepat.
 >
-> **Mengapa ini penting bagi Anda:** Ini salah satu dari sedikit trik kecepatan yang sama sekali tidak mengorbankan kualitas — kalau cocok. Ia bersinar saat AI mengubah kata atau melanjutkan teks yang mirip dengan yang diberikan padanya, dan paling kurang membantu saat jawaban harus mengikuti bentuk yang ketat, seperti format persis, tempat tebakan terus dibuang. Kalau Anda menjalankan dapur sendiri, satu pengaturan ini saja bisa menggandakan kecepatan menulis otak besar pada mesin yang sama.
+> **Mengapa ini penting bagi Anda:** Ini salah satu dari sedikit trik kecepatan yang sama sekali tidak mengorbankan kualitas — kalau cocok. Ia bersinar saat AI mengubah kata atau melanjutkan teks yang mirip dengan yang diberikan padanya, dan paling kurang membantu saat jawaban harus mengikuti bentuk yang ketat, seperti format persis, tempat tebakan terus dibuang. Kalau Anda menjalankan dapur sendiri (lebih lanjut soal dapur rumah di Bagian IV), satu sakelar ini saja bisa menggandakan kecepatan menulis otak besar pada mesin yang sama.
 
 ## 5. Menulis lebih ringkas
 
@@ -179,9 +181,9 @@ Anda.
 >
 > **Gambaran sehari-hari:** Sebuah perusahaan katering memenangkan tender resepsi pernikahan. Kumpulan resepnya tak muat lagi di satu dapur, jadi dibagi: setiap dapur memegang sebagian resep, setiap dapur memegang sebagian tamu, dan para kurir mengangkut hidangan setengah jadi di antara dapur-dapur agar resepsi terasa berasal dari satu kompor. Ini berhasil — tapi para kurir tak pernah berhenti bekerja, dan semakin besar resepsinya, semakin besar pula biaya lari-lari itu memakan hasilnya.
 >
-> **Apa yang sebenarnya terjadi:** Dua hal berbeda bisa melampaui kapasitas satu dapur. Pertama, otak-otak terbesar secara fisik lebih besar daripada yang muat di satu chip, jadi pengetahuuan disebar ke banyak chip yang harus terus-menerus saling mengoper potongan — bagi resepnya, bagi tamunya, atau buka cabang-cabang identik — dan otak modern terbesar melangkah lebih jauh: menyimpan sekelompok spesialis tempat setiap potongan kata hanya berkonsultasi dengan sedikit spesialis yang ia butuhkan; itulah sebabnya otak raksasa kadang menjawab lebih cepat daripada otak serba-bisa yang lebih kecil. Kedua, percakapan yang sangat panjang adalah resepsi pernikahannya sendiri: sebelum AI mengatakan satu kata pun, semua yang Anda berikan harus disilang-periksa dengan semua yang lain, dan pemeriksaan-silang itu tumbuh sangat cepat — menggandakan tumpukan jauh lebih dari sekadar menggandakan pemeriksaan.
+> **Apa yang sebenarnya terjadi:** Dua hal berbeda bisa melampaui kapasitas satu dapur. Pertama, otak-otak terbesar secara fisik lebih besar daripada yang muat di satu chip, jadi pengetahuuan disebar ke banyak chip yang harus terus-menerus saling mengoper potongan — bagi resepnya, bagi tamunya, atau buka cabang-cabang identik. Otak modern terbesar melangkah lebih jauh: menyimpan sekelompok spesialis tempat setiap potongan kata hanya berkonsultasi dengan sedikit spesialis yang ia butuhkan — itulah sebabnya otak raksasa kadang menjawab lebih cepat daripada otak serba-bisa yang lebih kecil. Kedua, percakapan yang sangat panjang adalah resepsi pernikahannya sendiri: sebelum AI mengatakan satu kata pun, semua yang Anda berikan harus disilang-periksa dengan semua yang lain, dan pemeriksaan-silang itu tumbuh sangat cepat — menggandakan tumpukan jauh lebih dari sekadar menggandakan pemeriksaan.
 >
-> **Mengapa ini penting bagi Anda:** Percakapan yang sangat panjang tidak dihargai seperti percakapan pendek yang sedikit lebih panjang — perusahaan mengenakan biaya ekstra untuk itu, dan sebagian menagih biaya potong antrean begitu Anda melewati batas ukuran tertentu. Perbaikannya adalah kerapian: letakkan instruksi dan dokumen yang tak pernah berubah di bagian depan (agar catatan bersama bekerja, lihat ide kedua), dan pangkas atau ringkas bagian tengah alih-alih membiarkan semuanya menumpuk. Percakapan panjang yang rapi sering kali beberapa kali lebih murah daripada yang berantakan dengan kegunaan yang sama.
+> **Mengapa ini penting bagi Anda:** Percakapan yang sangat panjang tidak dihargai seperti percakapan pendek yang sedikit lebih panjang — perusahaan mengenakan biaya ekstra untuk itu, dan sebagian menaikkan harga per potongan begitu Anda melewati batas ukuran tertentu. Perbaikannya adalah kerapian: letakkan instruksi dan dokumen yang tak pernah berubah di bagian depan (agar catatan bersama bekerja, lihat ide kedua), dan pangkas atau ringkas bagian tengah alih-alih membiarkan semuanya menumpuk. Percakapan panjang yang rapi sering kali beberapa kali lebih murah daripada yang berantakan dengan kegunaan yang sama.
 
 ---
 
@@ -201,7 +203,7 @@ paling banyak uang tanpa pernah menyadarinya.
 
 ## 1. Hidangan tiba satu per satu — dan piring pertama paling lama dinanti
 
-> **Dalam satu kalimat:** Dapur yang baik tidak membuat Anda menunggu seluruh santapan dikemas sebelum Anda melihat makanan — piring keluar begitu siap, dan hampir semua penantian Anda terjadi sebelum piring yang pertama.
+> **Dalam satu kalimat:** Dapur yang baik tidak membuat Anda menunggu seluruh santapan dikemas sebelum Anda melihat makanan — piring keluar begitu siap, dan untuk jawaban pendek, hampir semua penantian Anda terjadi sebelum piring yang pertama; untuk yang panjang, irama antar piring diam-diam ikut menumpuk.
 >
 > **Gambaran sehari-hari:** Restoran sushi berkonveyor. Anda duduk, memesan, dan begitu piring pertama siap ia meluncur ke Anda — lalu berikutnya, lalu berikutnya, dengan irama mantap. Alternatifnya adalah makanan bungkus take-away: Anda berdiri di loket, lapar, tak melihat apa-apa, sampai seluruh santapan muncul sekaligus. Makanan sama, dapur sama — pengalaman menunggu yang sama sekali berbeda.
 >
@@ -247,7 +249,7 @@ paling banyak uang tanpa pernah menyadarinya.
 >
 > **Apa yang sebenarnya terjadi:** Sebagian besar pekerjaan yang Anda kirim ke AI itu mudah — menyortir, memberi label, jawaban pendek — dan AI murah yang cepat mengerjakannya sama baiknya dengan andalan yang mahal. Triknya adalah tahu yang mana yang mana *sebelum* pesanan keluar, dan itu keterampilan yang dipelajari: tim yang mengarahkan permintaan mudah ke dapur murah dan yang berat ke dapur kuat melaporkan tagihan mereka terpangkas kira-kira separuh nyaris tanpa kehilangan kualitas. Ada juga diskon tetap yang tak pernah cukup dimanfaatkan orang: jalur semalam. Apa pun yang hanya perlu *akhirnya* tiba — tumpukan laporan untuk esok pagi, pemeriksaan tiap malam — bisa menumpang pengiriman semalam dengan harga setengah, makanan identik, tiba lebih lambat.
 >
-> **Mengapa ini penting bagi Anda:** Kebiasaan termahal adalah mengirim segalanya ke dapur terkuat dan termahal "biar aman." Pilih dua dapur — satu murah, satu kuat — dan putuskan pesanan mana butuh yang mana. Dan taruh pekerjaan Anda yang berulang dan tak ditunggu siapa pun di jalur semalam; menolak kupon potongan setengah harga tetap itu adalah sedekah untuk perusahaan kereta api.
+> **Mengapa ini penting bagi Anda:** Kebiasaan termahal adalah mengirim segalanya ke dapur terkuat dan termahal "biar aman." Pilih dua dapur — satu murah, satu kuat — dan putuskan pesanan mana butuh yang mana. Dan taruh pekerjaan Anda yang berulang dan tak ditunggu siapa pun di jalur semalam; menolak kupon potongan setengah harga tetap itu adalah sedekah untuk layanan pengiriman.
 
 ## 6. Ketika dapur favorit Anda tutup
 
@@ -340,7 +342,7 @@ Itulah seluruh buku dalam kata-kata sederhana. Otaknya brilian; dapurnya yang me
 
 1. Tiga pekerja berdiri di balik setiap jawaban: otak, dapur, dan Anda.
 2. Anda ditagih dalam mata uang dapur itu sendiri: potongan kata.
-3. Jawaban tiba satu potongan demi satu potongan — lari estafet dengan satu pelari.
+3. Jawaban tiba satu potongan demi satu potongan — pelari yang sama menjalani setiap babak estafet.
 4. Tempo ditentukan oleh pengambilan barang, bukan berpikir. Menambah chef tidak melebarkan tangga.
 5. Setiap percakapan memakai salinan berjalan dari semua yang sudah dikatakan — obrolan panjang berbiaya uang sungguhan.
 6. Anda berbagi dapur dengan orang asing. Mengelompokkan pesanan adalah cara dapur tetap terjangkau.
