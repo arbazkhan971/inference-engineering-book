@@ -4,10 +4,55 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's nineteenth fix pass: iteration 80 completed the appendix A
+wave's twentieth fix pass: iteration 81 completed the appendix B
+pass — all 20 findings applied (4.3/5 — 2 [LOST] + 10 [CONFUSING] +
+8 [POLISH]; the auditor hand-recomputed all 16 worked examples and
+found every one correct, so every fix is gloss/scaffold-level).
+Headlined by the audit's two LOST gaps — the sharding card's five
+unexpanded acronyms (the one card a motivated beginner genuinely
+could not use) and "real kernels" misreadable as the operating-
+system kernel — both fixed: the sharding formula line now expands
+every axis (TP (tensor) × PP (pipeline) × EP (expert) × CP
+(context) × DP (data) parallelism), and the roofline card now reads
+"real GPU programs (kernels)". The ten CONFUSING fixes: w and r
+defined before the cache loop's first use (both pointing at the
+constants box; mid-2026 1.25 and 0.1); c defined in the prefill
+decomposition's symbol line using chapter 11's own coinage ("a
+per-model constant you never need to number"); the double-compressed
+ridge-point sentence decompressed ("one division using numbers from
+the chip's spec sheet … before compute, not bandwidth, becomes the
+bottleneck") — which removes B.1's "binds", so the binds gloss lands
+at the new first surviving use in B.2 ("weights, not KV, bind
+(become the bottleneck)"; documented deviation from the audit's
+named site, forced by the same-coordinate rewrite); MoE expanded at
+its true first use (the decode-payload card); the sessions card's
+80−61≠15 gap closed with the formula's own workspace term ("~15 GiB
+left after a ~4 GiB workspace reserve"; 80−61−4 = 15); the compaction
+worked line now labels its terms (0.1 × 30K = 3K per turn versus
+0.1 × 150K = 15K per turn → t = 2.5); the expiry example carries its
+missing price ("Opus-5-class list prices, ≈$5/M input" — verified
+against Appendix C's Opus 5 row and re-derived: 200K × $5/M = $1.00
+full price, × 1.25 = $1.25 write, × 0.1 = $0.10 warm read);
+collectives glossed with chapter 10's own coinage ("synchronized
+data swaps between chips"); H100 glossed at first use ("an AI
+accelerator chip"). The eight POLISH fixes: token defined at its
+first use pointing at Appendix A; the format-name digits explained
+at FP8's first use ("counts bits per stored number"); the decode
+identity's when-it-lies restated plain while keeping the title word
+("an identity, not a predictor; queueing and jitter hide in the
+leftover difference" — appendix D's cross-reference stays coherent);
+burndown and K-of-N each glossed in one clause; the 0.7 rule tied to
+the roofline card's 60–80%; active bytes connected to its own
+explanation; the intro's card anatomy converted to a literal
+four-bullet map; entering/generating given their formal names
+(prefill/decode). Ripple greps clean (removed phrases zero-hit;
+"binds" once glossed plus the audit-blessed second use; K-of-N
+gloss agrees in substance with chapter 15's own); no figures
+changed (the file carries no mermaid). Appendix B now 2,705 words
+(+180, all gloss/scaffold-bearing). Prior pass kept as history:
+iteration 80 completed the appendix A
 pass — all 13 findings applied (4.0/5 — 2 [LOST] + 5 [CONFUSING] +
-6 [POLISH]), opening the reference-surface half of the queue
-(appendices B–D, front/back matter, and the plain guide remain).
+6 [POLISH]), opening the reference-surface half of the queue.
 Headlined by the audit's worst gap — undefined primitives below the
 glossary's own floor — every flagged entry now defines its words:
 BPE's byte gloss mirrors chapter 2's own coinage; the Logit mask

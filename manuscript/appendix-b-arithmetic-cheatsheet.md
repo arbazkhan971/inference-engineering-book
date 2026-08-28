@@ -2,7 +2,14 @@
 
 > **Appendices — the reference shelf.** Every formula the book taught, collected with its smallest worked example. The formulas outlive the prices; re-date the constants, keep the arithmetic.
 
-This is the operator's card deck. Each card carries four things: the formula, what its symbols mean, the smallest worked example from the chapter that owns it, and — the part most cheat-sheets omit — *when it lies*. Worked examples reuse numbers already sourced and dated in their chapters (August 2026 retrievals); Appendix C carries the full provider snapshot, Appendix E the sources. Provider prices and multipliers are defined once in the dated box at the end; the cards quote the multipliers and derive their dollars from it.
+This is the operator's card deck. Each card carries four things:
+
+- **The formula** — the arithmetic, in one line.
+- **The symbols** — what each letter means, at the moment you need it.
+- **The worked example** — the smallest one from the chapter that owns it.
+- **When it lies** — the caveat most cheat-sheets omit.
+
+Worked examples reuse numbers already sourced and dated in their chapters (August 2026 retrievals); Appendix C carries the full provider snapshot, Appendix E the sources. Provider prices and multipliers are defined once in the dated box at the end; the cards quote the multipliers and derive their dollars from it.
 
 ## B.1 How long will it take?
 
@@ -10,26 +17,26 @@ This is the operator's card deck. Each card carries four things: the formula, wh
 
 > e2e ≈ TTFT + (N − 1) × mean ITL, and equivalently TPOT = (e2e − TTFT) / (N − 1)
 
-e2e is end-to-end latency, N the output-token count. Worked: TTFT (time to first token) 400 ms, mean ITL (inter-token latency) 25 ms, 200 tokens → 0.4 s + 199 × 0.025 s ≈ **5.4 s** (Ch. 2). The handy conversion used throughout: tokens/s = 1000 / TPOT_ms (TPOT, time per output token, in milliseconds). *When it lies:* it is an identity over measured terms, not a predictor — queueing and jitter live in the residual. Short replies are TTFT-dominated; long replies are TPOT-dominated; know which regime you're in before optimizing either clock. *(Ch. 2)*
+e2e is end-to-end latency, N the output-token count (a token is the word-piece unit models read and you are billed in — Appendix A). Worked: TTFT (time to first token) 400 ms, mean ITL (inter-token latency) 25 ms, 200 tokens → 0.4 s + 199 × 0.025 s ≈ **5.4 s** (Ch. 2). The handy conversion used throughout: tokens/s = 1000 / TPOT_ms (TPOT, time per output token, in milliseconds). *When it lies:* it rearranges things you already measured — an identity, not a predictor; queueing and jitter hide in the leftover difference. Short replies are TTFT-dominated; long replies are TPOT-dominated; know which regime you're in before optimizing either clock. *(Ch. 2)*
 
 **The roofline.**
 
 > attainable speed = min( peak compute (FLOP/s), memory bandwidth (bytes/s) × arithmetic intensity (FLOP/byte) )
 > ridge point = peak FLOP/s ÷ peak bytes/s
 
-Arithmetic intensity is FLOPs (floating-point operations) per byte moved; the ridge point is one datasheet division that tells you how much reuse per byte a chip needs before compute — not bandwidth — binds. Worked: an H100's bandwidth-side attainable at batch 64 (intensity ≈ 64) is ≈ 3.35 TB/s × 64 ≈ **214 TFLOP/s** from the same weight traffic that yields ~3.35 at batch 1 (Ch. 3). *When it lies:* real kernels hit roughly 60–80% of datasheet bandwidth, and the constants are per-chip-generation — the division survives, the answers age. *(Ch. 3)*
+Arithmetic intensity is FLOPs (floating-point operations) per byte moved; the ridge point — one division using numbers from the chip's spec sheet — tells you how much reuse per byte a chip needs before compute, not bandwidth, becomes the bottleneck. Worked: an H100 (an AI accelerator chip) at batch 64 (intensity ≈ 64) has a bandwidth-side attainable ≈ 3.35 TB/s × 64 ≈ **214 TFLOP/s** from the same weight traffic that yields ~3.35 at batch 1 (Ch. 3). *When it lies:* real GPU programs (kernels) hit roughly 60–80% of datasheet bandwidth, and the constants are per-chip-generation — the division survives, the answers age. *(Ch. 3)*
 
 **The single-stream floor.**
 
 > tokens/s ≈ (bandwidth × 0.7) ÷ active bytes
 
-The ceiling on one request's decode: each token step must read the active weights (plus its KV — key–value — cache). Worked: a 70B model in FP8 (~70 GB) on a B200-class GPU at 8.0 TB/s → theoretical ~115 tokens/s, effective (0.7 rule) near **80**; the same model on an H100 floors at ≈ 48 theoretical (Ch. 3). *When it lies:* it is a floor for *batch-of-one* decode — batching raises reuse per byte, and no prompt engineering moves this number at all. *(Ch. 3)*
+The ceiling on one request's decode: each token step must read the active weights plus the KV (key–value) cache held for this context — those two together are the formula's *active bytes*. Worked: a 70B model in FP8 (~70 GB; the digit in these format names — FP8, FP16, INT4 — counts bits per stored number) on a B200-class GPU at 8.0 TB/s → theoretical ~115 tokens/s, effective near **80** by the 0.7 rule (the roofline card's 60–80% real-world efficiency); the same model on an H100 floors at ≈ 48 theoretical (Ch. 3). *When it lies:* it is a floor for *batch-of-one* decode — batching raises reuse per byte, and no prompt engineering moves this number at all. *(Ch. 3)*
 
 **The prefill decomposition.**
 
-> attention work ≈ c · (N² + N·M + M²/2), N = prompt tokens, M = generated tokens
+> attention work ≈ c · (N² + N·M + M²/2), N = prompt tokens, M = generated tokens, c a per-model constant you never need to number
 
-Entering is quadratic; generating is linear in what you're holding. A 1M-token prompt is not 8× a 128K prompt: the dense part is 8×, the attention part ~61–64× (Ch. 3, 11). *When it lies:* c absorbs kernel efficiencies, and decode's linear KV walk still dominates steady-state generation cost on long sessions. This is why TTFT balloons on giant prompts. *(Ch. 3, 7, 11)*
+Entering (prefill — reading your prompt) is quadratic; generating (decode) is linear in the context you're holding. A 1M-token prompt is not 8× a 128K prompt: the dense part is 8×, the attention part ~61–64× (Ch. 3, 11). *When it lies:* c absorbs kernel efficiencies, and decode's linear KV walk still dominates steady-state generation cost on long sessions. This is why TTFT balloons on giant prompts. *(Ch. 3, 7, 11)*
 
 ## B.2 How much memory?
 
@@ -43,13 +50,13 @@ Parameter count appears nowhere; the note-taking architecture — GQA (grouped-q
 
 > sessions = (usable memory − weights − workspace) ÷ (KV/token × context)
 
-Worked shape from chapter 4: an 80 GB card holding a 61 GB MXFP4 model has ~15 GiB left — weights, not KV, bind. *When it lies:* workspace overhead is an estimate; leave slack. Which resource binds is a deployment property this division reveals before you sign an invoice. *(Ch. 4)*
+Worked shape from chapter 4: an 80 GB card holding a 61 GB MXFP4 model has ~15 GiB left after a ~4 GiB workspace reserve — weights, not KV, bind (become the bottleneck). *When it lies:* workspace overhead is an estimate; leave slack. Which resource binds is a deployment property this division reveals before you sign an invoice. *(Ch. 4)*
 
 **The decode payload.**
 
 > bytes read per step = active weights + KV(context)
 
-The refinement chapter 3 owed: weights are the flat tax, KV the per-session tax that grows with every token. MoE models read only *active* weights per step — total parameters set memory, active parameters set the floor. *(Ch. 3, 4, 10)*
+The refinement chapter 3 owed: weights are the flat tax, KV the per-session tax that grows with every token. MoE (mixture-of-experts) models read only *active* weights per step — total parameters set memory, active parameters set the floor. *(Ch. 3, 4, 10)*
 
 **Quantization byte math.**
 
@@ -59,10 +66,10 @@ Memory halves by arithmetic, never by benchmark. *When it lies:* only about *spe
 
 **The sharding product.**
 
-> deployment = TP × PP × EP × CP × DP, across t·p·e·c·d chips
+> deployment = TP (tensor) × PP (pipeline) × EP (expert) × CP (context) × DP (data) parallelism, across t·p·e·c·d chips
 > per-shard memory = total bytes ÷ (t · p · e)
 
-Every axis except DP buys capacity *and* communication together; DP is the clean one — more replicas, zero per-token collectives. Hence the rule: shard as little as the memory math allows, scale out with DP, keep TP inside one node's fast interconnect. Worked in chapter 10's worksheet. *When it lies:* collectives' cost depends on interconnect (NVLink-class vs network) and on sequence length for CP. *(Ch. 10)*
+Every axis except DP buys capacity *and* communication together; DP is the clean one — more replicas, zero per-token collectives (synchronized data swaps between chips). Hence the rule: shard as little as the memory math allows, scale out with DP, keep TP inside one node's fast interconnect. Worked in chapter 10's worksheet. *When it lies:* collectives' cost depends on interconnect (NVLink-class vs network) and on sequence length for CP. *(Ch. 10)*
 
 **Expert capacity (MoE — mixture-of-experts).**
 
@@ -83,20 +90,20 @@ Normalize *before* multiplying: OpenAI and Gemini report inclusive totals (cache
 > the first request writes, the N re-reads read: w + N·r, versus N + 1 uncached (N = reuses)
 > break-even reuses: N ≥ (w − 1) / (1 − r)
 
-Worked at the box multipliers (w = 1.25, r = 0.1): N ≥ 0.28 — one reuse pays the premium; the 1-hour write (w = 2) needs N ≥ 1.11 — two cache reads, three requests total. In dollars: a $3/M model, a 100K-token stable prefix, ten turns → write $0.375 + nine reads $0.270 = **$0.645** versus $3.00 uncached, ≈ **79% saved** (Ch. 14). The only losing case is enrolling and never returning: a flat 25% surcharge. *When it lies:* the formula assumes the prefix *stays* byte-exact — one changed byte converts reads back to full price (the cliff below). *(Ch. 14)*
+w is the write premium, r the read discount — both defined in the constants box at the end (mid-2026: 1.25 and 0.1). Worked: N ≥ 0.28 — one reuse pays the premium; the 1-hour write (w = 2) needs N ≥ 1.11 — two cache reads, three requests total. In dollars: a $3/M model, a 100K-token stable prefix, ten turns → write $0.375 + nine reads $0.270 = **$0.645** versus $3.00 uncached, ≈ **79% saved** (Ch. 14). The only losing case is enrolling and never returning: a flat 25% surcharge. *When it lies:* the formula assumes the prefix *stays* byte-exact — one changed byte converts reads back to full price (the cliff below). *(Ch. 14)*
 
 **The expiry penalty.**
 
 > a dead TTL (time to live) on the next turn pays a fresh write: 1.25 ÷ 0.1 = 12.5× the warm read
 > 1-hour write crossover: 2.0 ÷ 1.25 = 1.6 re-writes per hour
 
-A 200K-token session that idles past the 5-minute window pays $1.25 instead of $0.10 to re-enter (Opus-5-class list prices; Ch. 17's resume box) — plus a multi-second re-prefill TTFT spike. Roughly two long idle gaps per hour justify the 2× 1-hour write (2 + 0.1·N < 1.25·N once N ≥ 2). *When it lies:* gap distributions are yours to measure; TTL clocks can run from *request start*, not request end. *(Ch. 14, 17)*
+A 200K-token session that idles past the 5-minute window pays $1.25 instead of $0.10 to re-enter (Opus-5-class list prices, ≈$5/M input; Ch. 17's resume box) — plus a multi-second re-prefill TTFT spike. Roughly two long idle gaps per hour justify the 2× 1-hour write (2 + 0.1·N < 1.25·N once N ≥ 2). *When it lies:* gap distributions are yours to measure; TTL clocks can run from *request start*, not request end. *(Ch. 14, 17)*
 
 **The compaction breakeven.**
 
 > before: each turn re-reads the prefix (r × prefix per turn)
 > after: one full-price re-prefill, then r × prefix′ per turn (3K here)
-> worked: 30K + 3K·t = 15K·t → t = 2.5 turns
+> worked: one 30K re-prefill, then re-reads 0.1 × 30K = 3K per turn, versus old re-reads 0.1 × 150K = 15K per turn → 30K + 3K·t = 15K·t → t = 2.5 turns
 
 Compacting a 150K prefix to a 30K summary is ahead from the third turn after the rewrite — and the stakes shrink as the session grows (Ch. 17). *When it lies:* it prices cache units, not quality — what the summary *drops* is chapter 11's lost-in-compaction cliff, unbudgeted here. *(Ch. 11, 17)*
 
@@ -126,7 +133,7 @@ At the same rates, each re-sent failed request costs ≈ $0.006; a 5% failure ra
 
 > rps ≈ TPM (tokens per minute) ÷ 60 ÷ average tokens per request
 
-Worked: 900,000 TPM at ~500 tokens per call → ~30 rps; pace at 70–80% (~21–24 rps) and large fanouts finish *sooner* than at 100%, because the difference is spent in 429s (too-many-requests rejections), backoff sleeps, and retry amplification. *When it lies:* meters differ — some providers count output-only, some apply burndown multipliers, some count unsuccessful requests; build the per-provider ledger from its own docs. *(Ch. 15)*
+Worked: 900,000 TPM at ~500 tokens per call → ~30 rps; pace at 70–80% (~21–24 rps) and large fanouts finish *sooner* than at 100%, because the difference is spent in 429s (too-many-requests rejections), backoff sleeps, and retry amplification. *When it lies:* meters differ — some providers count output-only, some apply burndown multipliers (quota that shrinks as you spend it), some count unsuccessful requests; build the per-provider ledger from its own docs. *(Ch. 15)*
 
 **The queueing knee.**
 
@@ -144,7 +151,7 @@ Sizes your semaphore directly: 24 rps at 4 s average → hold ≈ 96 in flight; 
 
 > P(step exceeds L) = 1 − (1 − p)^N, p = per-child probability, N = fanout width
 
-At p = 1% and N = 100, ~63%; at N = 10,000, ≥ 99.99999% (derived). A wide fanout of perfectly median calls behaves, at the step level, like a 99th-percentile call. Budget the step, not the call: child deadlines, K-of-N reduction. *(Ch. 15, 16)*
+At p = 1% and N = 100, ~63%; at N = 10,000, ≥ 99.99999% (derived). A wide fanout of perfectly median calls behaves, at the step level, like a 99th-percentile call. Budget the step, not the call: child deadlines, K-of-N reduction (accept the first K of N children's results and cancel the rest). *(Ch. 15, 16)*
 
 **Full jitter.**
 
