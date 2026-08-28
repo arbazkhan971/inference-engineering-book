@@ -28,6 +28,12 @@ decides whether a brilliant agent loop ships or stalls.
 - `tools/` — build + verify pipeline
 - `PROGRESS.md` — append-only driver ledger
 
+## Plain-English guide
+
+`PLAIN-ENGLISH-GUIDE.md` — the whole book taught with zero jargon (Feynman
+four-step: one sentence, everyday picture, what really happens, why you care).
+Start there if any chapter runs ahead of you.
+
 ## Build
 
 ```bash
