@@ -4,8 +4,22 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's third fix pass: iteration 64 applied all 20 ch03 findings (the
-wave's floor chapter at 3.75/5) — the two [LOST] openings (the jargon-stack
+wave's fourth fix pass: iteration 65 applied all 12 ch04 findings (4.5/5,
+zero [LOST]) — headlined by the audit's numeric-honesty fix ("dozens of
+times larger" became "tens of thousands" with the derived 131,072 ÷ 4 =
+32,768× shown), the KiB normalization of the OPT/MHA comparisons with
+one-step-checkable ratios (2,560 KiB from the full formula; 2,560 ÷ 320 =
+exactly one-eighth), both advisory worst-gap items (the MLA micro-example:
+2 × 128 × 128 = 32,768 numbers = 64 KiB vs 576 ≈ 1.1 KiB, ~57×; local
+glosses at the 4.6 recall moments), and one completion fix beyond the
+audit (the 4.5 heading's "Five ways" retitled "Four" — the ladder's
+fifth row is the 1× MHA baseline). The pass was recovered from an
+uncommitted working tree left by an interrupted session (all 12 findings
++ both gaps already applied); this iteration verified every hunk,
+re-derived every number, and completed the three remaining fixes.
+
+History: iteration 64 applied all 20 ch03 findings (the wave's floor
+chapter at 3.75/5) — the two [LOST] openings (the jargon-stack
 intro now plain words with a deferral pointer into 3.2; FlashAttention now
 picture-first with a working-notes bridge and a softmax gloss), nine
 [CONFUSING] (the 3.1 table grown to seventeen rows with Weights/Parameter/
