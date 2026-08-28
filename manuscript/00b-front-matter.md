@@ -15,8 +15,9 @@ Four readers, one ladder:
    boxes; skip nothing.
 2. **The application developer** — you call APIs all day; this book shows
    you what your calls land on, and which of your habits cost money.
-3. **The harness/agent engineer** — you own routing, caching, compaction,
-   and budgets; Parts III and IV are your new cheat codes.
+3. **The harness/agent engineer** — the harness is your code around the
+   model, the driver in this book's engine picture — owns routing, caching,
+   compaction, and budgets; Parts III and IV are your new cheat codes.
 4. **The founder or platform lead** — you make build-vs-buy calls; the
    arithmetic chapters let you price engines, not vibes.
 
@@ -28,9 +29,10 @@ bandwidth, and the KV cache memory formula) that explain half of everything
 that follows.
 
 **Part II — Inside the engine.** Batching, paging, prefill/decode,
-speculative decoding, quantization, parallelism, MoE, long context — the
-machinery, explained like a senior engineer explaining the kitchen to a
-food critic who's about to open a restaurant.
+speculative decoding, quantization, parallelism, mixture-of-experts (MoE),
+long context — the machinery, explained like a senior engineer explaining
+the kitchen to a food critic who's about to open a restaurant (the kitchen
+is the engine of the title, seen from inside).
 
 **Part III — The API contract.** Streaming, structured output, prompt
 caching economics, rate limits, routing and budgets — where the engine
@@ -39,7 +41,7 @@ personalities until you know their mechanics.
 
 **Part IV — Harness meets engine.** Cache-aware agent design, compaction
 trade-offs, fanout cost worksheets, and **tinyengine**, the small
-TypeScript inference shim you build across the book's final chapters.
+TypeScript mini-engine you build across the book's final chapters.
 
 Chapters end with **Build it / Break it / Prove it / See it in the wild**.
 Every analogy gets a **Where the picture stops** section, because every

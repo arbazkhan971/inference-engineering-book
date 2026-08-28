@@ -4,7 +4,56 @@ Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
 Every claim below names its evidence; every gate names its re-verification
 command where one exists. Last updated: 2026-08-28, after the pedagogy
-wave's twenty-second fix pass: iteration 83 completed the appendix D
+wave's twenty-third fix pass: iteration 84 completed the front-matter
+pass (00a-prologue + 00b-front-matter, audited together as one surface)
+— all 16 findings settled (4.25/5 — 1 [LOST] + 7 [CONFUSING] +
+8 [POLISH]; the auditor's verdict: "all fixes are one-clause insertions;
+none require restructuring"): 13 applied as edits, 3 settled as
+no-action with evidence. Headlined by the single [LOST]: "token" —
+the book's currency and the credential's unit, used cold in the very
+first paragraph — now glossed at its first use ("now each token — one of
+the word-piece chunks every AI bill is counted in — arrives like drip
+coffee", reusing ch01's own table coinage; documented deviation: "one
+of the" added for number agreement with "each token"). The two
+worst-gap [CONFUSING]s beyond it: "harness" — the series' defining
+noun, leaned on ~6× with only an implicit driver mapping — glossed at
+00b's reader-ladder rung 3 ("the harness is your code around the
+model, the driver in this book's engine picture"), which also clears
+rung 3's jargon stack (finding 13); and both foreshadow-lists given
+their promise signals ("— four things this book will make as familiar
+as traffic lights"; "— the vocabulary of the engine room, all of it
+yours by the last chapter"), converting the prologue's only genuine
+barriers into its best hooks. Also applied: "POST request" → "the
+moment you press send" (the acronym gave a lay reader nothing to
+picture; POST now absent from front matter); "latency doubles after a
+compaction" → "agent suddenly slows down after a context cleanup —
+*compaction*, chapter 11's word"; the tinyengine promise sentence
+unpacked ("provider-normalizing, cost-metering, cache-friendly
+inference shim" → "a mini-engine called tinyengine that hides the
+differences between AI companies, meters what you spend, and plays
+nicely with their caches" — with 00b's "TypeScript inference shim"
+rippled to "TypeScript mini-engine" so the Part IV line inherits the
+new coinage instead of an unglossed "shim"); MoE expanded at first use
+("mixture-of-experts (MoE)" — a hard STYLE rule breach, front matter
+precedes ch10 in reading order); "serving system" → "serving layer"
+(one concept, one spelling, matching chapter usage); "500 parallel
+subagents" glossed ("AI helpers working at once" — documented
+deviation: the term kept rather than the audit's wholesale replacement,
+because the series claims volume-independence so the gloss must serve
+Vol-I-less readers while ch17's subject matter needs the word); and the
+kitchen/engine metaphors welded ("the kitchen is the engine of the
+title, seen from inside"). Three POLISH findings settled as no-action
+with evidence: the 200B scale anchor skipped per the audit's own "or
+leave" option (a page-count figure would be an invented number against
+the numbers discipline — the ccrank.dev link already carries
+checkability); the GPU-kernels gloss skipped because the same
+sentence's "written for the people who build engines from scratch"
+already carries the picture; and "provider"/"inference dashboard"
+left per the audit's "fine to leave". No reviewer false positives.
+No figures (no mermaid in either file — SKIP_FIGURES sound). 00a now
+705 words (+70), 00b now 478 (+26), all gloss/on-ramp/promise-signal-
+bearing; front matter carries no band per linter policy.
+Prior pass kept as history: iteration 83 completed the appendix D
 pass — all 16 findings applied (3.44/5 — 1 [LOST] + 7 [CONFUSING] +
 8 [POLISH]; every one a one-clause-to-one-sentence fix per the audit's
 own verdict, "floor-lowering, not promise-breaking"). Headlined by
