@@ -18,7 +18,7 @@
 | Claim | Bound version used in copy | Verification |
 |---|---|---|
 | Token volume | "more than 200 billion tokens through coding agents in ~4 months (on the order of 1.6B/day)" | Public meter: ccrank.dev/user/arbaz-khan; stated in prologue + back matter |
-| Series | Volume II of the Harness Engineering series; Vol. I = *Harness Engineering: How to Build AI Agents That Actually Work* | front matter "Series note"; back matter |
+| Series | Volume II of the Harness Engineering series; Vol. I = *Harness Engineering: The systems that turn a language model into work you can trust* | front matter "Series note"; back matter |
 | Independence | "Each volume stands alone; built to be read in order" | front matter, verbatim sense |
 | Production method | 100+ GLM-5.3 instances, six editorial gates, 70+ dated sourced digests, public repo | back matter "How this book was written"; github.com/arbazkhan971/inference-engineering-book |
 | Numbers rule | Prices/rate limits/benchmarks are dated snapshots; formulas are forever | front matter "The rule about numbers" |
@@ -79,7 +79,7 @@ markers into the KDP description field (HTML view).
 <li>Read a provider's pricing or rate-limit page without flinching.</li>
 </ul>
 <h5>Volume II of the Harness Engineering series</h5>
-<p>Volume I, <i>Harness Engineering: How to Build AI Agents That Actually Work</i>, built the system around the model: tools, loops, sessions, safety, memory, evals. Volume II goes underneath: the serving layer that decides whether a brilliant harness ships or stalls. Each volume stands alone; they are built to be read in order.</p>
+<p>Volume I, <i>Harness Engineering: The systems that turn a language model into work you can trust</i>, built the system around the model: tools, loops, sessions, safety, memory, evals. Volume II goes underneath: the serving layer that decides whether a brilliant harness ships or stalls. Each volume stands alone; they are built to be read in order.</p>
 <h5>About the author</h5>
 <p>Arbaz Khan is a backend and harness engineer who has spent his career in high-volume messaging systems and, lately, industrial-scale AI agent operations: more than 200 billion tokens driven through coding agents in roughly four months. He writes from the operator's chair, not the vendor's podium.</p>
 <p><b>House rules, same as Volume I:</b> no jargon without a plain-words explanation, no number without a source or a visible hedge, no chapter that ends without making you build, break, or measure something. Prices and rate limits are clearly marked dated snapshots; the formulas are forever.</p>
@@ -95,7 +95,7 @@ markers into the KDP description field (HTML view).
 
 Volume I built the system around the model. Volume II goes underneath it.
 
-**Volume I — *Harness Engineering: How to Build AI Agents That Actually Work.***
+**Volume I — *Harness Engineering: The systems that turn a language model into work you can trust.***
 The system around the model: tools, loops, sessions, safety, memory, evals. How to
 build the driver's seat.
 

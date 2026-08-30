@@ -9,8 +9,9 @@ career at the intersection of high-volume messaging systems and, lately,
 industrial-scale AI agent operations — on the order of 200 billion tokens
 driven through coding agents in four months, metered publicly because a
 claim you can't check is just a boast. He is the author of *Harness
-Engineering: How to Build AI Agents That Actually Work* and *System Design
-Mastery*, and writes from the operator's chair, not the vendor's podium.
+Engineering: The systems that turn a language model into work you can trust*
+and *System Design Mastery*, and writes from the operator's chair, not the
+vendor's podium.
 
 *Agent spawner by day, loop optimizer by night.*
 

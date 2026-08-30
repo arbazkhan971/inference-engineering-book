@@ -34,8 +34,9 @@ the driver. This book is about the engine.
 ## The book this should have been, and isn't
 
 There are books about models — how they're trained, what they know. There
-are books about harnesses — mine, *Harness Engineering: How to Build AI
-Agents That Actually Work*, is one; it teaches the system around the model.
+are books about harnesses — mine, *Harness Engineering: The systems that
+turn a language model into work you can trust*, is one; it teaches the system
+around the model.
 And there are books about GPU kernels, written for the people who build
 engines from scratch.
 

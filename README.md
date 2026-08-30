@@ -2,11 +2,11 @@
 
 **Harness Engineering Series, Volume II** · Arbaz Khan
 
-The companion volume to *Harness Engineering: How to Build AI Agents That
-Actually Work*. Vol. I built the system around the model. Vol. II opens the
-engine: batching, KV caches, speculative decoding, quantization, caching
-economics, rate limits, routing, and budgets — the serving layer that
-decides whether a brilliant agent loop ships or stalls.
+The companion volume to *Harness Engineering: The systems that turn a
+language model into work you can trust*. Vol. I built the system around the
+model. Vol. II opens the engine: batching, KV caches, speculative decoding,
+quantization, caching economics, rate limits, routing, and budgets — the
+serving layer that decides whether a brilliant agent loop ships or stalls.
 
 ## Status
 
