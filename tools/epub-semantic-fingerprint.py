@@ -2,9 +2,11 @@
 """Fingerprint reader-visible EPUB content independently of package filenames.
 
 Pandoc versions can choose different internal XHTML names and serialization.
-This fingerprint follows the OPF spine and hashes normalized reading text,
+This fingerprint follows the OPF spine and hashes normalized body text,
 heading structure, image descriptions, external links, and embedded image
-payloads. Equal output is evidence of semantic parity, not byte identity.
+payloads. EPUB-head metadata and converter-generated CSS are deliberately
+excluded because they are not reading text. Equal output is evidence of
+semantic parity, not byte identity.
 """
 
 from __future__ import annotations
@@ -65,10 +67,16 @@ with zipfile.ZipFile(args.epub) as archive:
             continue
         path = posixpath.normpath(posixpath.join(package_dir, href))
         root = ElementTree.fromstring(archive.read(path))
+        body = next(
+            (element for element in root.iter() if local_name(element.tag) == "body"),
+            None,
+        )
+        if body is None:
+            raise ValueError(f"spine document has no body: {path}")
         headings: list[list[str]] = []
         image_alts: list[str] = []
         external_links: list[str] = []
-        for element in root.iter():
+        for element in body.iter():
             name = local_name(element.tag)
             if re.fullmatch(r"h[1-6]", name):
                 headings.append([name, normalized_text(element)])
@@ -84,7 +92,7 @@ with zipfile.ZipFile(args.epub) as archive:
                     external_links.append(href_value)
         documents.append(
             {
-                "text": normalized_text(root),
+                "text": normalized_text(body),
                 "headings": headings,
                 "image_alts": image_alts,
                 "external_links": external_links,
