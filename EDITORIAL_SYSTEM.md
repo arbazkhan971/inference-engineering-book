@@ -129,9 +129,10 @@ Feynman/ELI5 pass and a new visual proof before it may return to release status.
 ## Volume II pass record — current release truth (2026-08-30)
 
 This table is authoritative for the current *Inference Engineering* release
-candidate. Machine-verifiable work is closed locally. The KDP post-upload check
-and an independent human review remain owner-only; therefore the commercial
-release is not represented as fully closed.
+candidate. Machine-verifiable work is closed on the canonical local builder and
+the reader-visible result matches independently on `ldp`. The KDP post-upload
+check and an independent human review remain owner-only; therefore the
+commercial release is not represented as fully closed.
 
 Current extent: **120,128 words**, 18 chapters plus prologue, front matter,
 appendices A–F, and back matter (27 manuscript files); **71 dated research
@@ -143,14 +144,24 @@ figures**.
 | Architecture | pass | The 18-chapter dependency map, reader promise, four-part progression, and assembled `tinyengine` path agree |
 | Developmental edit | pass | All chapters and release surfaces are present; current lint reports 18/18 chapters and 120,128 words |
 | Technical edit | pass with explicit deployment boundaries | Research/source coverage is measurable at 71 dated digests and 126 unique external linked sources. The JSONL adapter is single-writer; a post-header stream failure is terminal and cannot be transparently replayed to a fallback without duplicate-output risk |
-| Code test | pass, strict local | Strict TypeScript build; four legacy scenario scripts plus 30 named tests pass; the assembled offline demo passes |
-| Build test | pass, strict local | `STRICT_EXTERNAL=1 tools/verify.sh`: EPUBCheck 0 errors / 0 warnings, DAISY Ace 0 failures, Kindle Previewer conversion success, Enhanced Typesetting, 0 issues |
+| Code test | pass, local + `ldp` | Strict TypeScript build; four legacy scenario scripts plus 30 named tests and the assembled offline demo pass locally. On clean `ldp`, `npm ci` and the full verifier passed all four legacy suites, both attack suites at 0 failures, and 30/30 named tests |
+| Build test | pass, canonical local + `ldp` semantic parity | Local Pandoc 3.10.2 artifact passed `STRICT_EXTERNAL=1 tools/verify.sh`: EPUBCheck 0 errors / 0 warnings, DAISY Ace 0 failures, Kindle Previewer conversion success, Enhanced Typesetting, 0 issues. `ldp` passed build, release audit, and structural verification; its unavailable external validators were explicitly skipped |
 | Visual proof | pass for agent sampling | Tablet, phone, maximum font, complex diagram, pricing table, code, and e-reader grayscale sampled successfully; 34/34 figures carry semantic alt text |
 | Copyedit | pass | The prior book-wide copyedit remains in force; the current build and release audits carry the canonical metadata and updated release truth |
 | Final proof | **pending, owner-only** | Inspect the KDP-ingested artifact after upload and obtain an independent human read/reflow review. Agent visual sampling and Kindle conversion do not substitute for these checks |
 
-No `ldp` result is claimed here. Add remote evidence only after the current
-revision has been run in that environment.
+`ldp` evidence is bound to clean `main` commit
+`19aec3d1f0a651271ff648b55d6f24ae5b0c9cd2`, 0 ahead / 0 behind origin. Pandoc
+3.1.3 produced a 6,300,579-byte EPUB with SHA-256
+`0cee01e93be1021f1c4c565aea44cc7c7d908ffc61c5a4bd5bbd898dda72f25f`.
+The canonical local Pandoc 3.10.2 artifact is 6,300,284 bytes with SHA-256
+`4bc40ba8abace10e66a431b715c63c6ba916301594fcd91ffd21921e77b52ee4`.
+The byte hashes differ across Pandoc versions, but the reader-visible semantic
+fingerprint matches exactly at
+`9aacd3c0f516db228bf4c2e3a3e752699f381acf3d08dbfb3112feef78695495`:
+740,715 body-text characters, 356 headings, 35 image descriptions, 132 external
+links, and 35 raster images. This is semantic reproducibility, not a false claim
+of byte-for-byte identity.
 
 ## Historical Volume II pass record (2026-08-27/28 snapshot)
 

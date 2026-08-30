@@ -8,9 +8,10 @@ re-verification command where one exists.
 ## Current release truth — 2026-08-30 (authoritative)
 
 This section supersedes status statements in the dated history below. The
-machine-verifiable release gates pass locally; commercial completion is not
-closed because KDP post-upload inspection and an independent human review are
-owner-only and remain pending.
+machine-verifiable release gates pass on the canonical local builder and the
+reader-visible result matches independently on `ldp`; commercial completion is
+not closed because KDP post-upload inspection and an independent human review
+are owner-only and remain pending.
 
 | Surface | Current evidence |
 |---|---|
@@ -18,7 +19,9 @@ owner-only and remain pending.
 | Research and sources | **71 dated digests** and **126 unique external linked sources** in Appendix E |
 | Figures and accessibility | **34/34** Mermaid figures rendered with matched semantic alt text |
 | Companion | Strict TypeScript build; **4 legacy scenario scripts + 30 named tests** pass; the assembled offline `tinyengine` demo passes |
-| Strict local retail validation | `STRICT_EXTERNAL=1 tools/verify.sh` passed: EPUBCheck **0 errors / 0 warnings**, DAISY Ace **0 failures**, and Kindle Previewer conversion succeeded with **Enhanced Typesetting** and **0 issues** |
+| Canonical local retail artifact | Pandoc 3.10.2 produced a **6,300,284-byte** EPUB, SHA-256 `4bc40ba8abace10e66a431b715c63c6ba916301594fcd91ffd21921e77b52ee4`; `STRICT_EXTERNAL=1 tools/verify.sh` passed, including EPUBCheck **0 errors / 0 warnings**, DAISY Ace **0 failures**, and Kindle Previewer conversion with **Enhanced Typesetting** and **0 issues** |
+| `ldp` verification | Clean `main` at `19aec3d1f0a651271ff648b55d6f24ae5b0c9cd2`, **0 ahead / 0 behind** origin; clean `npm ci`; full `tools/verify.sh` passed: 18/18 chapters, 120,128 words, 4 legacy suites, both attack suites at 0 failures, 30/30 named tests, release audit, EPUB build, and structural verification. External validators were unavailable and explicitly skipped on `ldp` |
+| Cross-builder semantic parity | `ldp` Pandoc 3.1.3 produced a **6,300,579-byte** EPUB, SHA-256 `0cee01e93be1021f1c4c565aea44cc7c7d908ffc61c5a4bd5bbd898dda72f25f`. Its reader-visible semantic fingerprint exactly matched local: `9aacd3c0f516db228bf4c2e3a3e752699f381acf3d08dbfb3112feef78695495` over 740,715 body-text characters, 356 headings, 35 image descriptions, 132 external links, and 35 raster images |
 | Agent visual sampling | Passed on tablet, phone, maximum font size, a complex diagram, the pricing table, code, and e-reader grayscale |
 | Owner-only completion | **Pending:** inspect the uploaded KDP artifact after ingestion and obtain an independent human read/reflow review; neither is replaced by the agent visual sample |
 
@@ -32,8 +35,12 @@ tests:
   must not transparently replay or route to a fallback that could duplicate text
   or tool-call deltas.
 
-No `ldp` verification result is asserted in this snapshot. Remote evidence must
-be added only after that environment has actually run the current revision.
+The two EPUB byte hashes differ because the builders use different Pandoc
+versions. The Pandoc 3.10.2 local file is the canonical retail artifact; the
+exact semantic-fingerprint match is the cross-builder reproducibility proof,
+not a claim of byte-for-byte equality. `ldp` did not run EPUBCheck, DAISY Ace,
+or Kindle Previewer because those validators were unavailable there; their
+strict passing evidence belongs to the canonical local artifact above.
 
 Current re-verification entry points:
 

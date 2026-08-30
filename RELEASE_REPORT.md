@@ -60,7 +60,9 @@ observed artifact, not on page count or line count alone.
 
 ## Local canonical evidence
 
-The full strict pre-commit run completed on 2026-08-30:
+The clean canonical run completed on 2026-08-30 at engineering commit
+`19aec3d1f0a651271ff648b55d6f24ae5b0c9cd2`. Its evidence is retained under
+`build/release-evidence/`:
 
 - manuscript lint: 18/18 chapters, 27 manuscript files, 120,128 words;
 - code reflow: 58 reader-facing lines in 10 fenced blocks, all at or below the
@@ -70,17 +72,16 @@ The full strict pre-commit run completed on 2026-08-30:
   attributed receipt;
 - release audit: 18 chapters, 34/34 semantic figure descriptions, 71 dated
   digests, and 126 unique linked external sources;
-- EPUB: 6,300,284 bytes, 30 spine documents, 356 headings, 35 image
-  descriptions, 132 external links, and 35 raster images;
+- EPUB: 6,300,284 bytes, SHA-256
+  `4bc40ba8abace10e66a431b715c63c6ba916301594fcd91ffd21921e77b52ee4`,
+  30 spine documents, 740,715 normalized body-text characters, 356 headings,
+  35 image descriptions, 132 external links, and 35 raster images;
 - EPUBCheck 5.3.0: zero errors and zero warnings;
 - DAISY Ace 1.4.6: zero failures;
 - Kindle Previewer 3.106: conversion success, Enhanced Typesetting supported,
   zero conversion errors, and zero quality issues;
 - semantic fingerprint:
-  `f48d0803c1cd0baaeebe935f6c338d3d46238949f00392c70658879393c573e8`.
-
-The clean-commit release run and its retained evidence directory are recorded
-below after the repository is sealed.
+  `9aacd3c0f516db228bf4c2e3a3e752699f381acf3d08dbfb3112feef78695495`.
 
 ## Human visual evidence
 
@@ -98,10 +99,25 @@ counted as an independent-reader pass.
 
 ## Independent `ldp` reproduction
 
-Pending the pushed clean commit. The acceptance condition is a clean `ldp`
-checkout that installs the pinned companion dependencies, runs the full verifier,
-and reproduces the local reader-visible semantic fingerprint. Different EPUB
-container bytes are allowed when the installed Pandoc versions differ.
+The clean `ldp` checkout pulled commit
+`19aec3d1f0a651271ff648b55d6f24ae5b0c9cd2`, installed the pinned companion
+dependency with `npm ci`, and passed `tools/verify.sh`. It remained on clean
+`main`, zero commits ahead of or behind `origin/main`.
+
+`ldp` uses Pandoc 3.1.3, so its package bytes differ as expected: 6,300,579
+bytes, SHA-256
+`0cee01e93be1021f1c4c565aea44cc7c7d908ffc61c5a4bd5bbd898dda72f25f`.
+Its reader-visible result is identical to the Pandoc 3.10.2 local build:
+740,715 normalized body-text characters, 356 headings, 35 image descriptions,
+132 external links, 35 raster images, and semantic fingerprint
+`9aacd3c0f516db228bf4c2e3a3e752699f381acf3d08dbfb3112feef78695495`.
+
+The remote host does not have EPUBCheck, DAISY Ace, or Kindle Previewer, so
+those checks were explicitly skipped there; they passed on the canonical local
+release toolchain. The first cross-machine comparison also exposed and then
+closed a normalizer defect: converter-generated CSS in XHTML `<head>` elements
+had been hashed as if it were reading text. The corrected gate hashes only the
+spine `<body>` plus headings, links, descriptions, and image payloads.
 
 ## Honest residual boundaries
 
