@@ -73,6 +73,29 @@ Writer → Technical editor → Code tester → Book builder → Proofreader →
 Final adversarial review. Every number in the book must trace to a dated
 research digest in research/ or carry a visible hedge.
 
+## Volume-I parity and superiority bar
+
+Volume I is the floor, not a halo. Volume II is ready only when it preserves
+the same six-gate editorial discipline and improves the evidence at the
+boundaries where a serving-layer book can fail:
+
+1. The companion must execute one assembled offline request path, not merely
+   present individually plausible modules. Routing, admission, streaming,
+   metering, receipts, and session replay must meet in that path.
+2. Reader-checkable source links must meet or exceed Volume I's bibliography
+   floor, while the dated research digests remain the full claim ledger.
+3. Every diagram must have a semantic description, and the retail EPUB must
+   pass both EPUB conformance and automated accessibility validation.
+4. Retail metadata must have one machine-audited source of truth. A release
+   run must retain the commit, tool versions, artifact checksum, converter
+   output, and validator reports.
+5. The canonical local builder must produce the byte-addressed retail file;
+   an independent `ldp` checkout must reproduce its reader-visible semantic
+   fingerprint even when its packaging tool version differs.
+6. Machine proof and human proof stay separate. No ledger may call the book
+   fully proved while the checksum-bound device page-through or KDP
+   post-upload preview is still awaiting its owner.
+
 ## Definition of done
 
 A reader can: explain continuous batching at a dinner table; compute KV

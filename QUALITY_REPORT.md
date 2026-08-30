@@ -2,8 +2,54 @@
 
 Honest, checkable status of the book against the six-gate editorial system,
 per AGENTS.md ("Record honest status in PROGRESS.md and QUALITY_REPORT.md").
-Every claim below names its evidence; every gate names its re-verification
-command where one exists. Last updated: 2026-08-28, after the translation re-sync pass
+Every current claim below names its evidence; every gate names its
+re-verification command where one exists.
+
+## Current release truth — 2026-08-30 (authoritative)
+
+This section supersedes status statements in the dated history below. The
+machine-verifiable release gates pass locally; commercial completion is not
+closed because KDP post-upload inspection and an independent human review are
+owner-only and remain pending.
+
+| Surface | Current evidence |
+|---|---|
+| Manuscript | **120,128 words** across 18 chapters plus prologue, front matter, appendices A–F, and back matter (27 manuscript files) |
+| Research and sources | **71 dated digests** and **126 unique external linked sources** in Appendix E |
+| Figures and accessibility | **34/34** Mermaid figures rendered with matched semantic alt text |
+| Companion | Strict TypeScript build; **4 legacy scenario scripts + 30 named tests** pass; the assembled offline `tinyengine` demo passes |
+| Strict local retail validation | `STRICT_EXTERNAL=1 tools/verify.sh` passed: EPUBCheck **0 errors / 0 warnings**, DAISY Ace **0 failures**, and Kindle Previewer conversion succeeded with **Enhanced Typesetting** and **0 issues** |
+| Agent visual sampling | Passed on tablet, phone, maximum font size, a complex diagram, the pricing table, code, and e-reader grayscale |
+| Owner-only completion | **Pending:** inspect the uploaded KDP artifact after ingestion and obtain an independent human read/reflow review; neither is replaced by the agent visual sample |
+
+Known companion boundaries remain explicit rather than hidden behind the green
+tests:
+
+- The JSONL session adapter has a **single-writer** contract. Multiple processes
+  require external serialization or a storage backend with concurrency control.
+- A stream failure **after response headers or body bytes have been emitted** is
+  terminal for that response. The harness must surface the partial failure; it
+  must not transparently replay or route to a fallback that could duplicate text
+  or tool-call deltas.
+
+No `ldp` verification result is asserted in this snapshot. Remote evidence must
+be added only after that environment has actually run the current revision.
+
+Current re-verification entry points:
+
+```sh
+STRICT_EXTERNAL=1 tools/verify.sh
+cd companion/tinyengine && npm test && npm run demo
+python3 tools/release-audit.py --epub build/inference-engineering.epub
+```
+
+## Historical narrative through 2026-08-28
+
+Everything from this heading onward is retained as an audit trail. Historical
+phrases such as “owed” or “not started” describe the dated snapshot in which
+they were written, not the authoritative 2026-08-30 state above.
+
+Historical snapshot last updated: 2026-08-28, after the translation re-sync pass
 (iteration 89): the residual logged at iteration 86 — the 12
 plain-English-guide translations sitting 10 fixes behind the post-pedagogy
 English source — is CLOSED. All 12 languages (es fr de pt ru ar hi id tr ja
@@ -929,7 +975,7 @@ full validation chain green — the gate-6 queue is closed and the
 release candidate re-seals with this pass. Remaining gate: final proof
 (Kindle Previewer) — human, at upload time.
 
-## 1. Gate ledger
+## Historical gate ledger (closed through 2026-08-28)
 
 | Gate | Status | Evidence |
 |---|---|---|
@@ -956,7 +1002,7 @@ build/verify chain green — the gate-6 queue is now closed in full
 | Gate 5 — Code test | **PASS** | `companion/tinyengine`: strict tsc 5.9.3 clean, zero npm deps; four offline suites green — the smoke suite replays the chapters' Break-it/Prove-it cases plus the gate-6 attack repros as regressions (P1 set from iteration 58, P2 set from iteration 60), and the cadence suite replays the tester role's three nightly gates (golden set, cache-hit gate, invoice reconciliation, duplicate-row, formula-agreement, retired-task and non-finite-floor regressions) over committed fixtures (`cd companion/tinyengine && npm test`); the three operator CLIs run the same gates over the fixtures via `npm run cadence`; the gate-6 companion attack fully applied (7 P1s + 10 P2s, 2026-08-28) with `tests/attack-gate6.ts` kept as regression evidence — 10/10 P2 attacks HELD at the fixed tree, all 14 previously-held attacks still hold. Fuzz round 2 (2026-08-28) fully applied: 12/12 findings, repros wired into smoke/cadence, `tests/attack2-gate6.ts` (33 attacks) green at the fixed tree — both attack suites now run in `npm test` and `tools/verify.sh`, and round-1's by-construction C1 print now asserts the fixed contract (named error + `recordSafe` continue-path) |
 | Gate 6 — Publisher (build) | **PASS, one command** | `tools/build.sh` → EPUB OK 6.0M, validate-epub.py passes, spine/nav carry all 27 files (prologue through back matter). Retail upload additionally requires the Kindle Previewer pass (Appendix F runbook) — **owed, and the only open release item** |
 
-## 2. Numbers discipline
+## Historical numbers-discipline record
 
 - Every number traces to one of **71 dated digests** in `research/` (all
   retrieved 2026-08-27; 72 files, one undated index) or carries a visible
@@ -1006,7 +1052,7 @@ front matter), and normalization fixes:
    "essentially all of the model's weights"; the scanner over-triggers on
    book titles such as *Agents That Actually Work*).
 
-## 4. Known residuals (honest list)
+## 4. Historical residuals (as recorded before the 2026-08-30 pass)
 
 1. **Final proof owed**: Kindle Previewer pass on the retail EPUB
    (phone + e-reader profiles) — the only open release item; runbook in
@@ -1036,7 +1082,7 @@ the budget-0 reflow gate, the build, and the validator end-to-end (exit 0 on
 this host; external validators skip-announced, STRICT_EXTERNAL=1 escalates
 a skip to an error, verified exit 1).
 
-## 5. How to re-verify
+## 5. Historical re-verification recipe
 
 ```
 python3 tools/lint-manuscript.py          # structural lint

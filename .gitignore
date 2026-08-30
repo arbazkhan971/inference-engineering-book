@@ -2,3 +2,4 @@ build/
 build/mermaid-src/
 companion/tinyengine/dist/
 node_modules/
+__pycache__/

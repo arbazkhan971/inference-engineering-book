@@ -38,44 +38,110 @@ export function backoffDelayMs(attempt: number, baseMs = 1000, capMs = 20000, re
 export class TokenBucket {             // Continuous refill — the provider's meter is a bucket, not a window (ch. 15).
   private tokens: number; private last: number;
   constructor(private capacity: number, private refillPerSecond: number, now = Date.now() / 1000) {
+    if (!Number.isFinite(capacity) || capacity < 0
+      || !Number.isFinite(refillPerSecond) || refillPerSecond < 0)
+      throw new Error("token bucket capacity and refill must be finite and non-negative");
     this.tokens = capacity; this.last = now;
   }
   private fill(now: number): void {
+    if (!Number.isFinite(now)) throw new Error("token bucket clock must be finite");
     if (now < this.last) return; // non-monotonic clock (NTP step, VM resume): ignore it, never drain the bucket (gate-6 B4)
     this.tokens = Math.min(this.capacity, this.tokens + (now - this.last) * this.refillPerSecond);
     this.last = now;
   }
-  tryAcquire(n = 1, now = Date.now() / 1000): boolean { this.fill(now); if (this.tokens >= n) { this.tokens -= n; return true; } return false; }
-  credit(n: number, now = Date.now() / 1000): void { this.fill(now); this.tokens = Math.min(this.capacity, this.tokens + n); }
-  debit(n: number, now = Date.now() / 1000): void { this.fill(now); this.tokens -= n; } // overrun charge: may go negative — admission freezes until refill covers it
+  tryAcquire(n = 1, now = Date.now() / 1000): boolean {
+    if (!validAmount(n)) return false;
+    this.fill(now);
+    if (this.tokens >= n) { this.tokens -= n; return true; }
+    return false;
+  }
+  credit(n: number, now = Date.now() / 1000): void {
+    requireAmount(n); this.fill(now); this.tokens = Math.min(this.capacity, this.tokens + n);
+  }
+  debit(n: number, now = Date.now() / 1000): void {
+    requireAmount(n); this.fill(now); this.tokens -= n;
+  } // overrun charge: may go negative — admission freezes until refill covers it
+  charge(n: number, now = Date.now() / 1000): boolean {
+    requireAmount(n); this.fill(now);
+    const covered = this.tokens >= n;
+    this.tokens -= n;
+    return covered;
+  }
+  available(now = Date.now() / 1000): number { this.fill(now); return this.tokens; }
+}
+
+function validAmount(n: number): boolean { return Number.isFinite(n) && n >= 0; }
+function requireAmount(n: number): void {
+  if (!validAmount(n)) throw new Error("token amount must be finite and non-negative");
 }
 
 // Little's Law sizing: in-flight ≈ throughput × latency. Excess waits in a visible local queue, never on the wire.
 export class Semaphore {
   private queue: (() => void)[] = []; active = 0;
-  constructor(private maxInFlight: number) {}
-  async acquire(): Promise<void> {
+  constructor(private maxInFlight: number) {
+    if (!Number.isInteger(maxInFlight) || maxInFlight < 1)
+      throw new Error("maxInFlight must be a positive integer");
+  }
+  private async acquireSlot(): Promise<void> {
     if (this.active < this.maxInFlight) { this.active++; return; }
     await new Promise<void>((res) => this.queue.push(res));
-    this.active++;
   }
-  release(): void { this.active--; this.queue.shift()?.(); }
+  // Hand the occupied slot directly to the next waiter. Decrementing first
+  // creates a race in which a double release can admit two holders into one slot.
+  private releaseSlot(): void {
+    const next = this.queue.shift();
+    if (next) { next(); return; }
+    if (this.active > 0) this.active--;
+  }
+  async acquire(): Promise<{ release: () => void }> { return this.acquirePermit(); }
+  async acquirePermit(): Promise<{ release: () => void }> {
+    await this.acquireSlot();
+    let live = true;
+    return { release: () => { if (live) { live = false; this.releaseSlot(); } } };
+  }
+  async withPermit<T>(fn: () => Promise<T>): Promise<T> {
+    const permit = await this.acquirePermit();
+    try { return await fn(); } finally { permit.release(); }
+  }
   get queued(): number { return this.queue.length; }
 }
 
 // Per-provider quota ledger. Reservations match the provider's own meter arithmetic.
+export interface QuotaRequest {
+  requestId?: string;
+  maxTokens: number;
+  estimatedPromptTokens: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+}
+export interface ReservationResult { ok: boolean; reservationId?: string }
+type Reservation = { id: string; charge: number };
+
 export class QuotaLedger {
-  private books = new Map<string, { rpm: TokenBucket; tpm: TokenBucket }>();
-  // Bedrock reservations awaiting settlement, FIFO (attack2 H1/H2): reconcile
-  // consumes the oldest — a double-fire (timeout + late success) or a reconcile
-  // for a request the ledger never booked finds nothing outstanding and no-ops,
-  // so a retry wrapper cannot manufacture quota nobody paid for.
-  private outstanding = new Map<string, number[]>();
+  private books = new Map<string, { rpm: TokenBucket; tpm: TokenBucket;
+    otpm?: TokenBucket; meters: QuotaMeters }>();
+  private outstanding = new Map<string, Reservation[]>();
+  private nextReservation = 0;
   configure(m: QuotaMeters, now?: number): void {
-    this.books.set(m.provider, { rpm: new TokenBucket(m.rpm ?? 60, (m.rpm ?? 60) / 60, now), tpm: new TokenBucket(m.tpm ?? m.itpm ?? 1e6, (m.tpm ?? m.itpm ?? 1e6) / 60, now) });
+    if (m.bedrockBurndown !== undefined && !validAmount(m.bedrockBurndown))
+      throw new Error("bedrockBurndown must be finite and non-negative");
+    const rpm = m.rpm ?? 60, tpm = m.tpm ?? m.itpm ?? 1e6;
+    this.books.set(m.provider, { rpm: new TokenBucket(rpm, rpm / 60, now),
+      tpm: new TokenBucket(tpm, tpm / 60, now),
+      otpm: m.otpm === undefined ? undefined : new TokenBucket(m.otpm, m.otpm / 60, now),
+      meters: m });
   }
-  reserve(provider: string, req: { maxTokens: number; estimatedPromptTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number }, now?: number): boolean {
-    const b = this.books.get(provider); if (!b) return true;
+  reserve(provider: string, req: QuotaRequest, now?: number): boolean {
+    return this.reserveRequest(provider, req, now).ok;
+  }
+  reserveRequest(provider: string, req: QuotaRequest, now?: number): ReservationResult {
+    const b = this.books.get(provider);
+    if (!b) return { ok: true, reservationId: req.requestId };
+    // An actual-output meter can go negative after an overrun. Do not admit
+    // another generation until continuous refill has paid that debt back.
+    if (b.otpm && b.otpm.available(now) <= 0) return { ok: false };
+    const id = req.requestId ?? `${provider}:${++this.nextReservation}`;
+    if ((this.outstanding.get(provider) ?? []).some((r) => r.id === id)) return { ok: false };
     // Fields clamp at the door (gate-6 B3): a malformed negative estimate or cache-write
     // must never cancel positive terms into a zero charge — that is a free ride past the meter.
     const est = Math.max(0, req.estimatedPromptTokens);
@@ -89,29 +155,54 @@ export class QuotaLedger {
     else charge = est;                                        // gemini: input TPM only
     // Atomic reservation (gate-6 B1): a TPM miss must leave RPM untouched, and an RPM miss must
     // return the TPM tokens — a leaked slot is a phantom 429 for a request that never went out.
-    if (!b.tpm.tryAcquire(Math.max(0, charge), now)) return false; // TPM first: a miss burns nothing
-    if (!b.rpm.tryAcquire(1, now)) { b.tpm.credit(Math.max(0, charge), now); return false; }
+    if (!b.tpm.tryAcquire(Math.max(0, charge), now)) return { ok: false }; // TPM first: a miss burns nothing
+    if (!b.rpm.tryAcquire(1, now)) {
+      b.tpm.credit(Math.max(0, charge), now);
+      return { ok: false };
+    }
     if (provider === "bedrock") {
       const out = this.outstanding.get(provider) ?? [];
-      out.push(charge); this.outstanding.set(provider, out);   // booked — one reconcile settles it
+      out.push({ id, charge });
+      this.outstanding.set(provider, out);
     }
-    return true;
+    return { ok: true, reservationId: id };
+  }
+
+  // Anthropic's output meter counts actual output, not max_tokens. Feed the
+  // usage event here as it arrives; a false return means the local OTPM meter
+  // is exhausted and the next generation must wait.
+  recordOutput(provider: string, outputTokens: number, now?: number): boolean {
+    const bucket = this.books.get(provider)?.otpm;
+    if (!bucket) return true;
+    if (!validAmount(outputTokens)) {
+      const remaining = bucket.available(now);
+      if (remaining > 0) bucket.charge(remaining, now);
+      return false;
+    }
+    // The model already emitted these tokens. Even when they exceed the local
+    // balance, charge every token and carry the debt into future admission.
+    return bucket.charge(outputTokens, now);
   }
   // Bedrock books input + cache-write + max_tokens up front, then reconciles at completion
   // (final charge = input + writes + output × burndown; cache reads never counted — ch. 15's
   // worked example). Under-runs re-credit the unused reservation; OVER-runs debit the
   // difference (gate-6 B2) — output × burndown can outrun max_tokens, and a ledger that only
   // credits lets a fleet of overrunners sail past TPM with the bucket green. One reconcile
-  // settles ONE outstanding reservation, oldest first (attack2 H1/H2): with nothing
-  // outstanding it is a no-op — reconcile in completion order, once per completed request.
-  reconcile(provider: string, booked: { input: number; cacheWrite?: number; maxTokens: number }, actual: { input: number; cacheWrite?: number; output: number; burndown?: number }, now?: number): void {
+  // settles the exact request id when supplied. Legacy callers without one use
+  // FIFO, but concurrent integrations should always propagate requestId.
+  reconcile(provider: string, booked: { requestId?: string; input: number; cacheWrite?: number; maxTokens: number }, actual: { input: number; cacheWrite?: number; output: number; burndown?: number }, now?: number): void {
     const b = this.books.get(provider); if (!b || provider !== "bedrock") return;
     const out = this.outstanding.get(provider);
     if (!out || out.length === 0) return;                       // nothing booked to settle — no-op
-    out.shift();
-    const bookedTotal = booked.input + (booked.cacheWrite ?? 0) + booked.maxTokens;
-    const finalCharge = actual.input + (actual.cacheWrite ?? 0) + actual.output * (actual.burndown ?? 1);
-    const delta = finalCharge - bookedTotal;
+    const index = booked.requestId === undefined ? 0 : out.findIndex((r) => r.id === booked.requestId);
+    if (index < 0) return;                                      // duplicate or never-booked completion
+    const [reservation] = out.splice(index, 1);
+    const burndown = actual.burndown ?? b.meters.bedrockBurndown ?? 1;
+    if (![actual.input, actual.cacheWrite ?? 0, actual.output, burndown].every(validAmount))
+      return; // keep the up-front reservation charged; malformed usage must never mint credit
+    const finalCharge = actual.input + (actual.cacheWrite ?? 0) + actual.output * burndown;
+    if (!validAmount(finalCharge)) return;
+    const delta = finalCharge - reservation.charge;
     if (delta > 0) b.tpm.debit(delta, now); else b.tpm.credit(-delta, now);
   }
 }

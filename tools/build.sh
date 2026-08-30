@@ -13,6 +13,11 @@ BOOK_EDITION_LINE="${BOOK_EDITION_LINE:-Volume II · Inference Engineering}"
 # when publishing a new dated edition.
 BOOK_SOURCE_DATE_EPOCH="${BOOK_SOURCE_DATE_EPOCH:-1787702400}"
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$BOOK_SOURCE_DATE_EPOCH}"
+
+# Fail before rendering if the release identity or the measurable book claims
+# have drifted. PUBLISHING/book-metadata.yaml is the only title-page/OPF source
+# for title, subtitle, author, and language.
+python3 tools/release-audit.py
 if [[ "${SKIP_FIGURES:-0}" != "1" ]]; then
   tools/render-figures.sh
 fi
@@ -39,15 +44,13 @@ pandoc \
   --resource-path .:figures/png:. \
   --epub-cover-image figures/png/cover.jpg \
   --toc --toc-depth=2 \
+  --metadata-file PUBLISHING/book-metadata.yaml \
   --metadata identifier="$BOOK_IDENTIFIER" \
   --metadata date="$BOOK_DATE" \
   --variable date="$BOOK_EDITION_LINE" \
-  --metadata title="Inference Engineering" \
-  --metadata subtitle="Inside the Engine Room of AI Agents" \
-  --metadata author="Arbaz Khan" \
-  --metadata lang=en \
   -o build/inference-engineering.epub
 
 python3 tools/prepare-kindle-epub.py
+python3 tools/release-audit.py --epub build/inference-engineering.epub --quiet
 
 echo "OK build/inference-engineering.epub ($(du -h build/inference-engineering.epub | cut -f1))"

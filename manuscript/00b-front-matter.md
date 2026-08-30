@@ -43,6 +43,10 @@ personalities until you know their mechanics.
 trade-offs, fanout cost worksheets, and **tinyengine**, the small
 TypeScript mini-engine you build across the book's final chapters.
 
+The complete companion and the source behind every dated receipt are public
+at [github.com/arbazkhan971/inference-engineering-book](https://github.com/arbazkhan971/inference-engineering-book).
+Appendix D gives the clean-checkout commands when you are ready to run it.
+
 Chapters end with **Build it / Break it / Prove it / See it in the wild**.
 Every analogy gets a **Where the picture stops** section, because every
 analogy is wrong somewhere and you deserve to know where.

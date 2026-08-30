@@ -44,7 +44,7 @@ The contracts differ on four axes: whether you opt in, how long entries live, wh
 
 > **Provider prompt-cache semantics and pricing (mid-2026 snapshot — prices verified 2026-08-27; re-verify before budgeting)**
 >
-> | | Anthropic | OpenAI (5.6+) | OpenAI (older) | Gemini (implicit / explicit) | DeepSeek |
+> | Cache property | Anthropic | OpenAI (5.6+) | OpenAI (older) | Gemini (implicit / explicit) | DeepSeek |
 > |---|---|---|---|---|---|
 > | Opt-in | Explicit breakpoints | Automatic | Automatic | Automatic / explicit object | Automatic |
 > | Write price | 1.25× (5-min), 2× (1-hour) | 1.25× | none | none / storage $4.50 per 1M tokens/hour (Pro-class) | none |

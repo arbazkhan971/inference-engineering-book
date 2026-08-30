@@ -1,7 +1,8 @@
 # Launch copy — *Inference Engineering: Inside the Engine Room of AI Agents*
 
-> **Publishing kit 2 · launch copy.** Intended repo destination:
-> `inference-engineering-book/PUBLISHING/launch-copy.md` (directory does not exist yet).
+> **Publishing kit 2 · launch copy.** Canonical retail metadata comes from
+> `PUBLISHING/book-metadata.yaml`; this copy may describe that identity but may not
+> override it.
 >
 > **Brand voice:** Agent spawner by day, loop optimiser by night. Factual/verifiable
 > claims only — every number below traces to the manuscript, the public repo, or the
@@ -9,9 +10,8 @@
 >
 > **Inputs used:** `manuscript/00a-prologue.md`, `manuscript/00b-front-matter.md`,
 > `manuscript/zz-back-matter.md`, `GOAL.md`, `research/books-launch-playbooks.md`.
-> `Harness-Engineering-First-Edition-Source/AUTHOR_MEDIA_KIT.docx` was **skipped** —
-> binary .docx, not extractable with available tooling (task said skip if unreadable).
-> No other `research/books-*.md` files exist beside the launch playbook.
+> Volume I series facts are bound to its published identity; Volume II author facts
+> are bound to `manuscript/zz-back-matter.md`.
 
 ## Claims ledger (what copy may assert, and where it verifies)
 
@@ -131,11 +131,12 @@ The model didn't change. The engine did — queues, batches, caches, rate limits
 
 This book is about that layer.
 
-**Post 2/5 — why it exists (~274 raw · ~271 X-counted)**
+**Post 2/5 — why it exists (269 raw · 266 X-counted)**
 
-Why: I ran agents at scale and the slowdowns weren't the model. 200B tokens through coding agents in ~4 months, metered publicly at ccrank.dev/user/arbaz-khan
+Why: I ran agents at scale and the slowdowns weren't the model. 200B tokens through coding agents in ~4 months, metered at ccrank.dev/user/arbaz-khan
 
-No book explains the layer between your harness and the GPU — for drivers, not engine builders. So I wrote it.
+In a dated market scan, I found no book-length client-side guide to the layer between
+harness and GPU. So I wrote one.
 
 **Post 3/5 — what's inside (~269 raw)**
 
@@ -149,7 +150,8 @@ IV — cache-aware agent design + tinyengine, a shim you build
 
 How it was written: a fleet of 100+ GLM-5.3 instances, six editorial gates, 70+ dated, sourced research digests. Every number traces to a digest or carries a visible hedge. Manuscript, corpus, and build pipeline are public: github.com/arbazkhan971/inference-engineering-book
 
-**Post 5/5 — CTA + series + verify (~253 raw · ~250 X-counted)**
+**Post 5/5 — CTA + series + verify (~253 raw · ~250 X-counted; release-time
+only, after the retail listing is live)**
 
 Inference Engineering is out now. Volume II of the Harness Engineering series — Vol. I built the system around the model; this one goes underneath it. Read either alone; read both in order.
 
@@ -212,6 +214,6 @@ github.com/arbazkhan971/inference-engineering-book. Check our work; that's the p
   one shareable sentence (Huyen pattern), public companion repo as lead artifact
   (aie-book/dmls-book pattern), Vol. I owners respected via "stands alone, read in
   order" framing (Ousterhout pattern).
-- **Skipped input:** AUTHOR_MEDIA_KIT.docx — binary .docx; no extraction tool in this
-  environment. If its bio facts differ from `zz-back-matter.md`, back matter wins
-  (it is the published source of record).
+- **Author source of record:** if an external media kit differs from
+  `manuscript/zz-back-matter.md`, reconcile it before launch; do not silently merge
+  credentials from two versions.

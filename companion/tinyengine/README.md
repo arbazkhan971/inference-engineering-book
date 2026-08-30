@@ -1,67 +1,53 @@
-# tinyengine — the Inference Engineering companion
+# tinyengine — the assembled Inference Engineering companion
 
-Roughly eight hundred lines of TypeScript that sit between your agent loop and
-every model endpoint it calls. Every module was designed in the chapter that
-needed it; this directory is the delivery of every "Build it" in the book.
+This directory delivers the executable path behind the book's **Build it**
+sections. It is deliberately compact, but it is no longer a bag of unrelated
+snippets: `TinyEngine.call()` composes session rendering, admission, routing,
+wire-send timing, stream normalization, quota reconciliation, cost metering,
+tracing, and an attributed receipt.
 
-| Module | Chapter | Shipped lines | Owns |
-|---|---|---|---|
-| `tracer.ts` | 1–2 | 20 | TTFT, inter-token latency, the identity e2e ≈ TTFT + (N−1) × ITL |
-| `stream-normalizer.ts` | 12 | 217 | one event grammar for four provider grammars; tool-call assembly; usage extraction |
-| `cache-ledger.ts` | 14 | 158 | the money meter: four-term cost, hit rate, TTL clock, keep-alive gate, deploy hook, unknown-model continue-path |
-| `rate-scheduler.ts` | 15 | 141 | quota ledger per provider meter, token bucket, jittered retries, wave pacer |
-| `router.ts` | 16 | 133 | weighted routing with session pinning, error-class breakers, classified-error fallback |
-| `session-store.ts` | 17 | 114 | five-layer byte-exact renderer, append-only log, TTL policy, staggered spawn |
+| Module | Chapter | Owns |
+|---|---|---|
+| `engine.ts` | 18 | assembled request path, per-session turn serialization, final receipt |
+| `tracer.ts` | 1–2 | TTFT, inter-token latency, and the end-to-end identity |
+| `stream-normalizer.ts` | 12 | one event grammar for four provider grammars, tool assembly, usage |
+| `cache-ledger.ts` | 14 | four-term cost, hit rate, TTL, deploy events, mispricing path |
+| `rate-scheduler.ts` | 15 | quota reservations, OTPM debt, token buckets, permits, retry and waves |
+| `router.ts` | 16 | weighted/pinned choice, breakers, classified fallback, route receipts |
+| `session-store.ts` | 17 | deterministic prompts, append-only event store, replay, compaction |
+| `demo.ts` | 18 | credential-free executable proof of the complete path |
+| cadence CLIs | 9, 13–16 | golden-set, cache-hit, and invoice gates over offline fixtures |
 
-No dependencies. No network in tests. Policy lives in config, not code —
-prices and quotas are passed in as dated data, never hardcoded
-(see `PriceRow.date` and `QuotaMeters`).
+There are no runtime npm dependencies and no network calls in tests. Policy
+lives in dated config (`PriceRow`, `QuotaMeters`, and routing rules), not in
+hardcoded commercial constants. TypeScript is the pinned development
+dependency.
 
-## The tester cadence (Appendix D.8)
-
-Three operator CLIs beyond the instruments — the nightly role the chapters
-kept insisting on, shipped with fixtures:
-
-| Script | Chapter | Shipped lines | Owns |
-|---|---|---|---|
-| `cadence-io.ts` | — | 48 | argv flags, JSON/JSONL/CSV reads (shared plumbing; BOM tolerated) |
-| `golden-set.ts` | 9, 13 | 137 | drift canary: per-task diff vs dated baseline + pass-rate floor |
-| `cache-hit-gate.ts` | 14 | 103 | hit-rate floor over the day's usage rows; thin models not gated |
-| `invoice-reconcile.ts` | 16 | 124 | meter vs invoice within tolerance; duplicates summed; the four drift suspects named |
+## Run it from a clean checkout
 
 ```bash
-npm run cadence   # all three gates over the fixtures, reports printed in
-                  # sequence; golden-set reports the fixture's deliberate
-                  # new failure (ex-011) — that DRIFT line is the demo
+npm install
+npm test       # compile; four scripted regressions; all named node:test files
+npm run demo   # assembled offline request -> "engine ready" + full receipt
+npm run cadence
 ```
 
-Your cron supplies the two things the scripts never do: it replays the tasks
-against the pinned variant and appends result rows, and it exports the
-provider invoice. Every gate compares two artifacts you already have.
+The four scripted programs preserve the original smoke, nightly cadence, and
+two adversarial attack rounds. Thirty named contracts then target the seams
+that a broad script can miss: exact one-use wire-send timing, tool-only TTFT,
+same-session concurrency, per-request quota settlement, OTPM overruns,
+half-open leases, permanent-breaker behavior, pin isolation, safe
+validator/logger failures, and disk-backed session replay/corruption.
 
-## Run the tests
+The three cadence CLIs consume fixtures here but are intended for ordinary
+cron inputs: fresh golden-task results, a day's usage rows, and a provider
+invoice export. They compare artifacts; they do not call models or providers.
 
-```bash
-npm test        # tsc -p tsconfig.json && both suites: smoke + cadence
-```
+## Boundaries
 
-The smoke suite is every Break-it / Prove-it item from the chapters,
-replayed from fixture strings: the Portland three-fragment tool-call split
-mid-escape-sequence, the meta-only SSE event, the unknown finish reason,
-the $0.645-vs-$3.00 cache worked example, the zombie-fleet 429 classifier,
-full-jitter bounds with `Retry-After` as a floor, the garbage-200 rule
-(fallbacks do not fire), and the byte-exact session render hash. The
-cadence suite replays the nightly instruments over `fixtures/` — the golden
-set's per-task drift diff, the hit-rate floor with thin-data exemption, and
-invoice reconciliation against all four drift suspects.
-
-`env.d.ts` holds minimal type shims for the four `node:` modules used
-(crypto, assert/strict, fs, process), so the
-project type-checks with a bare `tsc`. Delete it if you install `@types/node`.
-
-## What it is not
-
-Not a framework, not an SDK, not production-hardened. It is a teaching
-instrument: every dial has exactly one instrument that can see it, every
-crossing is metered, and every policy value arrives from dated config so you
-can watch it age. Read the chapters first; the code is the punctuation.
+This is a teaching engine, not a production SDK. `JsonlSessionEventStore` is a
+single-writer append log and does not coordinate multiple processes. A stream
+iterator failure after response headers bubbles to the caller; it is not fed
+back into Router breaker/fallback state. Real integrations also own transport
+authentication, retry idempotency, telemetry export, and provider-specific
+schema validation.

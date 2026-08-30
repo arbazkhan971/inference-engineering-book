@@ -126,7 +126,33 @@ reopened whenever a reader identifies a
 visible comprehension or design failure. The current revision requires a new
 Feynman/ELI5 pass and a new visual proof before it may return to release status.
 
-## Volume II pass record (Inference Engineering)
+## Volume II pass record — current release truth (2026-08-30)
+
+This table is authoritative for the current *Inference Engineering* release
+candidate. Machine-verifiable work is closed locally. The KDP post-upload check
+and an independent human review remain owner-only; therefore the commercial
+release is not represented as fully closed.
+
+Current extent: **120,128 words**, 18 chapters plus prologue, front matter,
+appendices A–F, and back matter (27 manuscript files); **71 dated research
+digests**; **126 unique external linked sources**; and **34/34 semantic
+figures**.
+
+| Pass | Status | Evidence |
+|---|---|---|
+| Architecture | pass | The 18-chapter dependency map, reader promise, four-part progression, and assembled `tinyengine` path agree |
+| Developmental edit | pass | All chapters and release surfaces are present; current lint reports 18/18 chapters and 120,128 words |
+| Technical edit | pass with explicit deployment boundaries | Research/source coverage is measurable at 71 dated digests and 126 unique external linked sources. The JSONL adapter is single-writer; a post-header stream failure is terminal and cannot be transparently replayed to a fallback without duplicate-output risk |
+| Code test | pass, strict local | Strict TypeScript build; four legacy scenario scripts plus 30 named tests pass; the assembled offline demo passes |
+| Build test | pass, strict local | `STRICT_EXTERNAL=1 tools/verify.sh`: EPUBCheck 0 errors / 0 warnings, DAISY Ace 0 failures, Kindle Previewer conversion success, Enhanced Typesetting, 0 issues |
+| Visual proof | pass for agent sampling | Tablet, phone, maximum font, complex diagram, pricing table, code, and e-reader grayscale sampled successfully; 34/34 figures carry semantic alt text |
+| Copyedit | pass | The prior book-wide copyedit remains in force; the current build and release audits carry the canonical metadata and updated release truth |
+| Final proof | **pending, owner-only** | Inspect the KDP-ingested artifact after upload and obtain an independent human read/reflow review. Agent visual sampling and Kindle conversion do not substitute for these checks |
+
+No `ldp` result is claimed here. Add remote evidence only after the current
+revision has been run in that environment.
+
+## Historical Volume II pass record (2026-08-27/28 snapshot)
 
 Manuscript complete 2026-08-27: 18/18 chapters + prologue + appendices A–F,
 111k+ words, all numbers traced to 71 dated digests. Status by pass:

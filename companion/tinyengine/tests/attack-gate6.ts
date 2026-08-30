@@ -168,13 +168,24 @@ const eventsOf = (n: StreamNormalizer, lines: string[]) => lines.flatMap((l) => 
 
   // B5: Semaphore over-release over-admits
   const s = new Semaphore(1);
-  s.acquire(); s.release(); s.release(); // double release with nobody waiting
-  const a1 = s.acquire(); const a2 = s.acquire();
-  void a1; void a2;
-  if (s.active > 1) {
-    finding("B5", "P2", `Semaphore double-release over-admits (active=${s.active} with max 1)`,
-      "release() decrements unconditionally; an extra release() (e.g. in a finally that also runs on a manual release path) makes active negative and every later acquire() is instant. Fix: assert active>0 / clamp at 0.");
-  } else pass("B5", "over-release clamped");
+  const first = await s.acquire();
+  let secondEntered = false;
+  const second = s.acquire().then((permit) => { secondEntered = true; return permit; });
+  await Promise.resolve();
+  first.release(); first.release(); // one-use permit: the duplicate is a no-op
+  const secondPermit = await second;
+  let thirdEntered = false;
+  const thirdWaiter = s.acquire().then((permit) => { thirdEntered = true; return permit; });
+  await Promise.resolve();
+  if (!secondEntered || thirdEntered) {
+    finding("B5", "P2", "Semaphore double-release admitted two holders into one slot",
+      "one-use permits must ignore duplicate release and hand one occupied slot to exactly one waiter.");
+  } else {
+    secondPermit.release();
+    const thirdPermit = await thirdWaiter;
+    thirdPermit.release();
+    pass("B5", "over-release clamped and the second holder waited");
+  }
 
   // B6: classify + backoff edges (contract spot-checks)
   assert.deepEqual(classify(429, {}, "insufficient_quota"), { kind: "billing", retryable: false });

@@ -52,7 +52,7 @@ The reusable structure underneath every row (chapter 2 and 16's metering): **cos
 
 One mechanism — byte-exact KV-prefix reuse (chapter 6) — under four contracts (chapter 14); each Opt-in cell names the provider's configuration knob:
 
-| | Anthropic | OpenAI | Gemini | DeepSeek |
+| Cache property | Anthropic | OpenAI | Gemini | DeepSeek |
 |---|---|---|---|---|
 | Opt-in? | Explicit breakpoints (`cache_control`) | Automatic (explicit on 5.6+) | Implicit + explicit `caches.create` | Automatic (disk) |
 | Min prefix | 512–4,096 by model (512 Opus 5; 1,024 Sonnet 4.5+/5; 4,096 Haiku 4.5) | 1,024 visible tokens (5.6+); 2,048 older | 2,048 (2.5 Pro/Flash); 4,096 (3.x) | — |
@@ -67,7 +67,7 @@ Break-even arithmetic the docs state themselves: one read repays the 1.25× writ
 
 The meters differ enough that one shared token counter mispredicts throttling on three of four providers (chapter 15). Reading the table: **RPM** requests/minute · **TPM** tokens/minute · the **I/O prefix** means input/output tokens · **D** per day · **IPM** images/minute · **audio-min** audio minutes/minute. And Bedrock's "burndown": each output token counts against quota at a multiplied rate — up to 15 tokens' worth per output token, the multiplier set per model family; chapter 15 works the arithmetic.
 
-| | OpenAI | Anthropic | Gemini | Bedrock |
+| Quota property | OpenAI | Anthropic | Gemini | Bedrock |
 |---|---|---|---|---|
 | Metrics | RPM, TPM, RPD, IPM, audio-min | RPM, ITPM, OTPM | RPM, input TPM, RPD | Per-model token quota |
 | Scope | Org + project (not per key); some families share pools (3.5M TPM documented) | Per model class; families share pools | Per project; resets midnight Pacific | Per model |
@@ -106,7 +106,7 @@ Provider finish-reason vocabularies diverge enough to break schemas (one provide
 
 ## C.7 Batch and priority lanes
 
-| | OpenAI | Anthropic | Google |
+| Lane property | OpenAI | Anthropic | Google |
 |---|---|---|---|
 | Batch discount | 50% | 50% on all token usage | 50% |
 | Window | 24 h (only value) | ≤24 h, most finish <1 h | 24 h SLO |

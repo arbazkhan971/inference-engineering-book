@@ -11,21 +11,32 @@ Prepared 2026-08-27 · Publishing kit 1 of the launch sequence.
 
 ---
 
-## 1. Title / Subtitle — 3 variants
+## 1. Locked retail identity
+
+**Locked retail metadata:** Title **Inference Engineering** · Subtitle *Inside the
+Engine Room of AI Agents* · Author **Arbaz Khan** · Language **English (`en`)**.
+The machine-readable source of truth is `PUBLISHING/book-metadata.yaml`; the build,
+KDP form, cover, and launch copy must use it without improvisation. Variants B and C
+below are retained only as positioning research, not as upload options for this
+edition.
 
 | # | Title | Subtitle | Digest basis |
 |---|-------|----------|--------------|
-| **A (current)** | **Inference Engineering** | *Inside the Engine Room of AI Agents* | **[PW]** warns: exact-title collision with Kiely/Baseten's 2026 *Inference Engineering*, which "will dominate search for the phrase." **[PW]** prescription: "differentiate by subtitle and framing" — the current subtitle does this (agents + engine-room framing, no competitor uses it). **[FM]** confirms the engine-room identity is the book's established voice. Keep only if launch speed matters more than owning exact-match search. |
-| **B (collision-dodge, series-led)** | **Inference Engineering for AI Agents** | *The Harness Engineer's Guide to LLM Serving, Latency, and Cost* | **[PW]:** the verified wedge is "the harness/agent engineer as primary reader… from the client side of the contract," and "harness engineering is now industry vocabulary" (Fowler, OpenAI, Anthropic, LangChain) yet unowned by any serving book. "for AI Agents" breaks exact-match collision while keeping the term; "Harness Engineer's Guide" plants the series flag. **[LP]:** Huyen's Apr-2024 one-line tether ("builds upon…") is the proven series-announce move — this subtitle performs it. **[FM]:** "You build agents, or you pay for them" is literally the reader promise. |
-| **C (clean-space, term-free)** | **The LLM Engine Room** | *What Happens to Your Agent's Tokens After the API Call — Inference Engineering, Volume II* | **[MD]:** inference/serving engineering is "thin" — "no dedicated title appeared in the AI or NLP bestseller nodes"; a distinctive brandable title can own the space outright instead of fighting Baseten for the phrase **[PW]**. "Engine room" is already the book's identity **[FM]**; "After the API Call" states the client-side wedge in plain words **[PW]**. Series continuity preserved via subtitle tail + series field **[LP]**. Trade-off: abandons the exact-match term "inference engineering" that **[PW]** says is now contested vocabulary. |
+| **A (locked)** | **Inference Engineering** | *Inside the Engine Room of AI Agents* | **[PW]** warns of an exact-title collision with Kiely/Baseten's 2026 *Inference Engineering* and prescribes differentiation by subtitle and framing. The agent-specific engine-room subtitle, Volume II series identity, cover hook, and canonical identifier now provide that differentiation as one consistent retail package. |
+| **B (archived exploration)** | **Inference Engineering for AI Agents** | *The Harness Engineer's Guide to LLM Serving, Latency, and Cost* | **[PW]:** the verified wedge is "the harness/agent engineer as primary reader… from the client side of the contract," and "harness engineering is now industry vocabulary" (Fowler, OpenAI, Anthropic, LangChain) yet unowned by any serving book. This direction informed the positioning, but it is not the title of this edition. |
+| **C (archived exploration)** | **The LLM Engine Room** | *What Happens to Your Agent's Tokens After the API Call — Inference Engineering, Volume II* | **[MD]** identifies a thin inference/serving category and **[FM]** establishes the engine-room metaphor. This direction informed the cover language, but it is not the title of this edition. |
 
-**Recommendation:** Variant **B** — it is the only variant that simultaneously (a) keeps the rising category term, (b) neutralizes the Baseten exact-title collision per **[PW]**, and (c) front-loads "AI Agents," the highest-traffic reader intent **[FM]**. Variant A remains acceptable as fallback if subtitle-only differentiation is deemed sufficient.
+**Recommendation:** Variant **A** is locked for this edition. It keeps the category
+term while the subtitle, series identity, cover hook, and launch copy carry the
+client-side AI-agent wedge. A title change now would split the OPF metadata, cover,
+public repository, and retail listing; revisit the archived alternatives only for a
+future edition with a new identifier.
 
 ---
 
 ## 2. Seven KDP keywords (high-traffic, low-competition)
 
-KDP gives exactly 7 backend keyword slots, ≤50 characters each, best as 2–3-word phrases; avoid words already in title/subtitle/categories **[KDP: G201298500, G201743260]**. All seven below avoid repeating title/subtitle terms under Variant B.
+KDP gives exactly 7 backend keyword slots, ≤50 characters each, best as 2–3-word phrases; avoid words already in title/subtitle/categories **[KDP: G201298500, G201743260]**. All seven below avoid repeating the locked Variant-A title and subtitle.
 
 | # | Keyword (chars) | Why — digest basis |
 |---|-----------------|--------------------|
@@ -37,7 +48,10 @@ KDP gives exactly 7 backend keyword slots, ≤50 characters each, best as 2–3-
 | 6 | `model routing and budgets` (25) | **[MD]** thin list includes GPU economics; **[PW]** ch16 seam (routing/budgets from the API-consuming side vs Johnson's policy checklists). **[FM]** Part III. |
 | 7 | `quantization speculative decoding` (33) | **[MD]** thin-coverage list names quantization. **[PW]:** engine books cover it, but none connects it to harness design — the differentiator is our harness-controls close per chapter. **[FM]** Part II, ch8–9. |
 
-**Swap rule:** if Variant A or C is chosen instead of B, add `building ai harnesses` (21) in place of #3 or #5 — **[PW]** names "harness" as the series keyword to lean on, and it is absent from A/C subtitles.
+**Series-keyword option:** if the live KDP keyword report shows that the Series field
+does not surface the Harness Engineering connection, test `building ai harnesses`
+(21) in place of #3 or #5. That is a backend discoverability experiment, not a title
+change.
 
 **Compliance note:** no brand names (vLLM, CUDA, etc.) used, per KDP keyword guidelines **[KDP: G201298500]**; all seven are accurate content descriptors, which KDP requires.
 
@@ -97,7 +111,11 @@ Cross-check: **[MD]** cites BSR #25,000 → ~$965/mo Kindle royalty, implying ~5
 - **Royalty math [KDP: G201834330, royalty-calculator]:** 60% of list minus print cost (60% tier applies at list ≥ $9.99). At an assumed ~450 pp B&W (mid-comps): print cost ≈ $0.85 + 450 × $0.012 ≈ **$6.25** (one calculator uses $1.00 base → $6.40; range noted).
   - $59.99 → 0.60 × 59.99 − $6.25 = **$29.74/copy**
   - $54.99 → $26.74/copy (the $5 list cut costs $3.00/copy in royalty — not worth it)
-- **Flag:** actual page count is TBD (manuscript in flight); re-run the calculator at final extent. If >500 pp, hold $59.99 anyway — **[MD]:** "Vol. II need not exceed ~500 pp," and Manning's 368-pp Raschka holds the same $59.99 anchor.
+- **Flag:** the manuscript is complete, but print page count remains unknown until a
+  trim-size-specific print interior is generated. Re-run KDP's calculator against
+  that final interior before locking the paperback price. If the extent exceeds 500
+  pages, revisit both print cost and list price rather than carrying the estimate
+  forward silently.
 
 ---
 

@@ -31,23 +31,24 @@ Old friends ride along without re-introduction: the **four-bucket usage events**
 
 > **ELI5:** A ship's bridge does not talk to the engines directly. The captain rings a telegraph — "ahead half" — and the engine room decides which engine, which throttle, whether the port one is cooling down, and what the fuel log should record. The bridge never learns the details; it learns the *answer*, plus a receipt. Your agent loop is the bridge. tinyengine is the engine room: one telegraph cable in, one answer and one itemized receipt out, and between them, six duty officers who each watch exactly one gauge.
 
-Here is the whole companion in one sentence: **tinyengine is roughly eight hundred lines of TypeScript — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — that sit between your agent loop and every model endpoint it calls.** Each part was designed in the chapter that needed it, at the size that chapter estimated (the shipped companion, itemized in Appendix D, lands about nine percent over the sum of those estimates — two adversarial code passes kept adding boundary guards, and guards are lines too):
+Here is the whole companion in one sentence: **tinyengine is an inspectable TypeScript request path — a tracer, a normalizer, a ledger that doubles as the money meter, a scheduler, a router, and a session store — between your agent loop and every model endpoint it calls.** `TinyEngine` is the assembly, not a seventh policy instrument: it wires those six components to an injected transport and returns one answer with one attributed receipt.
 
-| Instrument | Built in | Lines | Watches one gauge |
-|---|---|---|---|
-| Call tracer | Chapter 1 | ~10 | TTFT, inter-token latency (ITL), the identity e2e (end-to-end) ≈ TTFT + (N−1) × ITL, where N is the reply's token count |
-| StreamNormalizer | Chapter 12 | ~150 | One event grammar: `text_delta`, `tool_call_delta`, `usage`, `stop_reason` |
-| CacheLedger | Chapter 14 | ~130 | Hit rate, write amortization, TTL (time to live) clocks, four-term cost |
-| RateScheduler | Chapter 15 | ~120 | Quota ledgers, token bucket, retry caps, wave pacing |
-| Router | Chapter 16 | ~150 | Routing table, breakers, fallback chains, price-table version |
-| SessionStore | Chapter 17 | ~160 | The byte-exact session archive, renderer, TTL policy, spawn path |
+| Instrument | Built in | Watches one gauge |
+|---|---|---|
+| Call tracer | Chapter 1 | TTFT, inter-token latency (ITL), the identity e2e (end-to-end) ≈ TTFT + (N−1) × ITL, where N is the reply's token count |
+| StreamNormalizer | Chapter 12 | One event grammar: `text_delta`, `tool_call_delta`, `usage`, `stop_reason` |
+| CacheLedger | Chapter 14 | Hit rate, write amortization, TTL (time to live) clocks, four-term cost |
+| RateScheduler parts | Chapter 15 | Quota ledgers, token bucket, retry caps, wave pacing |
+| Router | Chapter 16 | Routing table, breakers, fallback chains, route receipt |
+| SessionStore | Chapter 17 | The byte-exact session archive, renderer, replay, TTL policy, spawn path |
 
 Follow one request through the room:
 
 ```mermaid
 graph LR
-    A[Agent loop] --> B[Prompt assembler<br/>five layers, byte-frozen]
-    B --> C[RateScheduler<br/>quota ledger + wave pacer]
+    A[Agent loop] --> X[TinyEngine.call<br/>one request + one receipt]
+    X --> B[SessionStore<br/>append + render five layers]
+    B --> C[QuotaLedger + Semaphore<br/>reserve + admit]
     C --> D[Router<br/>table, breakers, fallbacks]
     D --> E1[Hosted provider A]
     D --> E2[Hosted provider B]
@@ -57,19 +58,21 @@ graph LR
     E3 --> F
     F --> G[CacheLedger<br/>the meter: four buckets, attribution]
     G --> I[SessionStore]
-    F -.->|TTFT + ITL trace| A
+    F -.->|TTFT + ITL trace| X
     G -.->|prices lifecycle events| B
     I -.->|renders next turn| B
+    I --> X
+    X -->|answer + attributed receipt| A
 ```
 
 Read it as the chapter numbers taught it, numbered in the diagram's order:
 
-1. The agent hands over an intent — "complete this turn, guarantee tier strict, lane interactive."
-2. The **prompt assembler** (the session store's renderer) lays the turn out in the five-layer order chapter 17 froze: tools, system, static context, transcript, volatile tail — with breakpoints placed where chapter 14 put them.
-3. The **RateScheduler** checks the request against the per-provider quota ledger chapter 15 built — OpenAI's `max_tokens` reservation, Anthropic's split meters and cache-read exemption, Bedrock's burndown — and if a fanout is running, the wave pacer spaces it.
-4. The **router** picks the endpoint from chapter 16's table: weights, guarantee tier, session pinning, breaker states.
-5. The endpoint — hosted or, as section 18.4 will argue, your own — streams back in whatever grammar it speaks, and the **normalizer** flattens it to the four streaming events plus their two finish-time markers; the **tracer** stamps them.
-6. The **CacheLedger** — the assembly's money meter — prices them into four exclusive buckets, attributes the spend, and updates the session's cache arithmetic; the **SessionStore** appends the turn and renders the next one.
+1. The agent calls `TinyEngine.call` with an alias, session id, template, user content, token estimates, and a response ceiling. Calls for the same session serialize as complete turns, so two concurrent callers cannot interleave their user/assistant transcript; different sessions may proceed up to the global semaphore limit.
+2. The **SessionStore** appends the user message and renders the five-layer prompt chapter 17 froze: tools, system, static context, transcript, volatile tail.
+3. The **router** makes the actual weighted or pinned choice. Immediately before each transport attempt, the quota ledger atomically reserves that provider's RPM/token charge under a request-and-deployment id; a rejected reservation takes a local fallback path without a wire call and without poisoning the endpoint's breaker.
+4. The endpoint — hosted or, as section 18.4 will argue, your own — streams back in whatever grammar it speaks. The transport stamps the exact wire-send boundary for the successful attempt; the **normalizer** flattens the response to the four streaming events plus their two finish-time markers, and the **tracer** derives TTFT and ITL from those timestamps. Failed routing attempts and local admission time do not inflate the successful endpoint's TTFT.
+5. The **CacheLedger** prices the normalized usage into four exclusive buckets. The quota ledger debits Anthropic's actual output bucket or reconciles the exact Bedrock reservation with burndown. The **SessionStore** appends the assistant text.
+6. `TinyEngine` returns the text, normalized events, trace, and one receipt containing the request id, prompt hash, exclusive usage, cost, price-table version, and the router's exact deployment/selection record.
 
 The loop closes.
 
@@ -79,7 +82,7 @@ Three properties make the assembly more than the sum of its parts:
 
 **Every crossing is observable.** The agent sees one grammar. The meter sees every token. Nothing crosses a boundary without leaving an event — which means the harness can be audited end to end, the way chapter 16's worksheet audited a fanout and chapter 17's ledger audited a session. The assembly's defining feature is not any single instrument; it is that *there is no uninstrumented gap*.
 
-**Policy lives in config, not code.** Prices, quotas, routing weights, TTL buckets, template versions — all loaded from dated configuration files, never hard-coded. This is chapter 14's price-table discipline generalized: when a provider reprices or re-limits, you edit a file with a date on it, and the diff is itself an event your meter can see. The alternative — numbers scattered through eight hundred lines — is how a repricing becomes a quiet 40% bill surprise.
+**Policy lives in config, not code.** Prices, quotas, routing weights, and template versions arrive as configuration, with commercial tables carrying dates. This is chapter 14's price-table discipline generalized: when a provider reprices or re-limits, you edit data with a date on it, and the changed version travels in every route receipt. The alternative — commercial numbers scattered through implementation files — is how a repricing becomes a quiet 40% bill surprise.
 
 What the assembly is *not* matters just as much. It is not a framework you install; it is a pattern you implement. It is not clever — there is no scheduling algorithm in here more advanced than a token bucket and a table lookup. The engine's own sophistication — continuous batching, paged KV, speculative decoding — stays rented on the other side of the endpoint, whether that endpoint is a provider's region or a llama.cpp server on a machine under your desk. The shim's entire job is to hold the contract steady while everything behind it moves.
 
@@ -157,7 +160,7 @@ Here is the checklist the whole book has been writing, compressed to what you ca
 **Contract lines (router):**
 1. Every model referenced by *alias*, never by literal ID (chapter 16) — and every alias resolved by a pinned deployment with a version and a date.
 2. Quarterly re-benchmark on the golden set: your pinned model's quality today is a measurement, not a memory (chapters 1, 9).
-3. Breaker drill: inject a 429 storm (over-quota rejections) and a slow-but-200 brownout in staging; verify trips, fallbacks, and the all-open bypass (every breaker tripped) *log loudly* rather than dead-end (chapter 16 — and alert on cost-per-completed-task, because breakers cannot see dimming lights).
+3. Breaker drill: inject a transient overload storm and a slow-but-200 brownout in staging; verify trips, fallbacks, and the finite-cooldown all-open bypass log loudly. Then inject permanent auth failures and verify they fail closed with a human-action log rather than bypassing (chapter 16 — and alert on cost-per-completed-task, because breakers cannot see dimming lights).
 
 **Cache lines (session store and ledger):**
 4. Byte-exactness in CI (continuous integration): store, render, hash; resume, render, hash; assert equality. Golden-file render across library versions (chapter 17).
@@ -199,7 +202,11 @@ Monday morning, do this: wrap one real call with three timestamps (chapter 1, te
 
 The bridge, the kitchen, the van, the checklist — each earns its keep, and each breaks somewhere specific:
 
-**The engine room is not a product.** Roughly eight hundred lines of policy code is what the assembly is; it is not a framework, and it will not absorb your judgment calls for you. Which lane is sensitive, which golden set matters, what an acceptable hit-rate gate is — those decisions ride along unautomated. The duty officers watch gauges; the captain still has to want the right thing.
+**The engine room is not a product.** The assembly is compact policy code, not a framework that absorbs judgment calls for you. Which lane is sensitive, which golden set matters, what an acceptable hit-rate gate is — those decisions ride along unautomated. The duty officers watch gauges; the captain still has to want the right thing.
+
+**The shim is not a distributed coordinator.** `JsonlSessionEventStore` is an append-only, single-writer file with no cross-process lock. It is durable for one owner; two processes appending the same log can race the sequence and corrupt the boundary. Put a serialized database or log service behind `SessionEventStore` before multiple workers share sessions.
+
+**The router owns the response decision, not a dying stream body.** Once a successful response has returned headers and its iterator begins, a later iterator error bubbles to the caller. tinyengine does not feed that failure back into the router's breaker or automatically fall back, because another deployment could duplicate a partially delivered answer or tool call. That is the safe replay boundary — and it means your transport telemetry must count post-header stream failures separately.
 
 **Home cooking is not free cooking.** The local kitchen skips the per-dish bill and then hands you the grocery run: quant re-evals, ops pager, quality drift on a ladder rung, and a bandwidth ceiling no marketing slide lifts. "Free inference" is electricity plus maintenance plus the eval farm you now owe yourself (chapter 9). The crossover arithmetic prices the taxi honestly; price the van honestly too.
 
@@ -220,15 +227,19 @@ The bridge, the kitchen, the van, the checklist — each earns its keep, and eac
 
 ### Build it
 
-The assembly itself — Appendix D owns the full companion guide with the code; this chapter's job is the wiring order. Start with the tracer (ten lines, chapter 1) wrapping one real call. Add the normalizer (chapter 12) so all providers speak one grammar. Add the CacheLedger (chapter 14, fed by chapter 12's usage events) — the money meter — so every event is priced. Add the RateScheduler (chapter 15) so the fleet stops tripping its own quota. Add the router (chapter 16) so an endpoint can fail without failing you. Add the SessionStore (chapter 17) so sessions render byte-exact across days. Then — the only new line this chapter adds — a `local` deployment entry pointing at a llama.cpp or Ollama endpoint with its own dated price row (electricity, amortized), its own breaker (the machine can brown out too), and its own golden-set lane. Roughly eight hundred lines; every one of them specified in an earlier chapter.
+The assembly itself ships in `engine.ts`. `TinyEngine` accepts dated prices and quotas, route rules, an injected transport, provider stream grammars, concurrency, validation, clock, randomness, and an optional `sessionEventStore`. Its one call path appends and renders the session, reserves quota under an exact request id, executes the router's real choice and fallbacks, normalizes the returned stream from the successful wire-send timestamp, meters usage and cost, reconciles output quota, appends the answer, and returns the result with an attributed receipt. Pass `JsonlSessionEventStore` through that config field when byte-exact replay must survive process restarts; the in-memory store is the lightweight default, and `SessionStore.has()` prevents a replayed session from being created twice.
+
+`demo.ts` is the executable proof with no credentials or network: one fake deployment returns fixture SSE lines, and the printed JSON contains `engine ready` plus its route, usage, cost, prompt hash, and price-table version. Run it with `npm run demo`. A local llama.cpp or Ollama endpoint is then a deployment entry with its own dated price row (electricity, amortized), breaker, and golden-set lane — no alternate architecture required.
 
 ### Break it
 
-Kill each instrument in turn and watch what fails silently. Stop the meter: run one day with pricing disabled — can anyone tell you what the day cost? Break one wire in the normalizer's finish-reason map to `unknown`: does the agent loop hang on a stop it never heard? Open the router's breakers all at once: does the bypass *log loudly*, or dead-end with a shrug? Point the scheduler's ledger at last quarter's quota sheet while the provider changed meters: what breaks first, the 429s or your forecast? Every silent failure you can produce in staging is one that cannot surprise you in production.
+Kill each instrument in turn and watch what fails silently. Stop the meter: run one day with pricing disabled — can anyone tell you what the day cost? Break one wire in the normalizer's finish-reason map to `unknown`: does the agent loop hang on a stop it never heard? Throw halfway through a response's stream iterator: the call must reject without an automatic fallback or breaker mutation, and your caller must decide what to do with the partial turn. Open every finite-cooldown breaker: does the bypass *log loudly*? Open every permanent auth breaker: does the router stop asking? Point the scheduler's ledger at last quarter's quota sheet while the provider changed meters: what breaks first, the 429s or your forecast? Every silent failure you can produce in staging is one that cannot surprise you in production.
 
 ### Prove it
 
-The end-to-end proof is three scripts on a timer. Nightly: the golden set across every live route including local, the cache-hit gate on a scripted session, and invoice reconciliation against the meter — lines 5, 10, 12, 13 of the checklist, automated. Weekly: the byte-exactness hash across a stored session resumed cold, plus one forced fallback walk on a canary alias. Quarterly: re-run the crossover arithmetic of section 18.4 with current rental and per-token rates, and re-benchmark every pinned deployment. When all three rings of the cadence pass, you can answer the only three questions an operator is ever really asked: what did it cost, why was it slow, and is it still good?
+Start with the offline contract: `npm test` compiles the companion, runs the scripted regression programs, and discovers every named `node:test` contract file; `npm run demo` executes the assembled request path without credentials or a network. The assembly tests force a classified failure, verify fallback, streaming, metering, session pinning, durable restart, and same-session turn serialization. The router tests assert weighted choice, pin isolation, local-quota isolation, the finite/permanent all-open split, single-probe half-open behavior, and exact receipts; the quota tests settle request ids out of order and carry output debt; the session tests replay a durable JSONL log and attack corruption.
+
+Then run the three production scripts on a timer. Nightly: the golden set across every live route including local, the cache-hit gate on a scripted session, and invoice reconciliation against the meter — lines 5, 10, 12, 13 of the checklist, automated. Weekly: the byte-exactness hash across a stored session resumed cold, plus one forced fallback walk on a canary alias. Quarterly: re-run the crossover arithmetic of section 18.4 with current rental and per-token rates, and re-benchmark every pinned deployment. When all three rings of the cadence pass, you can answer the only three questions an operator is ever really asked: what did it cost, why was it slow, and is it still good?
 
 ### See it in the wild
 

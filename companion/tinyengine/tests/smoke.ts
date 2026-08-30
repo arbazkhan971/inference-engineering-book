@@ -329,6 +329,7 @@ function makeRouter(impl: (id: string) => Promise<{ status: number; body: unknow
   const logs: string[] = [];
   const ledger = new CacheLedger(PRICES);
   const r = new Router(rules, {
+    random: () => 0,
     log: (m) => logs.push(m),
     cacheLedger: ledger,
     validate: (body) => body !== "GARBAGE",
@@ -365,11 +366,7 @@ function makeRouter(impl: (id: string) => Promise<{ status: number; body: unknow
 {
   // A broken session pin is recorded as the cache event it is.
   const { r, ledger } = makeRouter(async () => ({ status: 200, body: "ok" }));
-  for (let i = 0; i < 50 && (r as any).pins.get("sess-9") !== "primary"; i++) {
-    (r as any).pins.delete("sess-9"); // re-roll the weighted pick until it lands on the primary
-    r.pick("extract", "sess-9");
-  } // pin resolves at session start
-  assert.equal((r as any).pins.get("sess-9"), "primary");
+  await r.execute("extract", {}, "sess-9"); // a pin commits only after endpoint success
   (r as any).breakers.get("primary").report({ cls: "rate_limit" }); // bench the pinned deployment
   r.pick("extract", "sess-9");                       // pin breaks → cache event + re-pick
   assert.ok(ledger.events.some((e) => e.kind === "deploy" && /pin broke/.test(e.note ?? "")), "pin break priced");

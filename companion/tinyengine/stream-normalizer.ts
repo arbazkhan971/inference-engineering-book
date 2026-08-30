@@ -4,7 +4,7 @@ export type Provider = "openai-chat" | "openai-responses" | "anthropic" | "gemin
 export type StopReason = "stop" | "tool_call" | "length" | "filtered" | "paused" | "unknown";
 export type Event =
   | { type: "text_delta"; text: string; ts: number; ttftSeconds?: number }
-  | { type: "tool_call_delta"; callId: string; name?: string; fragment: string; ts: number }
+  | { type: "tool_call_delta"; callId: string; name?: string; fragment: string; ts: number; ttftSeconds?: number }
   | { type: "tool_call"; callId: string; name: string; args: object; ts: number }   // assembled once, at finish
   | { type: "usage"; freshIn: number; cachedIn: number; cacheWriteIn: number; out: number; reasoning: number; ts: number; incomplete?: true }
   | { type: "stop_reason"; value: StopReason; raw?: string; ts: number }
@@ -20,13 +20,13 @@ const FINISH: Record<string, StopReason> = {
 class ToolCallAccumulator {
   private calls = new Map<string, { name: string; parts: string[] }>();
   private finished = false; // assemble once: a second finish or a late fragment is an ended-stream artifact (attack2 G1)
-  add(callId: string, name: string | undefined, fragment: string): Event[] {
+  add(callId: string, name: string | undefined, fragment: string, ts = Date.now() / 1000): Event[] {
     if (this.finished) return []; // the stream already ended; never re-open the accumulator
     const c = this.calls.get(callId) ?? { name: name ?? "", parts: [] };
     if (name) c.name = name;
     c.parts.push(fragment);
     this.calls.set(callId, c);
-    return [{ type: "tool_call_delta", callId, name, fragment, ts: Date.now() / 1000 }];
+    return [{ type: "tool_call_delta", callId, name, fragment, ts }];
   }
   // A late-arriving id re-keys fragments already banked under the synthetic id
   // (attack2 F2): the call stays whole instead of splitting into markers.
@@ -66,7 +66,29 @@ export class StreamNormalizer {
   private sawStop = false;                                  // first stop wins (gate-6 A7)
   private pendingIndexToId = new Map<number, string>();     // chat: index → id, resolved when id arrives
   private blockIndexToToolId = new Map<number, string>();   // anthropic: content-block index → toolu_ id (gate-6 A9)
-  constructor(public provider: Provider) {}
+  private readonly now: () => number;
+  private sentAt: number;
+  private lastTs: number;
+  private sendMarked = false;
+
+  constructor(public provider: Provider, options: { sentAt?: number; now?: () => number } = {}) {
+    this.now = options.now ?? (() => Date.now() / 1000);
+    this.sentAt = options.sentAt ?? this.now();
+    if (!Number.isFinite(this.sentAt)) throw new Error("sentAt must be finite");
+    this.lastTs = this.sentAt;
+  }
+
+  // Construction and wire-send are different moments. A caller that prepares a
+  // normalizer before admission can stamp the actual send boundary here; TTFT
+  // must never include time spent waiting in the harness before the request left.
+  markSent(sentAt = this.now()): void {
+    if (this.sendMarked) throw new Error("markSent may be called only once");
+    if (this.sawContent) throw new Error("cannot move sentAt after content arrived");
+    if (!Number.isFinite(sentAt)) throw new Error("sentAt must be finite");
+    this.sendMarked = true;
+    this.sentAt = sentAt;
+    this.lastTs = sentAt;
+  }
 
   // One raw SSE line in. Meta-only lines (comments, event:/id:/retry:, empty) are skipped.
   ingest(line: string): Event[] {
@@ -78,22 +100,46 @@ export class StreamNormalizer {
     // Parsed but not an object (null, array, bare string/number): skip like an unparseable
     // line — one bad keep-alive payload must never kill the stream loop (gate-6 A1).
     if (typeof chunk !== "object" || chunk === null || Array.isArray(chunk)) return [];
-    const ts = Date.now() / 1000;
+    const ts = this.timestamp();
     return this.provider === "openai-chat" ? this.chat(chunk, ts)
       : this.provider === "openai-responses" ? this.responses(chunk, ts)
       : this.provider === "anthropic" ? this.anthropic(chunk, ts) : this.gemini(chunk, ts);
   }
 
   // The stream ended (sentinel, finish event, or clean close): assemble tool calls once.
-  finish(): Event[] { return this.tools.finish(Date.now() / 1000); }
+  finish(): Event[] { return this.tools.finish(this.timestamp()); }
 
   private text(text: string, ts: number): Event[] {
     if (text === "") return [];
     const e: Event = { type: "text_delta", text, ts };
-    if (!this.sawContent) { this.sawContent = true; (e as any).ttftSeconds = ts - this.t0; }
+    const ttft = this.firstContent(ts);
+    if (ttft !== undefined) e.ttftSeconds = ttft;
     return [e];
   }
-  private t0 = Date.now() / 1000;
+
+  private tool(callId: string, name: string | undefined, fragment: string, ts: number): Event[] {
+    const events = this.tools.add(callId, name, fragment, ts);
+    if (events.length === 0) return events;
+    const ttft = this.firstContent(ts);
+    if (ttft !== undefined && events[0].type === "tool_call_delta")
+      events[0].ttftSeconds = ttft;
+    return events;
+  }
+
+  private firstContent(ts: number): number | undefined {
+    if (this.sawContent) return undefined;
+    this.sawContent = true;
+    return Math.max(0, ts - this.sentAt);
+  }
+
+  private timestamp(): number {
+    const raw = this.now();
+    if (!Number.isFinite(raw)) throw new Error("stream clock must return a finite timestamp");
+    // Wall clocks can step backwards. Clamp receive timestamps monotonically so
+    // TTFT and inter-delta latency never become physically impossible negatives.
+    this.lastTs = Math.max(this.lastTs, raw);
+    return this.lastTs;
+  }
 
   // One stop per stream: a retried/repeated finish chunk never re-fires the stop event
   // (gate-6 A7) — the stream already ended; the duplicate is a transport artifact.
@@ -118,7 +164,7 @@ export class StreamNormalizer {
           this.pendingIndexToId.set(tc.index, tc.id); id = tc.id;
         }
         const frag = tc.function?.arguments ?? "";
-        if (frag !== "" || id) out.push(...this.tools.add(id ?? `idx:${tc.index}`, tc.function?.name, frag));
+        if (frag !== "" || id) out.push(...this.tool(id ?? `idx:${tc.index}`, tc.function?.name, frag, ts));
       }
       if (ch.finish_reason) out.push(...this.stop(FINISH[ch.finish_reason] ?? "unknown", ch.finish_reason, ts));
     }
@@ -131,7 +177,7 @@ export class StreamNormalizer {
     else if (c.type === "response.function_call_arguments.delta" || c.type === "response.output_item.added") {
       const id = c.item_id ?? c.item?.id ?? c.call_id ?? "resp:?";
       const frag = c.delta ?? "";
-      if (c.item?.name || frag) out.push(...this.tools.add(id, c.item?.name, frag));
+      if (c.item?.name || frag) out.push(...this.tool(id, c.item?.name, frag, ts));
     } else if (c.type === "response.completed") { // terminal contract per ch12's dated snapshot — unattested event names are not handled
       const u = c.response?.usage;
       if (u) out.push(this.usageEvt((u.input_tokens ?? 0) - (u.input_tokens_details?.cached_tokens ?? 0),
@@ -153,7 +199,7 @@ export class StreamNormalizer {
       if (c.content_block?.type === "tool_use") {
         const id = c.content_block.id ?? `block:${c.index}`;  // toolu_ id keys the call
         this.blockIndexToToolId.set(c.index, id);              // deltas key by block index (gate-6 A9)
-        out.push(...this.tools.add(id, c.content_block.name, ""));
+        out.push(...this.tool(id, c.content_block.name, "", ts));
       } // text blocks: nothing to emit until deltas arrive
     } else if (c.type === "content_block_stop") {
       this.blockIndexToToolId.delete(c.index);                 // a later delta for this index is an orphan
@@ -165,7 +211,7 @@ export class StreamNormalizer {
         // blocks attribute correctly. A delta with no prior block start (lost on a
         // dropped event) is an orphan — skipped, never merged into another call (gate-6 A8).
         const id = this.blockIndexToToolId.get(c.index);
-        if (id !== undefined) out.push(...this.tools.add(id, undefined, d.partial_json ?? ""));
+        if (id !== undefined) out.push(...this.tool(id, undefined, d.partial_json ?? "", ts));
       }
     } else if (c.type === "message_delta") {
       const u = c.usage ?? {};
@@ -196,7 +242,7 @@ export class StreamNormalizer {
         const callId = seq === 1 ? `step:${part.functionCall.name}` : `step:${part.functionCall.name}#${seq - 1}`;
         const frag = typeof part.functionCall.args === "string"
           ? part.functionCall.args : JSON.stringify(part.functionCall.args ?? {});
-        out.push(...this.tools.add(callId, part.functionCall.name, frag));
+        out.push(...this.tool(callId, part.functionCall.name, frag, ts));
       }
     }
     const fr = c.candidates?.[0]?.finishReason;
@@ -208,9 +254,10 @@ export class StreamNormalizer {
   // undefined arithmetic → NaN; NaN poisons every sum downstream forever. Non-numeric
   // fields coerce to 0 and the event is flagged `incomplete` — visible, not silent (gate-6 A2).
   private usageEvt(freshIn: number, cachedIn: number, cacheWriteIn: number, out: number, reasoning: number, ts: number): Event {
-    const num = (x: number) => Number.isFinite(x) ? x : 0;
-    const incomplete = [freshIn, cachedIn, cacheWriteIn, out, reasoning].some((x) => !Number.isFinite(x));
-    const e: Event = { type: "usage", freshIn: Math.max(0, num(freshIn)), cachedIn: num(cachedIn),
+    const num = (x: number) => Number.isFinite(x) ? Math.max(0, x) : 0;
+    const incomplete = [freshIn, cachedIn, cacheWriteIn, out, reasoning]
+      .some((x) => !Number.isFinite(x) || x < 0);
+    const e: Event = { type: "usage", freshIn: num(freshIn), cachedIn: num(cachedIn),
       cacheWriteIn: num(cacheWriteIn), out: num(out), reasoning: num(reasoning), ts };
     return incomplete ? { ...e, incomplete: true } : e;
   }
