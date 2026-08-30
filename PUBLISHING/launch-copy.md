@@ -47,9 +47,9 @@ Arbaz Khan metered 200 billion tokens through coding agents — publicly, at ccr
 ## 2. Amazon / KDP description — HTML, opens with the 6pm hook
 
 KDP rules applied: 4,000-character limit; supported tags only (`h4`–`h6`, `b`, `i`, `em`,
-`strong`, `p`, `br`, `ul`, `ol`, `li`); anchor `<a>` links are stripped — URLs appear as
-plain text only. Source: kdp.amazon.com/help/topic/G201189630. Paste the block between
-the markers into the KDP description field (HTML view).
+`strong`, `p`, `br`, `ul`, `ol`, `li`); website URLs are omitted from the retail
+description. Source: kdp.amazon.com/help/topic/G201189630. Paste the block between the
+markers into the KDP description field (HTML view).
 
 <!-- BEGIN KDP DESCRIPTION — approx. 3.4k characters incl. tags; verify in KDP's counter before saving -->
 
@@ -81,9 +81,9 @@ the markers into the KDP description field (HTML view).
 <h5>Volume II of the Harness Engineering series</h5>
 <p>Volume I, <i>Harness Engineering: How to Build AI Agents That Actually Work</i>, built the system around the model: tools, loops, sessions, safety, memory, evals. Volume II goes underneath: the serving layer that decides whether a brilliant harness ships or stalls. Each volume stands alone; they are built to be read in order.</p>
 <h5>About the author</h5>
-<p>Arbaz Khan is a backend and harness engineer who has spent his career in high-volume messaging systems and, lately, industrial-scale AI agent operations: more than 200 billion tokens driven through coding agents in roughly four months — metered publicly, because a claim you can't check is just a boast (ccrank.dev/user/arbaz-khan). He writes from the operator's chair, not the vendor's podium.</p>
+<p>Arbaz Khan is a backend and harness engineer who has spent his career in high-volume messaging systems and, lately, industrial-scale AI agent operations: more than 200 billion tokens driven through coding agents in roughly four months. He writes from the operator's chair, not the vendor's podium.</p>
 <p><b>House rules, same as Volume I:</b> no jargon without a plain-words explanation, no number without a source or a visible hedge, no chapter that ends without making you build, break, or measure something. Prices and rate limits are clearly marked dated snapshots; the formulas are forever.</p>
-<p>The manuscript, the 70+ dated sourced research digests behind it, and the build pipeline are public: github.com/arbazkhan971/inference-engineering-book. Check our work; that's the point.</p>
+<p>The manuscript is backed by 70+ dated, sourced research digests and a reproducible build pipeline. Every dated claim can be checked.</p>
 
 <!-- END KDP DESCRIPTION -->
 
